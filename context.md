@@ -64,3 +64,12 @@ pm run build ejecutado exitosamente.
 - Añadida animación fluida de transición (desvanecimiento y escala suave opacity / scale) al cambiar entre proyectos.
 - 
 pm run build ejecutado exitosamente.
+
+## 16/09/2026 - Consolidación del Sistema de Animaciones e Interacciones (Excluyendo Scrollytelling)
+- Actualizado el motor de animación de entrada (ScrollReveal.tsx) para soportar la transición estandarizada de desplazamiento desde la derecha y opacidad (opacity: 0 -> 1, 	ranslateX(60px) -> translateX(0)), activado progresivamente con IntersectionObserver.
+- Confirmada la interactividad de la Consola Terminal (TerminalContactFooter.tsx) con captura de datos en 4 pasos (Nombre, Email, Selección de Servicio/Asesoría, Mensaje), feedback visual de consola y 0 auto-scroll / 0 auto-focus intrusivo.
+- Confirmado el visor dinámico Split del Portafolio (PortfolioShowcase.tsx) con SegmentedControl superior y transiciones ade & slide suaves.
+- Aplicado el diseño de tarjetas estilo Glassmorphism (tema oscuro, bordes #485346, fondos semi-transparentes y acentos #7fee64 Lime Pulse) con micro-interacciones suaves en botones y enlaces.
+- Garantizada la navegación pasiva en todas las secciones para control total del usuario sin saltos de viewport automáticos.
+- 
+pm run build ejecutado exitosamente.

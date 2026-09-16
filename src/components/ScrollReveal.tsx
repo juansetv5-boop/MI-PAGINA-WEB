@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -6,14 +6,16 @@ interface ScrollRevealProps {
   children: React.ReactNode;
   className?: string;
   delay?: number;
-  direction?: 'up' | 'down' | 'none';
+  direction?: 'right' | 'left' | 'up' | 'down' | 'none';
+  distance?: number;
 }
 
 export default function ScrollReveal({
   children,
   className = '',
   delay = 0,
-  direction = 'up',
+  direction = 'right',
+  distance = 60,
 }: ScrollRevealProps) {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -43,10 +45,12 @@ export default function ScrollReveal({
   }, []);
 
   const getTransform = () => {
-    if (isVisible) return 'translateY(0)';
-    if (direction === 'up') return 'translateY(24px)';
-    if (direction === 'down') return 'translateY(-24px)';
-    return 'translateY(0)';
+    if (isVisible) return 'translate(0, 0)';
+    if (direction === 'right') return `translateX(${distance}px)`;
+    if (direction === 'left') return `translateX(-${distance}px)`;
+    if (direction === 'up') return `translateY(${distance}px)`;
+    if (direction === 'down') return `translateY(-${distance}px)`;
+    return 'translate(0, 0)';
   };
 
   return (
