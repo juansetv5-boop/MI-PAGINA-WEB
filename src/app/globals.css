@@ -1,0 +1,205 @@
+@import "tailwindcss";
+
+/* ================================================================
+   PHOSPHOR TERMINAL — Design System Tokens (Tailwind v4)
+   Ref: DESIGN.md — Modal Style Reference
+   ================================================================ */
+
+@theme inline {
+  /* ---- Color Palette ---- */
+  --color-void: #000000;
+  --color-ground-iron: #181818;
+  --color-carbon-veil: #212525;
+  --color-circuit-border: #485346;
+  --color-phosphor-blue-black: #1f2a33;
+  --color-charcoal-rust: #231c1c;
+  --color-lime-pulse: #7fee64;
+  --color-phosphor-white: #ddffdc;
+  --color-mint-frost: #def0dd;
+  --color-sage-60: #8cab87;
+  --color-sage-40: #677d64;
+  --color-moss-70: #9cbf93;
+  --color-moss-80: #aed2a4;
+  --color-fern-link: #859984;
+  --color-deep-fern: #697368;
+  --color-pine-15: #3e4a3c;
+
+  /* ---- Font Families (Vercel Geist Typography System) ---- */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-display: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+
+  /* ---- Border Radius ---- */
+  --radius-card: 8px;
+  --radius-button: 12px;
+  --radius-pill: 9999px;
+  --radius-input: 8px;
+
+  /* ---- Spacing (4px base) ---- */
+  --spacing-section: 80px;
+  --spacing-card-padding: 32px;
+  --spacing-element-gap: 20px;
+
+  /* ---- Elevation (nav bar only) ---- */
+  --shadow-nav: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.1) 0px 4px 6px -4px;
+}
+
+/* ================================================================
+   BASE STYLES
+   ================================================================ */
+
+:root {
+  --background: #000000;
+  --foreground: #ddffdc;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  letter-spacing: -0.022em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ================================================================
+   TYPOGRAPHY UTILITIES
+   ================================================================ */
+
+.font-sans {
+  font-family: var(--font-sans);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+.font-display {
+  font-family: var(--font-sans);
+}
+
+/* Tight negative letter-spacing tracking from DESIGN.md */
+.tracking-display {
+  letter-spacing: -0.017em; /* -0.017em to -0.012em */
+}
+
+.tracking-heading-lg {
+  letter-spacing: -0.015em;
+}
+
+.tracking-heading {
+  letter-spacing: -0.013em;
+}
+
+.tracking-heading-sm {
+  letter-spacing: -0.012em;
+}
+
+.tracking-body {
+  letter-spacing: -0.022em;
+}
+
+.tracking-body-sm {
+  letter-spacing: -0.026em;
+}
+
+.tracking-eyebrow {
+  letter-spacing: 0.05em; /* 12px uppercase */
+}
+
+/* ================================================================
+   ANIMATIONS
+   ================================================================ */
+
+@keyframes pulse-led {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(127, 238, 100, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 16px rgba(127, 238, 100, 0.9);
+  }
+}
+
+@keyframes blink-cursor {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-led-pulse {
+  animation: pulse-led 2s ease-in-out infinite;
+}
+
+.animate-blink {
+  animation: blink-cursor 1s step-end infinite;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out forwards;
+}
+
+/* ================================================================
+   SCROLLBAR STYLING
+   ================================================================ */
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #485346;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #677d64;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #485346 #000000;
+}
+
+/* ================================================================
+   COMPONENT UTILITIES
+   ================================================================ */
+
+/* Card hover glow */
+.card-hover-glow {
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-hover-glow:hover {
+  border-color: #677d64;
+  box-shadow: 0 0 40px rgba(127, 238, 100, 0.06);
+}
+
+/* Selection color */
+::selection {
+  background-color: rgba(127, 238, 100, 0.2);
+  color: #ddffdc;
+}
