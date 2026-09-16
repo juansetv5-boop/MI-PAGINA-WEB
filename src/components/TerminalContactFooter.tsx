@@ -9,31 +9,45 @@ type ToastState = 'idle' | 'success' | 'error';
 
 export default function TerminalContactFooter() {
   const [formData, setFormData] = useState({
-    contact: '',
-    company: '',
-    description: '',
-    scope: 'LANDING_PAGE',
+    userName: '',
+    userEmail: '',
+    serviceType: 'Landing Page',
+    message: '',
   });
   const [step, setStep] = useState<number>(1);
   const [isLoading, setIsLoading] = useState(false);
   const [toast, setToast] = useState<ToastState>('idle');
 
-  const scopes = [
-    { label: 'Landing Page', val: 'LANDING_PAGE' },
-    { label: 'Página Web Corporativa', val: 'CORPORATIVA' },
-    { label: 'Sistema Web a Medida', val: 'SISTEMA_MEDIDA' },
+  const serviceOptions = [
+    { label: 'Landing Page', val: 'Landing Page' },
+    { label: 'Página Web Corporativa', val: 'Página Web Corporativa' },
+    { label: 'Sistema Web a Medida', val: 'Sistema Web a Medida' },
+    { label: 'Asesoría 1 a 1', val: 'Asesoría 1 a 1' },
   ];
 
   const handleNextStep = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (step < 3) {
-      setStep((prev) => prev + 1);
+    if (step === 1) {
+      if (!formData.userName.trim()) return;
+      setStep(2);
       return;
     }
 
-    // Final step — send via EmailJS
-    if (!formData.contact.trim() || !formData.description.trim()) return;
+    if (step === 2) {
+      if (!formData.userEmail.trim()) return;
+      setStep(3);
+      return;
+    }
+
+    if (step === 3) {
+      if (!formData.serviceType) return;
+      setStep(4);
+      return;
+    }
+
+    // Step 4 — Final step: send via EmailJS
+    if (!formData.message.trim()) return;
 
     setIsLoading(true);
     setToast('idle');
@@ -50,32 +64,32 @@ export default function TerminalContactFooter() {
     }
 
     const templateParams = {
-      name: formData.contact,
-      company: formData.company || 'Sin especificar',
-      email: formData.contact,
-      message: `[Tipo de Proyecto: ${formData.scope}]\n${formData.description}`,
-      client_name: formData.contact,
-      company_name: formData.company || 'Sin especificar',
-      client_email: formData.contact,
+      user_name: formData.userName,
+      user_email: formData.userEmail,
+      service_type: formData.serviceType,
+      message: formData.message,
+      // Compatibility fields for existing templates
+      name: formData.userName,
+      email: formData.userEmail,
+      client_name: formData.userName,
+      client_email: formData.userEmail,
+      company: formData.serviceType,
+      company_name: formData.serviceType,
     };
 
     try {
       await emailjs.send(serviceId, templateId, templateParams, publicKey);
       setToast('success');
-      setFormData({ contact: '', company: '', description: '', scope: 'LANDING_PAGE' });
-      setStep(1);
-      setTimeout(() => setToast('idle'), 6000);
     } catch (error) {
       console.error('[EmailJS Error]:', error);
       setToast('error');
-      setTimeout(() => setToast('idle'), 6000);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleReset = () => {
-    setFormData({ contact: '', company: '', description: '', scope: 'LANDING_PAGE' });
+    setFormData({ userName: '', userEmail: '', serviceType: 'Landing Page', message: '' });
     setStep(1);
     setToast('idle');
     setIsLoading(false);
@@ -89,31 +103,13 @@ export default function TerminalContactFooter() {
         <ScrollReveal delay={0}>
           <div className="text-center mb-10">
             <h2 className="text-[#ddffdc] text-[32px] md:text-[42px] font-medium tracking-[-0.015em]">
-              Diseña tu muestra <span className="text-[#7fee64]">personalizada</span>
+              Consola de contacto <span className="text-[#7fee64]">directo</span>
             </h2>
             <p className="text-[#8cab87] text-base mt-2">
-              Directo a nuestro equipo, sin intermediarios ni procesos complicados.
+              Ingresa tus datos paso a paso para comunicarte con nuestro equipo.
             </p>
           </div>
         </ScrollReveal>
-
-        {/* Toast Banner */}
-        {toast !== 'idle' && (
-          <div
-            className={`mb-6 flex items-center gap-3 px-5 py-4 rounded-lg border text-sm font-sans transition-all ${
-              toast === 'success'
-                ? 'bg-[#0d1f0d] border-[#7fee64] text-[#7fee64]'
-                : 'bg-[#1f0d0d] border-[#ff5f56] text-[#ff5f56]'
-            }`}
-          >
-            <span className="text-lg">{toast === 'success' ? '✓' : '✕'}</span>
-            <span>
-              {toast === 'success'
-                ? '¡Mensaje recibido! Nos pondremos en contacto contigo lo antes posible.'
-                : 'Ocurrió un error al enviar el mensaje. Intenta de nuevo.'}
-            </span>
-          </div>
-        )}
 
         {/* Window Frame */}
         <ScrollReveal delay={150}>
@@ -125,151 +121,227 @@ export default function TerminalContactFooter() {
                 <div className="w-3 h-3 rounded-full bg-[#febc2e]" />
                 <div className="w-3 h-3 rounded-full bg-[#28c840]" />
               </div>
-              <div className="font-sans text-xs text-[#8cab87] font-medium">
-                Clickshop — Formulario Directo
+              <div className="font-mono text-xs text-[#8cab87] font-medium">
+                clickshop@terminal:~ $ contact.sh
               </div>
               <button
                 onClick={handleReset}
-                className="text-xs font-sans text-[#677d64] hover:text-[#7fee64] transition-colors"
-                title="Reiniciar formulario"
+                className="text-xs font-mono text-[#677d64] hover:text-[#7fee64] transition-colors"
+                title="Reiniciar consola"
               >
-                Reiniciar
+                [Reiniciar]
               </button>
             </div>
 
             {/* Form Content Area */}
-            <div className="p-6 font-sans text-sm md:text-base min-h-[300px] flex flex-col justify-between">
-              <div>
-                <div className="text-[#aed2a4] mb-6 font-medium">
-                  Completa los datos para diseñar una muestra personalizada para tu negocio.
-                </div>
-
-                <form onSubmit={handleNextStep} className="space-y-6">
-                  {/* Select Scope Options */}
-                  <div>
-                    <label className="block text-[#ddffdc] text-xs uppercase font-sans tracking-wider mb-2.5">
-                      Tipo de proyecto:
-                    </label>
-                    <div className="flex flex-wrap gap-2.5">
-                      {scopes.map((s) => (
-                        <button
-                          key={s.val}
-                          type="button"
-                          onClick={() => setFormData({ ...formData, scope: s.val })}
-                          className={`px-4 py-2 rounded-md text-xs font-sans font-medium transition-all ${
-                            formData.scope === s.val
-                              ? 'bg-[#7fee64] text-[#000000] font-bold shadow-[0_0_12px_rgba(127,238,100,0.3)]'
-                              : 'bg-[#212525] text-[#8cab87] border border-[#485346] hover:border-[#677d64]'
-                          }`}
-                        >
-                          {s.label}
-                        </button>
-                      ))}
-                    </div>
+            <div className="p-6 font-mono text-sm md:text-base min-h-[320px] flex flex-col justify-between">
+              {toast === 'success' ? (
+                /* Success Terminal Screen */
+                <div className="space-y-5 my-auto">
+                  <div className="text-[#7fee64] font-semibold flex items-start gap-2">
+                    <span className="text-lg">✓</span>
+                    <span>system: ¡Mensaje recibido con éxito! Te contactaremos lo antes posible.</span>
                   </div>
-
-                  {/* Step 1: Nombre y Correo / WhatsApp */}
-                  {step >= 1 && (
-                    <div className="space-y-1.5">
-                      <label className="block text-[#ddffdc] text-xs uppercase font-sans tracking-wider">
-                        [1/3] Nombre y Correo / WhatsApp:
-                      </label>
-                      <div className="flex items-center bg-[#212525] border border-[#485346] rounded-md px-3.5 py-2.5">
-                        <input
-                          type="text"
-                          required
-                          value={formData.contact}
-                          onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
-                          placeholder="Ej: Carlos Mendoza - carlos@miempresa.com / +52 55..."
-                          className="bg-transparent border-none outline-none text-[#7fee64] placeholder-[#677d64] flex-1 text-sm font-sans focus:ring-0"
-                        />
-                      </div>
+                  <div className="bg-[#212525] border border-[#485346] rounded-md p-4 space-y-2 text-xs md:text-sm text-[#8cab87]">
+                    <div className="text-[#ddffdc] font-bold text-xs uppercase tracking-wider mb-2">
+                      &gt; REGISTRO DE CONSOLA:
                     </div>
-                  )}
-
-                  {/* Step 2: Nombre de la empresa o proyecto */}
-                  {step >= 2 && (
-                    <div className="space-y-1.5">
-                      <label className="block text-[#ddffdc] text-xs uppercase font-sans tracking-wider">
-                        [2/3] Nombre de tu empresa o proyecto:
-                      </label>
-                      <div className="flex items-center bg-[#212525] border border-[#485346] rounded-md px-3.5 py-2.5">
-                        <input
-                          type="text"
-                          required
-                          value={formData.company}
-                          onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                          placeholder="Ej: Mendoza Consultores / Clínica Dental"
-                          className="bg-transparent border-none outline-none text-[#7fee64] placeholder-[#677d64] flex-1 text-sm font-sans focus:ring-0"
-                        />
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Step 3: Descripción del negocio */}
-                  {step >= 3 && (
-                    <div className="space-y-1.5">
-                      <label className="block text-[#ddffdc] text-xs uppercase font-sans tracking-wider">
-                        [3/3] ¿A qué se dedica tu negocio? (Breve descripción):
-                      </label>
-                      <div className="flex items-start bg-[#212525] border border-[#485346] rounded-md px-3.5 py-2.5">
-                        <textarea
-                          required
-                          rows={2}
-                          value={formData.description}
-                          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                          placeholder="Ej: Ofrecemos servicios de consultoría financiera para PyMEs y buscamos captar más clientes calificados..."
-                          className="bg-transparent border-none outline-none text-[#7fee64] placeholder-[#677d64] flex-1 text-sm font-sans focus:ring-0 resize-none"
-                        />
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Buttons */}
-                  <div className="flex justify-between items-center pt-2">
-                    <span className="text-xs text-[#677d64] font-sans">
-                      Paso {step} de 3
-                    </span>
+                    <div><span className="text-[#7fee64]">&gt; Nombre:</span> {formData.userName}</div>
+                    <div><span className="text-[#7fee64]">&gt; Email:</span> {formData.userEmail}</div>
+                    <div><span className="text-[#7fee64]">&gt; Servicio:</span> {formData.serviceType}</div>
+                    <div><span className="text-[#7fee64]">&gt; Mensaje:</span> {formData.message}</div>
+                  </div>
+                  <div className="pt-2">
                     <button
-                      type="submit"
-                      disabled={isLoading}
-                      className="bg-[#7fee64] text-[#000000] px-6 py-2.5 rounded-md font-sans text-xs md:text-sm font-bold uppercase tracking-wider transition-all hover:opacity-95 hover:shadow-[0_0_20px_rgba(127,238,100,0.3)] disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
+                      onClick={handleReset}
+                      className="bg-[#7fee64] text-[#000000] px-5 py-2.5 rounded-md font-sans text-xs font-bold uppercase tracking-wider hover:opacity-95 transition-all shadow-[0_0_15px_rgba(127,238,100,0.25)]"
                     >
-                      {isLoading ? (
-                        <>
-                          <svg
-                            className="animate-spin h-3.5 w-3.5 text-[#000000]"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                          >
-                            <circle
-                              className="opacity-25"
-                              cx="12"
-                              cy="12"
-                              r="10"
-                              stroke="currentColor"
-                              strokeWidth="4"
-                            />
-                            <path
-                              className="opacity-75"
-                              fill="currentColor"
-                              d="M4 12a8 8 0 018-8v8H4z"
-                            />
-                          </svg>
-                          Enviando...
-                        </>
-                      ) : step < 3 ? (
-                        'Siguiente Paso →'
-                      ) : (
-                        'Solicitar Muestra →'
-                      )}
+                      Nueva consulta →
                     </button>
                   </div>
-                </form>
-              </div>
+                </div>
+              ) : (
+                /* Interactive Step-by-Step Terminal Form */
+                <div>
+                  {toast === 'error' && (
+                    <div className="mb-4 flex items-center gap-3 px-4 py-3 rounded-lg border bg-[#1f0d0d] border-[#ff5f56] text-[#ff5f56] text-xs font-sans">
+                      <span>✕</span>
+                      <span>system: Error al enviar la solicitud. Intenta nuevamente.</span>
+                    </div>
+                  )}
 
-              <div className="pt-6 border-t border-[#485346]/40 flex justify-between items-center text-xs font-sans text-[#677d64]">
+                  {/* Summary of Completed Steps */}
+                  <div className="space-y-2 mb-6 text-xs md:text-sm text-[#677d64]">
+                    {step > 1 && (
+                      <div className="flex items-center gap-2 text-[#8cab87]">
+                        <span className="text-[#7fee64]">✓ [Paso 1] Nombre:</span>
+                        <span className="text-[#ddffdc]">{formData.userName}</span>
+                      </div>
+                    )}
+                    {step > 2 && (
+                      <div className="flex items-center gap-2 text-[#8cab87]">
+                        <span className="text-[#7fee64]">✓ [Paso 2] Email:</span>
+                        <span className="text-[#ddffdc]">{formData.userEmail}</span>
+                      </div>
+                    )}
+                    {step > 3 && (
+                      <div className="flex items-center gap-2 text-[#8cab87]">
+                        <span className="text-[#7fee64]">✓ [Paso 3] Servicio:</span>
+                        <span className="text-[#ddffdc]">{formData.serviceType}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <form onSubmit={handleNextStep} className="space-y-6">
+                    {/* Step 1: Nombre Completo */}
+                    {step === 1 && (
+                      <div className="space-y-2">
+                        <label className="block text-[#aed2a4] text-xs md:text-sm">
+                          system: Por favor ingresa tu nombre completo:
+                        </label>
+                        <div className="flex items-center bg-[#212525] border border-[#485346] rounded-md px-3.5 py-2.5 focus-within:border-[#7fee64] transition-colors">
+                          <span className="text-[#7fee64] mr-2">&gt;</span>
+                          <input
+                            type="text"
+                            required
+                            autoFocus
+                            value={formData.userName}
+                            onChange={(e) => setFormData({ ...formData, userName: e.target.value })}
+                            placeholder="Ej: Carlos Mendoza"
+                            className="bg-transparent border-none outline-none text-[#7fee64] placeholder-[#677d64] flex-1 text-sm font-mono focus:ring-0"
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Step 2: Email de contacto */}
+                    {step === 2 && (
+                      <div className="space-y-2">
+                        <label className="block text-[#aed2a4] text-xs md:text-sm">
+                          system: Ingresa tu email de contacto:
+                        </label>
+                        <div className="flex items-center bg-[#212525] border border-[#485346] rounded-md px-3.5 py-2.5 focus-within:border-[#7fee64] transition-colors">
+                          <span className="text-[#7fee64] mr-2">&gt;</span>
+                          <input
+                            type="email"
+                            required
+                            autoFocus
+                            value={formData.userEmail}
+                            onChange={(e) => setFormData({ ...formData, userEmail: e.target.value })}
+                            placeholder="Ej: carlos@miempresa.com"
+                            className="bg-transparent border-none outline-none text-[#7fee64] placeholder-[#677d64] flex-1 text-sm font-mono focus:ring-0"
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Step 3: Tipo de servicio u opción (incluye Asesoría 1 a 1) */}
+                    {step === 3 && (
+                      <div className="space-y-3">
+                        <label className="block text-[#aed2a4] text-xs md:text-sm">
+                          system: Selecciona el servicio o tipo de proyecto:
+                        </label>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                          {serviceOptions.map((opt) => (
+                            <button
+                              key={opt.val}
+                              type="button"
+                              onClick={() => {
+                                setFormData({ ...formData, serviceType: opt.val });
+                              }}
+                              className={`px-4 py-3 rounded-md text-xs md:text-sm font-mono text-left transition-all flex items-center justify-between ${
+                                formData.serviceType === opt.val
+                                  ? 'bg-[#7fee64] text-[#000000] font-bold shadow-[0_0_12px_rgba(127,238,100,0.3)]'
+                                  : 'bg-[#212525] text-[#8cab87] border border-[#485346] hover:border-[#7fee64] hover:text-[#ddffdc]'
+                              }`}
+                            >
+                              <span>{opt.label}</span>
+                              {formData.serviceType === opt.val && <span>✓</span>}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Step 4: Mensaje / Detalle */}
+                    {step === 4 && (
+                      <div className="space-y-2">
+                        <label className="block text-[#aed2a4] text-xs md:text-sm">
+                          system: ¿A qué se dedica tu negocio o qué necesitas? (Mensaje / Detalle):
+                        </label>
+                        <div className="flex items-start bg-[#212525] border border-[#485346] rounded-md px-3.5 py-2.5 focus-within:border-[#7fee64] transition-colors">
+                          <span className="text-[#7fee64] mr-2 mt-1">&gt;</span>
+                          <textarea
+                            required
+                            rows={3}
+                            autoFocus
+                            value={formData.message}
+                            onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                            placeholder="Ej: Necesitamos una página web para nuestra empresa de consultoría financiera..."
+                            className="bg-transparent border-none outline-none text-[#7fee64] placeholder-[#677d64] flex-1 text-sm font-mono focus:ring-0 resize-none"
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Step Controls */}
+                    <div className="flex justify-between items-center pt-4">
+                      <div className="flex items-center gap-2">
+                        {step > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => setStep((prev) => prev - 1)}
+                            className="text-xs font-mono text-[#8cab87] hover:text-[#7fee64] transition-colors"
+                          >
+                            ← Anterior
+                          </button>
+                        )}
+                        <span className="text-xs text-[#677d64] font-mono">
+                          Paso {step} de 4
+                        </span>
+                      </div>
+
+                      <button
+                        type="submit"
+                        disabled={isLoading}
+                        className="bg-[#7fee64] text-[#000000] px-6 py-2.5 rounded-md font-sans text-xs md:text-sm font-bold uppercase tracking-wider transition-all hover:opacity-95 hover:shadow-[0_0_20px_rgba(127,238,100,0.3)] disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
+                      >
+                        {isLoading ? (
+                          <>
+                            <svg
+                              className="animate-spin h-3.5 w-3.5 text-[#000000]"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                            >
+                              <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="4"
+                              />
+                              <path
+                                className="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8v8H4z"
+                              />
+                            </svg>
+                            Enviando...
+                          </>
+                        ) : step < 4 ? (
+                          'Siguiente Paso →'
+                        ) : (
+                          'Enviar Solicitud →'
+                        )}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              )}
+
+              <div className="pt-6 border-t border-[#485346]/40 flex justify-between items-center text-xs font-sans text-[#677d64] mt-6">
                 <span>Confidencialidad garantizada</span>
                 <span>Respuesta en menos de 24h</span>
               </div>

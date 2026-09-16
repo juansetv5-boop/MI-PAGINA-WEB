@@ -26,3 +26,14 @@
 - Agregados enlaces de navegación en el Footer.
 - 
 pm run build exitoso.
+
+## 16/09/2026 - Refactorización Consola de Contacto Interactiva (EmailJS & Asesoría 1 a 1)
+- Refactorizada la consola interactiva (TerminalContactFooter.tsx) con un flujo de captura progresiva de 4 pasos independientes:
+  - Paso 1: Nombre completo (userName).
+  - Paso 2: Email de contacto (userEmail).
+  - Paso 3: Selección de tipo de servicio (Landing Page, Página Web Corporativa, Sistema Web a Medida, y la nueva opción "Asesoría 1 a 1").
+  - Paso 4: Detalle o mensaje del negocio (message).
+- Actualizado el envío vía EmailJS mapeando los parámetros individuales (user_name, user_email, service_type, message) junto con alias de compatibilidad.
+- Pantalla de confirmación con estilo terminal al enviar la consulta.
+- 
+pm run build ejecutado exitosamente.
