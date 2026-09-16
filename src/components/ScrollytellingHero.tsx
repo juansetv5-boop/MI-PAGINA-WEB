@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { useScrollProgress } from '@/hooks/useScrollProgress';
@@ -50,30 +50,103 @@ export default function ScrollytellingHero() {
   const [loadedCount, setLoadedCount] = useState(0);
   const [isPreloaded, setIsPreloaded] = useState(false);
 
+  // Auto-play state & refs
+  const [isInViewport, setIsInViewport] = useState(false);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const autoFrameRef = useRef<number>(1);
+  const userInteractedRef = useRef<boolean>(false);
+
   const progress = useScrollProgress(containerRef);
 
-  // 1. EXACT FRAME MAPPING & ACTIVE PHASE BY PROGRESS RANGES:
-  // Phase 1 (0% - 45%): Frames 1 to 38
-  // Phase 2 (46% - 83%): Frames 39 to 70
-  // Phase 3 (84% - 100%): Frames 71 to 84 (freezes on 84 at end)
-  let targetFrame = 1;
-  let activePhase = 1;
+  // 1. Intersection Observer to detect when Scrollytelling section is in viewport
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
 
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        setIsInViewport(entry.isIntersecting);
+      },
+      { threshold: 0.1 }
+    );
+
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, []);
+
+  // 2. Pause auto-play instantly on user manual interaction (wheel, touch, drag, key)
+  useEffect(() => {
+    const handleUserInteraction = () => {
+      if (!userInteractedRef.current) {
+        userInteractedRef.current = true;
+        setIsAutoPlaying(false);
+      }
+    };
+
+    window.addEventListener('wheel', handleUserInteraction, { passive: true });
+    window.addEventListener('touchstart', handleUserInteraction, { passive: true });
+    window.addEventListener('touchmove', handleUserInteraction, { passive: true });
+    window.addEventListener('mousedown', handleUserInteraction, { passive: true });
+    window.addEventListener('keydown', handleUserInteraction, { passive: true });
+
+    return () => {
+      window.removeEventListener('wheel', handleUserInteraction);
+      window.removeEventListener('touchstart', handleUserInteraction);
+      window.removeEventListener('touchmove', handleUserInteraction);
+      window.removeEventListener('mousedown', handleUserInteraction);
+      window.removeEventListener('keydown', handleUserInteraction);
+    };
+  }, []);
+
+  // 3. Auto-play frame interval loop (~26 fps = 38ms interval) when in viewport
+  useEffect(() => {
+    if (!isInViewport || !isAutoPlaying || userInteractedRef.current) return;
+
+    const interval = setInterval(() => {
+      if (autoFrameRef.current < TOTAL_FRAMES) {
+        autoFrameRef.current += 1;
+      } else {
+        // Freeze on frame 84
+        setIsAutoPlaying(false);
+        clearInterval(interval);
+      }
+    }, 38);
+
+    return () => clearInterval(interval);
+  }, [isInViewport, isAutoPlaying]);
+
+  // 4. Calculate target frame & active phase
+  // Manual scroll target frame:
+  let scrollTargetFrame = 1;
   if (progress <= 0.45) {
-    activePhase = 1;
     const norm = Math.max(0, progress / 0.45);
-    targetFrame = Math.min(38, Math.max(1, Math.round(1 + norm * 37)));
+    scrollTargetFrame = Math.min(38, Math.max(1, Math.round(1 + norm * 37)));
   } else if (progress <= 0.83) {
-    activePhase = 2;
     const norm = (progress - 0.45) / 0.38;
-    targetFrame = Math.min(70, Math.max(39, Math.round(39 + norm * 31)));
+    scrollTargetFrame = Math.min(70, Math.max(39, Math.round(39 + norm * 31)));
   } else {
-    activePhase = 3;
     const norm = Math.min(1, (progress - 0.83) / 0.17);
-    targetFrame = Math.min(84, Math.max(71, Math.round(71 + norm * 13)));
+    scrollTargetFrame = Math.min(84, Math.max(71, Math.round(71 + norm * 13)));
   }
 
-  // 2. Canvas drawing with object-fit: contain logic
+  // Active target frame (auto-play OR manual scroll):
+  let targetFrame = scrollTargetFrame;
+  if (!userInteractedRef.current && isAutoPlaying && autoFrameRef.current > scrollTargetFrame) {
+    targetFrame = autoFrameRef.current;
+  }
+
+  // Active Phase calculation based on targetFrame:
+  let activePhase = 1;
+  if (targetFrame <= 38) {
+    activePhase = 1;
+  } else if (targetFrame <= 70) {
+    activePhase = 2;
+  } else {
+    activePhase = 3;
+  }
+
+  // 5. Canvas drawing with object-fit: contain logic
   const drawFrame = useCallback((frameIdx: number) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -117,7 +190,7 @@ export default function ScrollytellingHero() {
     ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
   }, []);
 
-  // 3. Asynchronous preloading of all 84 PNG frames
+  // 6. Asynchronous preloading of all 84 PNG frames
   useEffect(() => {
     let mounted = true;
     const preloadedImages: HTMLImageElement[] = [];
@@ -157,7 +230,7 @@ export default function ScrollytellingHero() {
     };
   }, [drawFrame]);
 
-  // 4. Smooth Lerp Frame Animation Loop (lerp factor: 0.09 for ~3s reading per phase)
+  // 7. Smooth Lerp Frame Animation Loop (lerp factor: 0.09)
   useEffect(() => {
     let rafId: number;
 
@@ -193,11 +266,22 @@ export default function ScrollytellingHero() {
   }, [drawFrame]);
 
   return (
-    // Outer scroll track (Sticky container height 500vh for 3s reading rhythm per phase)
+    // Outer scroll track (Sticky container height 500vh)
     <section ref={containerRef} className="relative h-[500vh] w-full bg-black">
       {/* Sticky Viewport */}
       <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden px-6 md:px-12 lg:px-20">
         
+        {/* Top Navigation Notice Badge */}
+        <div className="mb-6 flex items-center gap-2 text-xs md:text-sm font-sans text-[#8cab87] tracking-wide bg-[#181818]/80 border border-[#485346]/70 px-4 py-1.5 rounded-full backdrop-blur-md shadow-lg">
+          <span className="w-2 h-2 rounded-full bg-[#7fee64] animate-pulse" />
+          <span>
+            {isAutoPlaying && !userInteractedRef.current
+              ? 'Avance automático activo — Desliza para explorar a tu ritmo'
+              : 'Desliza para explorar a tu ritmo'}
+          </span>
+          <span className="text-[#7fee64] font-bold animate-bounce ml-0.5">↓</span>
+        </div>
+
         {/* Main Fixed 2-Column Container (Text Left, Canvas Right) */}
         <div className="w-full max-w-6xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
           
@@ -286,14 +370,6 @@ export default function ScrollytellingHero() {
 
         </div>
 
-        {/* Scroll Instruction Hint */}
-        <div
-          className="absolute bottom-6 md:bottom-8 flex items-center gap-2 text-xs font-sans text-[#677d64] tracking-wider transition-opacity duration-300"
-          style={{ opacity: progress > 0.9 ? 0 : 0.8 }}
-        >
-          <span>Haz scroll para ver la transformación</span>
-          <span className="animate-bounce">↓</span>
-        </div>
       </div>
     </section>
   );

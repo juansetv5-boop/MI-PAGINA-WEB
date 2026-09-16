@@ -44,3 +44,11 @@ pm run build ejecutado exitosamente.
 - El usuario permanece de forma natural en la parte superior (Hero) al cargar el sitio.
 - 
 pm run build ejecutado exitosamente.
+
+## 16/09/2026 - Auto-Advance de Fotogramas y Aviso de Navegación en Scrollytelling
+- Implementado avance automático de fotogramas (1 a 84) a ~26 fps exclusivamente cuando el componente ScrollytellingHero.tsx entra en el viewport (mediante IntersectionObserver).
+- Pausa inmediata del avance automático ante cualquier interacción manual del usuario (wheel, 	ouch, drag, keydown).
+- Detención fija en el fotograma 84 al completar la secuencia para lectura continua de la Fase 3.
+- Añadido badge/aviso superior minimalista en el contenedor del Scrollytelling: "Desliza para explorar a tu ritmo ↓" con icono/flecha verde animada (#7fee64).
+- 
+pm run build ejecutado exitosamente.
