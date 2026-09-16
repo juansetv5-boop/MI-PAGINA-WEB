@@ -1,7 +1,9 @@
-﻿'use client';
+'use client';
 
 import React, { useState } from 'react';
 import emailjs from '@emailjs/browser';
+import Link from 'next/link';
+import ScrollReveal from './ScrollReveal';
 
 type ToastState = 'idle' | 'success' | 'error';
 
@@ -83,6 +85,18 @@ export default function TerminalContactFooter() {
     <footer id="contact" className="w-full bg-[#000000] pt-24 pb-12 flex flex-col items-center">
       <div id="start" className="w-full max-w-3xl px-6 md:px-12 mb-16 scroll-mt-24">
 
+        {/* Section Title Header */}
+        <ScrollReveal delay={0}>
+          <div className="text-center mb-10">
+            <h2 className="text-[#ddffdc] text-[32px] md:text-[42px] font-medium tracking-[-0.015em]">
+              Diseña tu muestra <span className="text-[#7fee64]">personalizada</span>
+            </h2>
+            <p className="text-[#8cab87] text-base mt-2">
+              Directo a nuestro equipo, sin intermediarios ni procesos complicados.
+            </p>
+          </div>
+        </ScrollReveal>
+
         {/* Toast Banner */}
         {toast !== 'idle' && (
           <div
@@ -102,175 +116,179 @@ export default function TerminalContactFooter() {
         )}
 
         {/* Window Frame */}
-        <div className="bg-[#181818] rounded-lg border border-[#485346] overflow-hidden shadow-2xl">
-          {/* Header Bar */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-[#485346] bg-[#181818]">
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 rounded-full bg-[#ff5f56]" />
-              <div className="w-3 h-3 rounded-full bg-[#febc2e]" />
-              <div className="w-3 h-3 rounded-full bg-[#28c840]" />
+        <ScrollReveal delay={150}>
+          <div className="bg-[#181818] rounded-lg border border-[#485346] overflow-hidden shadow-2xl">
+            {/* Header Bar */}
+            <div className="flex items-center justify-between px-4 py-3 border-b border-[#485346] bg-[#181818]">
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 rounded-full bg-[#ff5f56]" />
+                <div className="w-3 h-3 rounded-full bg-[#febc2e]" />
+                <div className="w-3 h-3 rounded-full bg-[#28c840]" />
+              </div>
+              <div className="font-sans text-xs text-[#8cab87] font-medium">
+                Clickshop — Formulario Directo
+              </div>
+              <button
+                onClick={handleReset}
+                className="text-xs font-sans text-[#677d64] hover:text-[#7fee64] transition-colors"
+                title="Reiniciar formulario"
+              >
+                Reiniciar
+              </button>
             </div>
-            <div className="font-sans text-xs text-[#8cab87] font-medium">
-              Clickshop — Formulario Directo
-            </div>
-            <button
-              onClick={handleReset}
-              className="text-xs font-sans text-[#677d64] hover:text-[#7fee64] transition-colors"
-              title="Reiniciar formulario"
-            >
-              Reiniciar
-            </button>
-          </div>
 
-          {/* Form Content Area */}
-          <div className="p-6 font-sans text-sm md:text-base min-h-[300px] flex flex-col justify-between">
-            <div>
-              <div className="text-[#aed2a4] mb-6 font-medium">
-                Completa los datos para diseñar una muestra personalizada para tu negocio.
+            {/* Form Content Area */}
+            <div className="p-6 font-sans text-sm md:text-base min-h-[300px] flex flex-col justify-between">
+              <div>
+                <div className="text-[#aed2a4] mb-6 font-medium">
+                  Completa los datos para diseñar una muestra personalizada para tu negocio.
+                </div>
+
+                <form onSubmit={handleNextStep} className="space-y-6">
+                  {/* Select Scope Options */}
+                  <div>
+                    <label className="block text-[#ddffdc] text-xs uppercase font-sans tracking-wider mb-2.5">
+                      Tipo de proyecto:
+                    </label>
+                    <div className="flex flex-wrap gap-2.5">
+                      {scopes.map((s) => (
+                        <button
+                          key={s.val}
+                          type="button"
+                          onClick={() => setFormData({ ...formData, scope: s.val })}
+                          className={`px-4 py-2 rounded-md text-xs font-sans font-medium transition-all ${
+                            formData.scope === s.val
+                              ? 'bg-[#7fee64] text-[#000000] font-bold shadow-[0_0_12px_rgba(127,238,100,0.3)]'
+                              : 'bg-[#212525] text-[#8cab87] border border-[#485346] hover:border-[#677d64]'
+                          }`}
+                        >
+                          {s.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Step 1: Nombre y Correo / WhatsApp */}
+                  {step >= 1 && (
+                    <div className="space-y-1.5">
+                      <label className="block text-[#ddffdc] text-xs uppercase font-sans tracking-wider">
+                        [1/3] Nombre y Correo / WhatsApp:
+                      </label>
+                      <div className="flex items-center bg-[#212525] border border-[#485346] rounded-md px-3.5 py-2.5">
+                        <input
+                          type="text"
+                          required
+                          value={formData.contact}
+                          onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
+                          placeholder="Ej: Carlos Mendoza - carlos@miempresa.com / +52 55..."
+                          className="bg-transparent border-none outline-none text-[#7fee64] placeholder-[#677d64] flex-1 text-sm font-sans focus:ring-0"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Step 2: Nombre de la empresa o proyecto */}
+                  {step >= 2 && (
+                    <div className="space-y-1.5">
+                      <label className="block text-[#ddffdc] text-xs uppercase font-sans tracking-wider">
+                        [2/3] Nombre de tu empresa o proyecto:
+                      </label>
+                      <div className="flex items-center bg-[#212525] border border-[#485346] rounded-md px-3.5 py-2.5">
+                        <input
+                          type="text"
+                          required
+                          value={formData.company}
+                          onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                          placeholder="Ej: Mendoza Consultores / Clínica Dental"
+                          className="bg-transparent border-none outline-none text-[#7fee64] placeholder-[#677d64] flex-1 text-sm font-sans focus:ring-0"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Step 3: Descripción del negocio */}
+                  {step >= 3 && (
+                    <div className="space-y-1.5">
+                      <label className="block text-[#ddffdc] text-xs uppercase font-sans tracking-wider">
+                        [3/3] ¿A qué se dedica tu negocio? (Breve descripción):
+                      </label>
+                      <div className="flex items-start bg-[#212525] border border-[#485346] rounded-md px-3.5 py-2.5">
+                        <textarea
+                          required
+                          rows={2}
+                          value={formData.description}
+                          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                          placeholder="Ej: Ofrecemos servicios de consultoría financiera para PyMEs y buscamos captar más clientes calificados..."
+                          className="bg-transparent border-none outline-none text-[#7fee64] placeholder-[#677d64] flex-1 text-sm font-sans focus:ring-0 resize-none"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Buttons */}
+                  <div className="flex justify-between items-center pt-2">
+                    <span className="text-xs text-[#677d64] font-sans">
+                      Paso {step} de 3
+                    </span>
+                    <button
+                      type="submit"
+                      disabled={isLoading}
+                      className="bg-[#7fee64] text-[#000000] px-6 py-2.5 rounded-md font-sans text-xs md:text-sm font-bold uppercase tracking-wider transition-all hover:opacity-95 hover:shadow-[0_0_20px_rgba(127,238,100,0.3)] disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
+                    >
+                      {isLoading ? (
+                        <>
+                          <svg
+                            className="animate-spin h-3.5 w-3.5 text-[#000000]"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            />
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8v8H4z"
+                            />
+                          </svg>
+                          Enviando...
+                        </>
+                      ) : step < 3 ? (
+                        'Siguiente Paso →'
+                      ) : (
+                        'Solicitar Muestra →'
+                      )}
+                    </button>
+                  </div>
+                </form>
               </div>
 
-              <form onSubmit={handleNextStep} className="space-y-6">
-                {/* Select Scope Options */}
-                <div>
-                  <label className="block text-[#ddffdc] text-xs uppercase font-sans tracking-wider mb-2.5">
-                    Tipo de proyecto:
-                  </label>
-                  <div className="flex flex-wrap gap-2.5">
-                    {scopes.map((s) => (
-                      <button
-                        key={s.val}
-                        type="button"
-                        onClick={() => setFormData({ ...formData, scope: s.val })}
-                        className={`px-4 py-2 rounded-md text-xs font-sans font-medium transition-all ${
-                          formData.scope === s.val
-                            ? 'bg-[#7fee64] text-[#000000] font-bold shadow-[0_0_12px_rgba(127,238,100,0.3)]'
-                            : 'bg-[#212525] text-[#8cab87] border border-[#485346] hover:border-[#677d64]'
-                        }`}
-                      >
-                        {s.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Step 1: Nombre y Correo / WhatsApp */}
-                {step >= 1 && (
-                  <div className="space-y-1.5">
-                    <label className="block text-[#ddffdc] text-xs uppercase font-sans tracking-wider">
-                      [1/3] Nombre y Correo / WhatsApp:
-                    </label>
-                    <div className="flex items-center bg-[#212525] border border-[#485346] rounded-md px-3.5 py-2.5">
-                      <input
-                        type="text"
-                        required
-                        value={formData.contact}
-                        onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
-                        placeholder="Ej: Carlos Mendoza - carlos@miempresa.com / +52 55..."
-                        className="bg-transparent border-none outline-none text-[#7fee64] placeholder-[#677d64] flex-1 text-sm font-sans focus:ring-0"
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {/* Step 2: Nombre de la empresa o proyecto */}
-                {step >= 2 && (
-                  <div className="space-y-1.5">
-                    <label className="block text-[#ddffdc] text-xs uppercase font-sans tracking-wider">
-                      [2/3] Nombre de tu empresa o proyecto:
-                    </label>
-                    <div className="flex items-center bg-[#212525] border border-[#485346] rounded-md px-3.5 py-2.5">
-                      <input
-                        type="text"
-                        required
-                        value={formData.company}
-                        onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                        placeholder="Ej: Mendoza Consultores / Clínica Dental"
-                        className="bg-transparent border-none outline-none text-[#7fee64] placeholder-[#677d64] flex-1 text-sm font-sans focus:ring-0"
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {/* Step 3: Descripción del negocio */}
-                {step >= 3 && (
-                  <div className="space-y-1.5">
-                    <label className="block text-[#ddffdc] text-xs uppercase font-sans tracking-wider">
-                      [3/3] ¿A qué se dedica tu negocio? (Breve descripción):
-                    </label>
-                    <div className="flex items-start bg-[#212525] border border-[#485346] rounded-md px-3.5 py-2.5">
-                      <textarea
-                        required
-                        rows={2}
-                        value={formData.description}
-                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                        placeholder="Ej: Ofrecemos servicios de consultoría financiera para PyMEs y buscamos captar más clientes calificados..."
-                        className="bg-transparent border-none outline-none text-[#7fee64] placeholder-[#677d64] flex-1 text-sm font-sans focus:ring-0 resize-none"
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {/* Buttons */}
-                <div className="flex justify-between items-center pt-2">
-                  <span className="text-xs text-[#677d64] font-sans">
-                    Paso {step} de 3
-                  </span>
-                  <button
-                    type="submit"
-                    disabled={isLoading}
-                    className="bg-[#7fee64] text-[#000000] px-6 py-2.5 rounded-md font-sans text-xs md:text-sm font-bold uppercase tracking-wider transition-all hover:opacity-95 hover:shadow-[0_0_20px_rgba(127,238,100,0.3)] disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
-                  >
-                    {isLoading ? (
-                      <>
-                        <svg
-                          className="animate-spin h-3.5 w-3.5 text-[#000000]"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                        >
-                          <circle
-                            className="opacity-25"
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="currentColor"
-                            strokeWidth="4"
-                          />
-                          <path
-                            className="opacity-75"
-                            fill="currentColor"
-                            d="M4 12a8 8 0 018-8v8H4z"
-                          />
-                        </svg>
-                        Enviando...
-                      </>
-                    ) : step < 3 ? (
-                      'Siguiente Paso →'
-                    ) : (
-                      'Solicitar Muestra →'
-                    )}
-                  </button>
-                </div>
-              </form>
-            </div>
-
-            <div className="pt-6 border-t border-[#485346]/40 flex justify-between items-center text-xs font-sans text-[#677d64]">
-              <span>Confidencialidad garantizada</span>
-              <span>Respuesta en menos de 24h</span>
+              <div className="pt-6 border-t border-[#485346]/40 flex justify-between items-center text-xs font-sans text-[#677d64]">
+                <span>Confidencialidad garantizada</span>
+                <span>Respuesta en menos de 24h</span>
+              </div>
             </div>
           </div>
-        </div>
+        </ScrollReveal>
 
         {/* Direct Email Link */}
-        <div className="text-center mt-8 text-[#677d64] text-xs md:text-sm font-sans">
-          Consultas directas:{' '}
-          <a
-            href="mailto:clickshop.code@gmail.com?subject=Consulta%20Directa%20Clickshop&body=Hola%20equipo%20Clickshop,"
-            className="text-[#859984] hover:text-[#7fee64] underline underline-offset-2 transition-colors"
-          >
-            clickshop.code@gmail.com
-          </a>
-        </div>
+        <ScrollReveal delay={250}>
+          <div className="text-center mt-8 text-[#677d64] text-xs md:text-sm font-sans">
+            Consultas directas:{' '}
+            <a
+              href="mailto:clickshop.code@gmail.com?subject=Consulta%20Directa%20Clickshop&body=Hola%20equipo%20Clickshop,"
+              className="text-[#859984] hover:text-[#7fee64] underline underline-offset-2 transition-colors"
+            >
+              clickshop.code@gmail.com
+            </a>
+          </div>
+        </ScrollReveal>
       </div>
 
       {/* Footer Navigation Bar */}
@@ -284,16 +302,26 @@ export default function TerminalContactFooter() {
             </span>
           </div>
 
-          <div className="flex items-center space-x-6 text-xs font-sans">
-            <a href="#work" className="text-[#859984] hover:text-[#7fee64] transition-colors">
+          <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6 text-xs font-sans">
+            <a href="/#work" className="text-[#859984] hover:text-[#7fee64] transition-colors">
               Proyectos
             </a>
-            <a href="#services" className="text-[#859984] hover:text-[#7fee64] transition-colors">
+            <a href="/#services" className="text-[#859984] hover:text-[#7fee64] transition-colors">
               Servicios
             </a>
-            <a href="#process" className="text-[#859984] hover:text-[#7fee64] transition-colors">
+            <a href="/#process" className="text-[#859984] hover:text-[#7fee64] transition-colors">
               Proceso
             </a>
+            <span className="hidden md:inline text-[#485346]">|</span>
+            <Link href="/politica-de-privacidad" className="text-[#697368] hover:text-[#7fee64] transition-colors">
+              Política de Privacidad
+            </Link>
+            <Link href="/terminos-y-condiciones" className="text-[#697368] hover:text-[#7fee64] transition-colors">
+              Términos y Condiciones
+            </Link>
+            <Link href="/aviso-legal" className="text-[#697368] hover:text-[#7fee64] transition-colors">
+              Aviso Legal
+            </Link>
           </div>
         </div>
       </div>

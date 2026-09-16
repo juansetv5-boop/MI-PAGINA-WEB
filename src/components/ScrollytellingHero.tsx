@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { useScrollProgress } from '@/hooks/useScrollProgress';
@@ -9,21 +9,33 @@ const phaseTexts = [
   {
     phase: 1,
     badge: '01 // Arquitectura Técnica',
-    title: 'Codificando la arquitectura técnica',
+    title: (
+      <>
+        Codificando la <span className="text-[#7fee64]">arquitectura técnica</span>
+      </>
+    ),
     desc1: 'Construimos las bases del proyecto con Next.js y TypeScript de alto rendimiento.',
     desc2: 'Sin código redundante ni librerías pesadas: cada componente se compila para responder al instante.',
   },
   {
     phase: 2,
     badge: '02 // Estructuración UX/UI',
-    title: 'Diseño y experiencia visual UX/UI',
+    title: (
+      <>
+        Diseño y <span className="text-[#7fee64]">experiencia visual UX/UI</span>
+      </>
+    ),
     desc1: 'Creamos una estructura de navegación clara que capta la atención del usuario en segundos.',
     desc2: 'Diseño responsive adaptado a las necesidades reales y patrones de navegación de tus clientes.',
   },
   {
     phase: 3,
     badge: '03 // Alta Conversión en Vivo',
-    title: 'Tu sitio web listo para generar resultados',
+    title: (
+      <>
+        Tu sitio web listo para <span className="text-[#7fee64]">generar resultados</span>
+      </>
+    ),
     desc1: 'Rendimiento de 100/100 en Lighthouse y tiempos de respuesta ultrarrápidos.',
     desc2: 'Tu presencia digital transformada en un activo corporativo que genera autoridad y ventas 24/7.',
   },
@@ -40,55 +52,26 @@ export default function ScrollytellingHero() {
 
   const progress = useScrollProgress(containerRef);
 
-  // Target frame index from 1 to 84 based on scroll progress
-  const targetFrame = Math.min(
-    TOTAL_FRAMES,
-    Math.max(1, Math.floor(progress * (TOTAL_FRAMES - 1)) + 1)
-  );
-
-  // Active Phase calculation (1, 2, or 3)
+  // 1. EXACT FRAME MAPPING & ACTIVE PHASE BY PROGRESS RANGES:
+  // Phase 1 (0% - 45%): Frames 1 to 38
+  // Phase 2 (46% - 83%): Frames 39 to 70
+  // Phase 3 (84% - 100%): Frames 71 to 84 (freezes on 84 at end)
+  let targetFrame = 1;
   let activePhase = 1;
-  if (progress >= 0.66 || displayedFrame > 56) {
-    activePhase = 3;
-  } else if (progress >= 0.33 || displayedFrame > 28) {
+
+  if (progress <= 0.45) {
+    activePhase = 1;
+    const norm = Math.max(0, progress / 0.45);
+    targetFrame = Math.min(38, Math.max(1, Math.round(1 + norm * 37)));
+  } else if (progress <= 0.83) {
     activePhase = 2;
+    const norm = (progress - 0.45) / 0.38;
+    targetFrame = Math.min(70, Math.max(39, Math.round(39 + norm * 31)));
+  } else {
+    activePhase = 3;
+    const norm = Math.min(1, (progress - 0.83) / 0.17);
+    targetFrame = Math.min(84, Math.max(71, Math.round(71 + norm * 13)));
   }
-
-  // 1. Asynchronous preloading of all 84 PNG frames
-  useEffect(() => {
-    let mounted = true;
-    const preloadedImages: HTMLImageElement[] = [];
-    let loadedCounter = 0;
-
-    for (let i = 1; i <= TOTAL_FRAMES; i++) {
-      const img = new Image();
-      const formattedIndex = String(i).padStart(2, '0');
-      img.src = `/frames/${formattedIndex}.png`;
-
-      img.onload = () => {
-        if (!mounted) return;
-        loadedCounter++;
-        setLoadedCount(loadedCounter);
-        if (loadedCounter === TOTAL_FRAMES) {
-          setIsPreloaded(true);
-        }
-      };
-
-      img.onerror = () => {
-        if (!mounted) return;
-        loadedCounter++;
-        setLoadedCount(loadedCounter);
-      };
-
-      preloadedImages.push(img);
-    }
-
-    imagesRef.current = preloadedImages;
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
 
   // 2. Canvas drawing with object-fit: contain logic
   const drawFrame = useCallback((frameIdx: number) => {
@@ -101,11 +84,10 @@ export default function ScrollytellingHero() {
     const img = imagesRef.current[frameIdx - 1];
     if (!img || !img.complete || img.naturalWidth === 0) return;
 
-    // Internal canvas resolution matching display size and DPR
     const rect = canvas.getBoundingClientRect();
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const width = Math.max(rect.width * dpr, 300);
-    const height = Math.max(rect.height * dpr, 200);
+    const width = Math.max(Math.round(rect.width * dpr), 300);
+    const height = Math.max(Math.round(rect.height * dpr), 200);
 
     if (canvas.width !== width || canvas.height !== height) {
       canvas.width = width;
@@ -135,14 +117,54 @@ export default function ScrollytellingHero() {
     ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
   }, []);
 
-  // 3. Smooth Lerp Frame Animation Loop (lerp: 0.1)
+  // 3. Asynchronous preloading of all 84 PNG frames
+  useEffect(() => {
+    let mounted = true;
+    const preloadedImages: HTMLImageElement[] = [];
+    let loadedCounter = 0;
+
+    for (let i = 1; i <= TOTAL_FRAMES; i++) {
+      const img = new Image();
+      const formattedIndex = String(i).padStart(2, '0');
+      img.src = `/frames/${formattedIndex}.png`;
+
+      img.onload = () => {
+        if (!mounted) return;
+        loadedCounter++;
+        setLoadedCount(loadedCounter);
+        if (loadedCounter === 1) {
+          drawFrame(1);
+        }
+        if (loadedCounter === TOTAL_FRAMES) {
+          setIsPreloaded(true);
+          drawFrame(displayedFrameRef.current);
+        }
+      };
+
+      img.onerror = () => {
+        if (!mounted) return;
+        loadedCounter++;
+        setLoadedCount(loadedCounter);
+      };
+
+      preloadedImages.push(img);
+    }
+
+    imagesRef.current = preloadedImages;
+
+    return () => {
+      mounted = false;
+    };
+  }, [drawFrame]);
+
+  // 4. Smooth Lerp Frame Animation Loop (lerp factor: 0.09 for ~3s reading per phase)
   useEffect(() => {
     let rafId: number;
 
     const render = () => {
       const diff = targetFrame - displayedFrameRef.current;
-      if (Math.abs(diff) > 0.01) {
-        displayedFrameRef.current += diff * 0.1;
+      if (Math.abs(diff) > 0.005) {
+        displayedFrameRef.current += diff * 0.09;
       } else {
         displayedFrameRef.current = targetFrame;
       }
@@ -171,30 +193,35 @@ export default function ScrollytellingHero() {
   }, [drawFrame]);
 
   return (
-    // Outer scroll track (500vh for ultra smooth control)
+    // Outer scroll track (Sticky container height 500vh for 3s reading rhythm per phase)
     <section ref={containerRef} className="relative h-[500vh] w-full bg-black">
       {/* Sticky Viewport */}
       <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden px-6 md:px-12 lg:px-20">
         
-        {/* Main 2-Column Alternating Container */}
-        <div className="w-full max-w-6xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12 transition-all duration-700 ease-in-out">
+        {/* Main Fixed 2-Column Container (Text Left, Canvas Right) */}
+        <div className="w-full max-w-6xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
           
-          {/* TEXT CONTENT COLUMN */}
-          <div
-            className={`w-full lg:w-5/12 relative min-h-[220px] md:min-h-[240px] flex items-center transition-all duration-700 ease-in-out ${
-              activePhase === 2 ? 'order-1 lg:order-2' : 'order-1 lg:order-1'
-            }`}
-          >
+          {/* TEXT CONTENT COLUMN (Fixed Left Column, Slide-in from Right) */}
+          <div className="w-full lg:w-5/12 relative min-h-[220px] md:min-h-[240px] flex items-center">
             {phaseTexts.map((item) => {
               const isActive = activePhase === item.phase;
+              const isPast = activePhase > item.phase;
+
               return (
                 <div
                   key={item.phase}
-                  className={`transition-all duration-500 ease-in-out ${
+                  className={`transition-all duration-500 ease-out transform ${
                     isActive
-                      ? 'opacity-100 translate-y-0 relative z-10'
-                      : 'opacity-0 translate-y-4 absolute inset-0 pointer-events-none z-0'
+                      ? 'opacity-100 translate-x-0 relative z-10'
+                      : isPast
+                      ? 'opacity-0 -translate-x-[60px] absolute inset-0 pointer-events-none z-0'
+                      : 'opacity-0 translate-x-[60px] absolute inset-0 pointer-events-none z-0'
                   }`}
+                  style={{
+                    transitionProperty: 'opacity, transform',
+                    transitionDuration: '500ms',
+                    transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
+                  }}
                 >
                   <div className="text-xs font-sans font-medium text-[#7fee64] tracking-wider mb-2 uppercase">
                     {item.badge}
@@ -217,12 +244,8 @@ export default function ScrollytellingHero() {
             })}
           </div>
 
-          {/* CANVAS / MONITOR CONTAINER COLUMN */}
-          <div
-            className={`w-full lg:w-7/12 flex items-center justify-center transition-all duration-700 ease-in-out ${
-              activePhase === 2 ? 'order-2 lg:order-1' : 'order-2 lg:order-2'
-            }`}
-          >
+          {/* CANVAS / MONITOR CONTAINER COLUMN (Fixed Right Column) */}
+          <div className="w-full lg:w-7/12 flex items-center justify-center">
             <div className="relative w-full aspect-video flex items-center justify-center">
               <div className="relative w-full max-w-[760px] aspect-[16/10] rounded-lg overflow-hidden border border-[#485346] bg-[#181818] shadow-2xl flex flex-col">
                 
@@ -266,7 +289,7 @@ export default function ScrollytellingHero() {
         {/* Scroll Instruction Hint */}
         <div
           className="absolute bottom-6 md:bottom-8 flex items-center gap-2 text-xs font-sans text-[#677d64] tracking-wider transition-opacity duration-300"
-          style={{ opacity: progress > 0.95 ? 0 : 0.8 }}
+          style={{ opacity: progress > 0.9 ? 0 : 0.8 }}
         >
           <span>Haz scroll para ver la transformación</span>
           <span className="animate-bounce">↓</span>
