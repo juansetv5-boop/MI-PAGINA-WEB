@@ -52,3 +52,15 @@ pm run build ejecutado exitosamente.
 - Añadido badge/aviso superior minimalista en el contenedor del Scrollytelling: "Desliza para explorar a tu ritmo ↓" con icono/flecha verde animada (#7fee64).
 - 
 pm run build ejecutado exitosamente.
+
+## 16/09/2026 - Refactorización de Portafolio (SegmentedControl & Layout Split 2 Columnas)
+- Reemplazada la cuadrícula de 3 tarjetas en PortfolioShowcase.tsx por un control de pestañas centrado (SegmentedControl estilo glassmorphism) con selección activa:
+  - "RLP Compliance"
+  - "Traductor Dactilología Alpha"
+  - "Clickshop UI/UX Lab"
+- Implementada la arquitectura Split en 2 columnas:
+  - Columna Izquierda: Categoría en acento verde (#7fee64), título del proyecto, descripción extendida, 3 tarjetas de métricas clave (ej. 99.8% Disponibilidad, 60 FPS, <0.4ms Render), stack tecnológico y botón de acción directa.
+  - Columna Derecha: Vista previa tipo ventana de navegador interactiva con botones de control (rojo, amarillo, verde) y dominio activo (lpcompliance.com, dactilologia.clickshop.dev, lab.clickshop.dev).
+- Añadida animación fluida de transición (desvanecimiento y escala suave opacity / scale) al cambiar entre proyectos.
+- 
+pm run build ejecutado exitosamente.

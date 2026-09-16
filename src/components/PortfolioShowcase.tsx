@@ -1,18 +1,21 @@
-﻿'use client';
+'use client';
 
 import React, { useState } from 'react';
 import ScrollReveal from './ScrollReveal';
 
 interface Project {
   id: string;
+  tabLabel: string;
   title: string;
+  domain: string;
+  url?: string;
   category: string;
   description: string;
-  url?: string;
   metrics: {
-    perf: string;
-    badgeText: string;
-  };
+    label: string;
+    value: string;
+    badge: string;
+  }[];
   tags: string[];
   mockupType: 'rlp' | 'ai' | 'lab';
 }
@@ -20,237 +23,296 @@ interface Project {
 const projects: Project[] = [
   {
     id: 'rlp',
-    title: 'RLP Compliance',
+    tabLabel: 'RLP Compliance',
+    title: 'RLP Compliance S.A.S.',
     url: 'https://rlpcompliance.com',
-    category: 'PÁGINA WEB CORPORATIVA',
+    domain: 'rlpcompliance.com',
+    category: 'PÁGINA WEB CORPORATIVA & CUMPLIMIENTO',
     description:
-      'Plataforma web institucional desarrollada para RLP Compliance. Enfoque en autoridad de marca, arquitectura de información clara y rendimiento óptimo para el sector corporativo.',
-    metrics: {
-      perf: '100/100',
-      badgeText: 'EN VIVO',
-    },
-    tags: ['Next.js', 'UX/UI Design', 'Mobile-First', 'High Performance'],
+      'Plataforma web institucional desarrollada para RLP Compliance. Arquitectura limpia, máxima velocidad de carga y presentación corporativa diseñada para generar autoridad y confianza en el sector normativo.',
+    metrics: [
+      { label: 'Disponibilidad', value: '99.8%', badge: 'HTTP/3 EDGE' },
+      { label: 'Rendimiento', value: '100/100', badge: 'LIGHTHOUSE' },
+      { label: 'Experiencia', value: 'Mobile-First', badge: 'RESPONSIVE' },
+    ],
+    tags: ['Next.js 16', 'TypeScript', 'Tailwind CSS', 'SEO Corporate', 'Edge Cache'],
     mockupType: 'rlp',
   },
   {
     id: 'dactilologia',
+    tabLabel: 'Traductor Dactilología Alpha',
     title: 'Traductor de Dactilología Alpha',
-    category: 'VISIÓN POR COMPUTADORA & IA (PYTHON)',
+    domain: 'dactilologia.clickshop.dev',
+    category: 'VISIÓN POR COMPUTADORA & INTELIGENCIA ARTIFICIAL',
     description:
-      'Proyecto de investigación y desarrollo enfocado en el reconocimiento en tiempo real de lenguaje de señas (deletreo dactilológico) mediante procesamiento de visión artificial.',
-    metrics: {
-      perf: '60 FPS',
-      badgeText: 'I+D IA',
-    },
-    tags: ['Python', 'Computer Vision', 'Real-time AI', 'R&D'],
+      'Proyecto de investigación y desarrollo con IA para la detección y traducción en tiempo real de lenguaje de señas (deletreo dactilológico) mediante visión artificial de alta frecuencia de actualización.',
+    metrics: [
+      { label: 'Tasa de FPS', value: '60 FPS', badge: 'REAL-TIME' },
+      { label: 'Puntos Clave', value: '21 Keypoints', badge: 'LANDMARKS' },
+      { label: 'Precisión IA', value: '98.4%', badge: 'ALPHA v1.0' },
+    ],
+    tags: ['Python 3.10', 'Computer Vision', 'OpenCV', 'AI Pipeline', 'Real-Time R&D'],
     mockupType: 'ai',
   },
   {
     id: 'lab',
+    tabLabel: 'Clickshop UI/UX Lab',
     title: 'Clickshop UI/UX Lab',
-    category: 'CONCEPTOS & PROTOTIPOS INTERACTIVOS',
+    domain: 'lab.clickshop.dev',
+    category: 'LABORATORIO DE PROTOTIPADO Y MICRO-INTERACCIONES',
     description:
-      'Demostraciones visuales y prototipos de alto rendimiento desarrollados internamente para probar micro-interacciones, velocidad de carga y conversión.',
-    metrics: {
-      perf: '99/100',
-      badgeText: 'LAB RENDER',
-    },
-    tags: ['UX/UI Research', 'Micro-Interactions', 'Tailwind CSS'],
+      'Banco de pruebas interactivas y prototipos de alta fidelidad desarrollados internamente para probar velocidades de renderizado, animaciones compuestas de 60 FPS y patrones de conversión.',
+    metrics: [
+      { label: 'Render Cycle', value: '<0.4ms', badge: 'ULTRA FAST' },
+      { label: 'Frame Rate', value: '60 FPS', badge: 'HARDWARE ACCEL' },
+      { label: 'Conversión UX', value: '+100%', badge: 'PROTOTIPO' },
+    ],
+    tags: ['React / Next.js', 'Framer Motion', 'Micro-Interactions', 'CSS Canvas', 'Performance Design'],
     mockupType: 'lab',
   },
 ];
 
 export default function PortfolioShowcase() {
-  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
+  const [activeProjectId, setActiveProjectId] = useState<string>('rlp');
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  const activeProject = projects.find((p) => p.id === activeProjectId) || projects[0];
+
+  const handleSelectTab = (id: string) => {
+    if (id === activeProjectId) return;
+    setIsAnimating(true);
+    setTimeout(() => {
+      setActiveProjectId(id);
+      setIsAnimating(false);
+    }, 150);
+  };
 
   return (
     <section id="work" className="w-full bg-[#000000] py-24 px-6 md:px-12 lg:px-20 border-t border-[#1f2a33]">
       <div className="max-w-[1360px] mx-auto">
         {/* Section Header */}
         <ScrollReveal delay={0}>
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 pb-6 border-b border-[#1f2a33]">
-            <div>
-              <h2
-                className="text-[#ddffdc] text-[32px] md:text-[44px] font-medium leading-tight"
-                style={{
-                  fontFamily: 'var(--font-sans, sans-serif)',
-                  letterSpacing: '-0.012em',
-                }}
-              >
-                Proyectos Destacados <span className="text-[#7fee64]">e Investigación</span>
-              </h2>
-            </div>
-            <p className="text-[#8cab87] text-[15px] max-w-md mt-4 md:mt-0 tracking-[-0.022em]">
-              Desde sitios corporativos en producción hasta algoritmos de inteligencia artificial e investigación de interfaz.
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <h2
+              className="text-[#ddffdc] text-[32px] md:text-[44px] font-medium leading-tight"
+              style={{
+                fontFamily: 'var(--font-sans, sans-serif)',
+                letterSpacing: '-0.012em',
+              }}
+            >
+              Proyectos Destacados <span className="text-[#7fee64]">e Investigación</span>
+            </h2>
+            <p className="text-[#8cab87] text-[15px] md:text-base mt-3 tracking-[-0.022em]">
+              Explora nuestras soluciones desarrolladas: desde sitios web corporativos en producción hasta algoritmos de visión por computadora e investigación UI/UX.
             </p>
           </div>
         </ScrollReveal>
 
-        {/* Project Cards Grid (3 Columns) */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {projects.map((project, idx) => (
-            <ScrollReveal key={project.id} delay={idx * 150} className="h-full">
-              <div
-                onMouseEnter={() => setHoveredCard(project.id)}
-                onMouseLeave={() => setHoveredCard(null)}
-                className="group relative bg-[#181818] rounded-lg border border-[#485346] p-6 md:p-7 transition-all duration-300 hover:border-[#677d64] flex flex-col justify-between h-full overflow-hidden"
-                style={{
-                  background:
-                    hoveredCard === project.id
-                      ? 'radial-gradient(circle at 50% 0%, rgba(127, 238, 100, 0.08) 0%, #181818 70%)'
-                      : '#181818',
-                }}
-              >
-                <div>
-                  {/* Top Bar: Traffic Light Dots + Performance Label */}
-                  <div className="flex items-center justify-between mb-5 pb-3 border-b border-[#485346]/40">
-                    <div className="flex items-center gap-2">
-                      <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]" />
-                      <div className="w-2.5 h-2.5 rounded-full bg-[#febc2e]" />
-                      <div className="w-2.5 h-2.5 rounded-full bg-[#28c840]" />
-                      <span className="text-xs font-sans text-[#677d64] ml-2">
-                        {project.url ? (
-                          <a
-                            href={project.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="hover:text-[#7fee64] transition-colors"
-                          >
-                            rlpcompliance.com ↗
-                          </a>
-                        ) : (
-                          `${project.id}.clickshop.dev`
-                        )}
-                      </span>
-                    </div>
-                    <span className="text-[#7fee64] text-xs font-medium font-sans">
-                      {project.metrics.badgeText}
-                    </span>
-                  </div>
-
-                  {/* Mockup Preview Area */}
-                  <div className="w-full h-44 rounded-md bg-[#0e120e] border border-[#485346]/60 p-4 mb-5 relative overflow-hidden flex flex-col justify-between">
-                    {/* Mockup 1: RLP Compliance */}
-                    {project.mockupType === 'rlp' && (
-                      <div className="w-full h-full flex flex-col justify-between font-sans text-[11px]">
-                        <div className="flex justify-between text-[#8cab87]">
-                          <span>SITIO INSTITUCIONAL</span>
-                          <span className="text-[#7fee64]">99.8% DISPONIBILIDAD</span>
-                        </div>
-                        <div className="bg-[#181818] border border-[#485346] rounded p-2.5 my-auto">
-                          <div className="text-[10px] text-[#7fee64] font-bold mb-1">
-                            RLP COMPLIANCE EN VIVO
-                          </div>
-                          <div className="text-[#ddffdc] text-xs font-sans font-medium">
-                            Servicios Corporativos &amp; Cumplimiento Normativo
-                          </div>
-                          <div className="text-[9px] text-[#677d64] mt-1">
-                            Navegación fluida &bull; Optimizado para dispositivos móviles
-                          </div>
-                        </div>
-                        <div className="flex justify-between text-[10px] text-[#677d64]">
-                          <span>HTTPS SECURE</span>
-                          <span className="text-[#7fee64]">HTTP/3 EDGE CACHE</span>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Mockup 2: Python AI Dactilología */}
-                    {project.mockupType === 'ai' && (
-                      <div className="w-full h-full flex flex-col justify-between font-sans text-[11px]">
-                        <div className="flex justify-between text-[#8cab87]">
-                          <span>COMPUTER VISION PIPELINE</span>
-                          <span className="text-[#7fee64]">60 FPS RECOG</span>
-                        </div>
-                        <div className="grid grid-cols-2 gap-2 my-auto">
-                          <div className="bg-[#181818] border border-[#485346] rounded p-2 text-center">
-                            <div className="text-[9px] text-[#677d64]">LANDMARKS</div>
-                            <div className="text-xs font-bold text-[#7fee64]">21 KEYPOINTS</div>
-                          </div>
-                          <div className="bg-[#181818] border border-[#485346] rounded p-2 text-center">
-                            <div className="text-[9px] text-[#677d64]">PRECISIÓN</div>
-                            <div className="text-xs font-bold text-[#ddffdc]">98.4% IA</div>
-                          </div>
-                        </div>
-                        <div className="text-[10px] text-[#677d64] flex justify-between">
-                          <span>MODEL: DACTILOLOGIA_V1</span>
-                          <span className="text-[#7fee64]">PYTHON 3.10</span>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Mockup 3: Clickshop UI/UX Lab */}
-                    {project.mockupType === 'lab' && (
-                      <div className="w-full h-full flex flex-col justify-between font-sans text-[11px]">
-                        <div className="flex justify-between text-[#8cab87]">
-                          <span>INTERACTIVE LAB BENCHMARK</span>
-                          <span className="text-[#7fee64]">RENDER: 0.4ms</span>
-                        </div>
-                        <div className="flex items-center justify-around py-2 my-auto bg-[#181818] border border-[#485346] rounded">
-                          <div className="text-center">
-                            <div className="text-[9px] text-[#677d64]">MICRO-ANIM</div>
-                            <div className="text-xs font-bold text-[#7fee64]">FLUID 60FPS</div>
-                          </div>
-                          <div className="h-6 w-[1px] bg-[#485346]" />
-                          <div className="text-center">
-                            <div className="text-[9px] text-[#677d64]">LIGHTHOUSE</div>
-                            <div className="text-xs font-bold text-[#ddffdc]">100 SCORE</div>
-                          </div>
-                        </div>
-                        <div className="text-[10px] text-[#677d64] text-center">
-                          PROTOTIPADO RÁPIDO &bull; TAILWIND CSS &bull; NEXT.JS
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Project Details */}
-                  <span className="text-[#9cbf93] text-xs font-sans font-medium uppercase tracking-wider">
-                    {project.category}
-                  </span>
-                  <h3
-                    className="text-[#ddffdc] text-[20px] md:text-[22px] font-medium mt-1 mb-2 leading-snug"
-                    style={{
-                      fontFamily: 'var(--font-sans, sans-serif)',
-                      letterSpacing: '-0.013em',
-                    }}
+        {/* 1. SegmentedControl (Top Tabs Bar) */}
+        <ScrollReveal delay={100}>
+          <div className="flex justify-center mb-12">
+            <div className="inline-flex p-1.5 rounded-xl bg-[#181818] border border-[#485346] shadow-xl gap-1.5 overflow-x-auto max-w-full">
+              {projects.map((p) => {
+                const isSelected = activeProjectId === p.id;
+                return (
+                  <button
+                    key={p.id}
+                    onClick={() => handleSelectTab(p.id)}
+                    className={`px-5 py-2.5 rounded-lg text-xs md:text-sm font-sans font-medium whitespace-nowrap transition-all duration-300 flex items-center gap-2 ${
+                      isSelected
+                        ? 'bg-[#7fee64] text-[#000000] font-bold shadow-[0_0_16px_rgba(127,238,100,0.35)]'
+                        : 'text-[#8cab87] hover:text-[#ddffdc] hover:bg-[#212525]'
+                    }`}
                   >
-                    {project.title}
-                  </h3>
-                  <p className="text-[#8cab87] text-[14px] leading-relaxed mb-5">
-                    {project.description}
-                  </p>
+                    {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-[#000000]" />}
+                    <span>{p.tabLabel}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </ScrollReveal>
+
+        {/* 2. Split Layout (2 Columns: Info Left, Preview Right) */}
+        <ScrollReveal delay={200}>
+          <div
+            className={`grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center bg-[#181818] border border-[#485346] rounded-2xl p-6 md:p-10 shadow-2xl relative overflow-hidden transition-all duration-300 ${
+              isAnimating ? 'opacity-40 scale-[0.995]' : 'opacity-100 scale-100'
+            }`}
+          >
+            {/* LEFT COLUMN: Project Info */}
+            <div className="lg:col-span-6 flex flex-col justify-between space-y-6">
+              <div>
+                <div className="text-xs font-sans font-bold text-[#7fee64] tracking-widest uppercase mb-2">
+                  // {activeProject.category}
+                </div>
+                <h3
+                  className="text-[#ddffdc] text-2xl md:text-3xl lg:text-4xl font-medium tracking-tight leading-tight mb-4"
+                  style={{ fontFamily: 'var(--font-sans, sans-serif)' }}
+                >
+                  {activeProject.title}
+                </h3>
+                <p className="text-[#8cab87] text-sm md:text-base leading-relaxed mb-6">
+                  {activeProject.description}
+                </p>
+
+                {/* Metrics Row */}
+                <div className="grid grid-cols-3 gap-3 p-4 rounded-xl bg-[#0e120e] border border-[#485346]/60 mb-6">
+                  {activeProject.metrics.map((m) => (
+                    <div key={m.label} className="text-center">
+                      <div className="text-[10px] md:text-xs text-[#677d64] uppercase font-sans tracking-wider font-medium">
+                        {m.label}
+                      </div>
+                      <div className="text-sm md:text-lg font-bold text-[#7fee64] font-sans mt-0.5">
+                        {m.value}
+                      </div>
+                      <div className="text-[9px] text-[#8cab87] font-mono mt-0.5">
+                        {m.badge}
+                      </div>
+                    </div>
+                  ))}
                 </div>
 
-                {/* Bottom Area: Clean Minimalist Tags & External Link */}
+                {/* Tech Stack Tags */}
                 <div>
-                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1 pt-4 border-t border-[#485346]/40 text-xs font-sans text-[#8cab87]">
-                    {project.tags.map((tag, idx) => (
-                      <React.Fragment key={tag}>
-                        {idx > 0 && <span className="text-[#485346]">&bull;</span>}
-                        <span>{tag}</span>
-                      </React.Fragment>
+                  <div className="text-xs text-[#677d64] uppercase tracking-wider mb-2.5 font-sans font-medium">
+                    Stack Tecnológico:
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {activeProject.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="px-3 py-1 rounded-md text-xs font-mono bg-[#212525] border border-[#485346] text-[#ddffdc]"
+                      >
+                        {tag}
+                      </span>
                     ))}
                   </div>
+                </div>
+              </div>
 
-                  {project.url && (
-                    <div className="mt-4 pt-2">
-                      <a
-                        href={project.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 text-xs font-sans text-[#7fee64] hover:underline font-medium"
-                      >
-                        <span>Visitar sitio web ({project.url.replace('https://', '')})</span>
-                        <span>↗</span>
-                      </a>
+              {/* Action Button */}
+              <div className="pt-4 border-t border-[#485346]/40">
+                {activeProject.url ? (
+                  <a
+                    href={activeProject.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 bg-[#7fee64] text-[#000000] px-6 py-3 rounded-lg font-sans text-xs md:text-sm font-bold uppercase tracking-wider hover:opacity-95 transition-all shadow-[0_0_20px_rgba(127,238,100,0.3)]"
+                  >
+                    <span>Visitar {activeProject.domain}</span>
+                    <span>↗</span>
+                  </a>
+                ) : (
+                  <a
+                    href="#start"
+                    className="inline-flex items-center gap-2 bg-[#212525] border border-[#7fee64] text-[#7fee64] px-6 py-3 rounded-lg font-sans text-xs md:text-sm font-bold uppercase tracking-wider hover:bg-[#7fee64] hover:text-[#000000] transition-all"
+                  >
+                    <span>Solicitar Consulta o Muestra</span>
+                    <span>→</span>
+                  </a>
+                )}
+              </div>
+            </div>
+
+            {/* RIGHT COLUMN: Visual Browser Window Preview */}
+            <div className="lg:col-span-6">
+              <div className="relative w-full aspect-[16/10] rounded-xl overflow-hidden border border-[#485346] bg-[#0e120e] shadow-2xl flex flex-col">
+                {/* Browser Header Bar */}
+                <div className="flex items-center justify-between px-4 py-2.5 bg-[#181818] border-b border-[#485346]">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-[#febc2e]" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-[#28c840]" />
+                  </div>
+                  <div className="text-xs font-mono text-[#8cab87] flex items-center gap-2 bg-[#212525] px-3.5 py-1 rounded border border-[#485346]/60">
+                    <span className="text-[#7fee64]">https://</span>
+                    <span>{activeProject.domain}</span>
+                  </div>
+                  <div className="w-8" />
+                </div>
+
+                {/* Mockup Preview Screen */}
+                <div className="relative flex-1 p-6 flex flex-col justify-between overflow-hidden bg-gradient-to-br from-[#0e120e] via-[#141d14] to-[#0a120a]">
+                  {/* Mockup 1: RLP Compliance */}
+                  {activeProject.mockupType === 'rlp' && (
+                    <div className="w-full h-full flex flex-col justify-between font-sans text-xs">
+                      <div className="flex justify-between items-center text-[#8cab87] pb-2 border-b border-[#485346]/40">
+                        <span className="font-semibold text-[#ddffdc]">RLP COMPLIANCE S.A.S.</span>
+                        <span className="text-[#7fee64] font-mono text-[11px]">● EN VIVO</span>
+                      </div>
+                      <div className="bg-[#181818] border border-[#485346] rounded-lg p-4 my-auto space-y-2 shadow-lg">
+                        <div className="text-xs text-[#7fee64] font-bold tracking-wide">
+                          PORTAL DE CUMPLIMIENTO CORPORATIVO
+                        </div>
+                        <div className="text-[#ddffdc] text-sm md:text-base font-medium">
+                          Soluciones Normativas &amp; Asesoría Legal Integral
+                        </div>
+                        <div className="text-xs text-[#677d64]">
+                          Optimizado para carga instantánea &bull; Seguridad SSL &bull; UX de alta conversión
+                        </div>
+                      </div>
+                      <div className="flex justify-between text-[11px] text-[#677d64] pt-2 border-t border-[#485346]/40 font-mono">
+                        <span>ESTADO: 200 OK</span>
+                        <span className="text-[#7fee64]">HTTP/3 FAST CACHE</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Mockup 2: Python AI Dactilología */}
+                  {activeProject.mockupType === 'ai' && (
+                    <div className="w-full h-full flex flex-col justify-between font-sans text-xs">
+                      <div className="flex justify-between items-center text-[#8cab87] pb-2 border-b border-[#485346]/40">
+                        <span className="font-semibold text-[#ddffdc]">DACTILOLOGIA AI PIPELINE</span>
+                        <span className="text-[#7fee64] font-mono text-[11px]">● 60 FPS</span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3 my-auto">
+                        <div className="bg-[#181818] border border-[#485346] rounded-lg p-3 text-center shadow-lg">
+                          <div className="text-[10px] text-[#677d64] uppercase font-mono">Detección de Manos</div>
+                          <div className="text-sm md:text-base font-bold text-[#7fee64] mt-1">21 Keypoints</div>
+                        </div>
+                        <div className="bg-[#181818] border border-[#485346] rounded-lg p-3 text-center shadow-lg">
+                          <div className="text-[10px] text-[#677d64] uppercase font-mono">Modelo IA</div>
+                          <div className="text-sm md:text-base font-bold text-[#ddffdc] mt-1">98.4% Precision</div>
+                        </div>
+                      </div>
+                      <div className="flex justify-between text-[11px] text-[#677d64] pt-2 border-t border-[#485346]/40 font-mono">
+                        <span>MODEL: DACTILOLOGIA_V1</span>
+                        <span className="text-[#7fee64]">PYTHON 3.10 / OPENCV</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Mockup 3: Clickshop UI/UX Lab */}
+                  {activeProject.mockupType === 'lab' && (
+                    <div className="w-full h-full flex flex-col justify-between font-sans text-xs">
+                      <div className="flex justify-between items-center text-[#8cab87] pb-2 border-b border-[#485346]/40">
+                        <span className="font-semibold text-[#ddffdc]">UI/UX BENCHMARK LAB</span>
+                        <span className="text-[#7fee64] font-mono text-[11px]">● RENDER 0.4ms</span>
+                      </div>
+                      <div className="bg-[#181818] border border-[#485346] rounded-lg p-4 my-auto space-y-3 shadow-lg">
+                        <div className="flex justify-around text-center">
+                          <div>
+                            <div className="text-[10px] text-[#677d64] uppercase font-mono">Micro-Animaciones</div>
+                            <div className="text-sm font-bold text-[#7fee64] mt-0.5">Fluid 60FPS</div>
+                          </div>
+                          <div className="w-[1px] bg-[#485346]" />
+                          <div>
+                            <div className="text-[10px] text-[#677d64] uppercase font-mono">Lighthouse Score</div>
+                            <div className="text-sm font-bold text-[#ddffdc] mt-0.5">100 / 100</div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-center text-[11px] text-[#677d64] pt-2 border-t border-[#485346]/40 font-mono">
+                        TAILWIND CSS &bull; NEXT.JS 16 &bull; TURBOPACK
+                      </div>
                     </div>
                   )}
                 </div>
               </div>
-            </ScrollReveal>
-          ))}
-        </div>
+            </div>
+          </div>
+        </ScrollReveal>
       </div>
     </section>
   );
