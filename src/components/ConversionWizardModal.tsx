@@ -98,7 +98,6 @@ export default function ConversionWizardModal() {
                 </label>
                 <input
                   type="text"
-                  autoFocus
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -116,7 +115,6 @@ export default function ConversionWizardModal() {
                 </label>
                 <input
                   type="text"
-                  autoFocus
                   required
                   value={formData.company}
                   onChange={(e) => setFormData({ ...formData, company: e.target.value })}

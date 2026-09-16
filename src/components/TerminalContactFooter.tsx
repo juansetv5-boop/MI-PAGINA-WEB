@@ -204,7 +204,6 @@ export default function TerminalContactFooter() {
                           <input
                             type="text"
                             required
-                            autoFocus
                             value={formData.userName}
                             onChange={(e) => setFormData({ ...formData, userName: e.target.value })}
                             placeholder="Ej: Carlos Mendoza"
@@ -225,7 +224,6 @@ export default function TerminalContactFooter() {
                           <input
                             type="email"
                             required
-                            autoFocus
                             value={formData.userEmail}
                             onChange={(e) => setFormData({ ...formData, userEmail: e.target.value })}
                             placeholder="Ej: carlos@miempresa.com"
@@ -274,7 +272,6 @@ export default function TerminalContactFooter() {
                           <textarea
                             required
                             rows={3}
-                            autoFocus
                             value={formData.message}
                             onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                             placeholder="Ej: Necesitamos una página web para nuestra empresa de consultoría financiera..."

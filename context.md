@@ -37,3 +37,10 @@ pm run build exitoso.
 - Pantalla de confirmación con estilo terminal al enviar la consulta.
 - 
 pm run build ejecutado exitosamente.
+
+## 16/09/2026 - Corrección de Auto-Scroll / Focus Intrusivo en Consola
+- Eliminados los atributos utoFocus de los campos de entrada e inputs de TerminalContactFooter.tsx y ConversionWizardModal.tsx.
+- Se evita que el navegador desplace automáticamente el viewport hacia la consola del footer al cargar la web o cambiar de paso.
+- El usuario permanece de forma natural en la parte superior (Hero) al cargar el sitio.
+- 
+pm run build ejecutado exitosamente.
