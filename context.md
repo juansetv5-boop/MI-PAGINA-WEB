@@ -73,3 +73,29 @@ pm run build ejecutado exitosamente.
 - Garantizada la navegación pasiva en todas las secciones para control total del usuario sin saltos de viewport automáticos.
 - 
 pm run build ejecutado exitosamente.
+
+---
+## [2026-09-17] Scrollytelling 3 Capítulos + Optimización de Imágenes WebP
+
+### Optimización masiva de fotogramas
+- Ejecutado script Python con Pillow para convertir todos los .png a .webp (calidad 85%).
+- Resultado: ase1/ (84 frames), ase2/ (84 frames), ase3/ (92 frames) — total 260 frames optimizados.
+- Los archivos .png originales fueron eliminados para aliviar el repositorio.
+
+### Refactorización de ScrollytellingHero.tsx — Arquitectura 3 Capítulos
+- Eliminada la lógica de carga plana (/frames/NN.png) por un sistema modular por fase.
+- Helper getFrameSrc(globalIndex) mapea el índice global (1-260) a la ruta correcta por carpeta:
+  * ase1/: frames 1–84
+  * ase2/: frames 85–168
+  * ase3/: frames 169–260
+- La sección tiene ahora h-[600vh] para dar más espacio de scroll a los 3 capítulos.
+- Scroll dividido en 3 tercios: cada tercio avanza el capítulo correspondiente.
+- Badges de progreso superiores (Capítulo 1 / 2 / 3) con estado completado (✓) visible.
+- Al finalizar cada capítulo, aparece con transición suave una tarjeta con el nombre de la fase:
+  * ✓ Fase 1: Arquitectura & Código
+  * ✓ Fase 2: Posicionamiento & Experiencia de Usuario
+  * ✓ Fase 3: Conversión & Ventas Automáticas
+- El header del monitor muestra el frame local por capítulo en lugar del frame global.
+- Preloader rediseñado: barra de progreso animada verde en overlay hasta completar carga.
+- Auto-play activo por defecto; se cancela ante cualquier interacción de usuario (wheel/touch/key).
+- Build verificado exitosamente con Next.js 16.3.4 + Turbopack (código 0).
