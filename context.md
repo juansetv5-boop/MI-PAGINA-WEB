@@ -99,3 +99,17 @@ pm run build ejecutado exitosamente.
 - Preloader rediseñado: barra de progreso animada verde en overlay hasta completar carga.
 - Auto-play activo por defecto; se cancela ante cualquier interacción de usuario (wheel/touch/key).
 - Build verificado exitosamente con Next.js 16.3.4 + Turbopack (código 0).
+
+---
+## [2026-09-17] Adaptacion de Aspect Ratio Dinamico & Contenedor Full-Screen (Scrollytelling)
+
+### Contenedor Full-Screen Pinning (100vh)
+- Configurado el contenedor interno pegajoso en 'w-full h-screen sticky top-0 overflow-hidden' para asegurar fijacion del 100% del viewport durante toda la secuencia.
+- Capas informativas rediseñadas con glassmorphic overlays ('bg-[#181818]/90 border border-[#485346]/80 backdrop-blur-md') ubicadas en la parte inferior o lateral (pantallas XL en Fase 2) sin obstruir el canvas animado.
+
+### Tratamiento de Aspect Ratio Vertical en Fase 2
+- Incorporada la propiedad 'isVertical: true' para la Fase 2 (fotogramas portrait 720x1280).
+- Aplicado escalado adaptativo fluido ('w-auto h-full max-h-[85vh] object-contain mx-auto') permitiendo aprovechar la altura maxima sin recortes (CLS) ni deformaciones.
+- Implementado el efecto de luz ambiental inteligente (Ambient Glow) detras del marco ('blur-3xl opacity-40 bg-[#7fee64]/20') ajustado a las dimensiones dinamicas.
+- Transiciones CSS suaves ('transition-all duration-700 ease-out') en el marco al cambiar entre Fases 1, 2 y 3.
+- Build verificado de Next.js (codigo 0).
