@@ -113,3 +113,14 @@ pm run build ejecutado exitosamente.
 - Implementado el efecto de luz ambiental inteligente (Ambient Glow) detras del marco ('blur-3xl opacity-40 bg-[#7fee64]/20') ajustado a las dimensiones dinamicas.
 - Transiciones CSS suaves ('transition-all duration-700 ease-out') en el marco al cambiar entre Fases 1, 2 y 3.
 - Build verificado de Next.js (codigo 0).
+
+---
+## [2026-09-17] Rollback de Estructura Scrollytelling & Desenfoque Ambiental en Fase 2
+
+### Rollback y Restauración
+- Restaurada la arquitectura modular de 3 Capítulos previa en ScrollytellingHero.tsx con disposición limpia de 2 columnas (Texto fijo a la izquierda | Monitor Canvas a la derecha).
+
+### Tratamiento de Desenfoque Ambiental (Ambient Blur) en Fase 2
+- Añadido efecto de resplandor y desenfoque ambiental posterior (g-[#7fee64]/20 blur-3xl opacity-40) detrás del marco del monitor cuando la Fase 2 (fotogramas verticales) está activa.
+- Garantizado un encuadre estético y limpio que rellena los laterales durante la transición de la Fase 2 sin alterar la proporcionalidad ni generar desplazamientos brúscos de diseño (0 CLS).
+- Build verificado de Next.js (código 0).
