@@ -21,8 +21,17 @@
 ## 2. Architecture Notes
 - Distribución visual fija de 2 columnas (Texto a la izquierda | Canvas a la derecha) para una lectura fluida, natural e ininterrumpida durante el scroll.
 
+## 18/09/2026 - Previsualización Interactiva RLP Compliance en Mockup de Portafolio
+- Capturada imagen de alta resolución (1440x900) del sitio real en producción `https://rlpcompliance.com`.
+- Optimizada y guardada como `/public/assets/portfolio/rlpcompliance-preview.webp` (WebP 85%, ~58 KB) para máxima velocidad de carga y 0 CLS.
+- Integrado componente Next.js `<Image />` con dimensiones responsivas (`fill`, `object-cover object-top`, `sizes`) dentro del marco de navegador simulado en `PortfolioShowcase.tsx`.
+- Envoltura del mockup completo como enlace interactivo hacia `https://rlpcompliance.com` (`target="_blank"`, `rel="noopener noreferrer"`).
+- Agregado estado de hover con resplandor perimetral verde `#7fee64`, zoom sutil de imagen (`scale-[1.03]`), badge animado `Visitar sitio en vivo ↗` con backdrop blur, y micro-interacción con indicador pulsante `● EN VIVO`.
+- Conservadas barra superior con botones tipo Mac y barra inferior con `ESTADO: 200 OK` y `HTTP/3 FAST CACHE`.
+- `npm run build` ejecutado exitosamente con 0 errores y 0 advertencias.
+
 ## 16/09/2026 - Páginas Legales
-- Creadas rutas politica-de-privacidad, 	erminos-y-condiciones, y viso-legal.
+- Creadas rutas politica-de-privacidad, 	erminos-y-condiciones, y  viso-legal.
 - Agregados enlaces de navegación en el Footer.
 - 
 pm run build exitoso.

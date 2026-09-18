@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import ScrollReveal from './ScrollReveal';
 
 interface Project {
@@ -217,47 +218,80 @@ export default function PortfolioShowcase() {
 
             {/* RIGHT COLUMN: Visual Browser Window Preview */}
             <div className="lg:col-span-6">
-              <div className="relative w-full aspect-[16/10] rounded-xl overflow-hidden border border-[#485346] bg-[#0e120e] shadow-2xl flex flex-col">
-                {/* Browser Header Bar */}
-                <div className="flex items-center justify-between px-4 py-2.5 bg-[#181818] border-b border-[#485346]">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#febc2e]" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#28c840]" />
-                  </div>
-                  <div className="text-xs font-mono text-[#8cab87] flex items-center gap-2 bg-[#212525] px-3.5 py-1 rounded border border-[#485346]/60">
-                    <span className="text-[#7fee64]">https://</span>
-                    <span>{activeProject.domain}</span>
-                  </div>
-                  <div className="w-8" />
-                </div>
-
-                {/* Mockup Preview Screen */}
-                <div className="relative flex-1 p-6 flex flex-col justify-between overflow-hidden bg-gradient-to-br from-[#0e120e] via-[#141d14] to-[#0a120a]">
-                  {/* Mockup 1: RLP Compliance */}
-                  {activeProject.mockupType === 'rlp' && (
-                    <div className="w-full h-full flex flex-col justify-between font-sans text-xs">
-                      <div className="flex justify-between items-center text-[#8cab87] pb-2 border-b border-[#485346]/40">
-                        <span className="font-semibold text-[#ddffdc]">RLP COMPLIANCE S.A.S.</span>
-                        <span className="text-[#7fee64] font-mono text-[11px]">● EN VIVO</span>
-                      </div>
-                      <div className="bg-[#181818] border border-[#485346] rounded-lg p-4 my-auto space-y-2 shadow-lg">
-                        <div className="text-xs text-[#7fee64] font-bold tracking-wide">
-                          PORTAL DE CUMPLIMIENTO CORPORATIVO
-                        </div>
-                        <div className="text-[#ddffdc] text-sm md:text-base font-medium">
-                          Soluciones Normativas &amp; Asesoría Legal Integral
-                        </div>
-                        <div className="text-xs text-[#677d64]">
-                          Optimizado para carga instantánea &bull; Seguridad SSL &bull; UX de alta conversión
-                        </div>
-                      </div>
-                      <div className="flex justify-between text-[11px] text-[#677d64] pt-2 border-t border-[#485346]/40 font-mono">
-                        <span>ESTADO: 200 OK</span>
-                        <span className="text-[#7fee64]">HTTP/3 FAST CACHE</span>
-                      </div>
+              {activeProject.mockupType === 'rlp' ? (
+                <a
+                  href="https://rlpcompliance.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group relative w-full aspect-[16/10] rounded-xl overflow-hidden border border-[#485346] bg-[#0e120e] shadow-2xl flex flex-col transition-all duration-300 hover:border-[#7fee64] hover:shadow-[0_0_30px_rgba(127,238,100,0.2)] block"
+                >
+                  {/* Browser Header Bar */}
+                  <div className="flex items-center justify-between px-4 py-2.5 bg-[#181818] border-b border-[#485346] z-10">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]" />
+                      <div className="w-2.5 h-2.5 rounded-full bg-[#febc2e]" />
+                      <div className="w-2.5 h-2.5 rounded-full bg-[#28c840]" />
                     </div>
-                  )}
+                    <div className="text-xs font-mono text-[#8cab87] flex items-center gap-2 bg-[#212525] px-3.5 py-1 rounded border border-[#485346]/60 transition-colors group-hover:border-[#7fee64]/50 group-hover:text-[#ddffdc]">
+                      <span className="text-[#7fee64]">https://</span>
+                      <span>{activeProject.domain}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 font-mono text-[11px] text-[#7fee64]">
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#7fee64] opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-[#7fee64]"></span>
+                      </span>
+                      <span className="hidden sm:inline font-semibold">EN VIVO</span>
+                    </div>
+                  </div>
+
+                  {/* Mockup Preview Screen: Screenshot Image */}
+                  <div className="relative flex-1 w-full overflow-hidden bg-[#0a0a0a]">
+                    <Image
+                      src="/assets/portfolio/rlpcompliance-preview.webp"
+                      alt="Previsualización del sitio web RLP Compliance S.A.S."
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 640px"
+                      className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                      loading="lazy"
+                    />
+
+                    {/* Hover Overlay Feedback */}
+                    <div className="absolute inset-0 bg-[#000000]/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-4 backdrop-blur-[2px]">
+                      <span className="inline-flex items-center gap-2 bg-[#7fee64] text-[#000000] font-sans font-bold text-xs md:text-sm px-5 py-2.5 rounded-lg shadow-[0_0_20px_rgba(127,238,100,0.4)] transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                        <span>Visitar sitio en vivo</span>
+                        <span>↗</span>
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Browser Footer Status Bar */}
+                  <div className="flex justify-between items-center px-4 py-2 bg-[#181818] border-t border-[#485346] text-[11px] text-[#677d64] font-mono z-10">
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#7fee64]"></span>
+                      <span>ESTADO: 200 OK</span>
+                    </span>
+                    <span className="text-[#7fee64] font-semibold">HTTP/3 FAST CACHE</span>
+                  </div>
+                </a>
+              ) : (
+                <div className="relative w-full aspect-[16/10] rounded-xl overflow-hidden border border-[#485346] bg-[#0e120e] shadow-2xl flex flex-col">
+                  {/* Browser Header Bar */}
+                  <div className="flex items-center justify-between px-4 py-2.5 bg-[#181818] border-b border-[#485346]">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]" />
+                      <div className="w-2.5 h-2.5 rounded-full bg-[#febc2e]" />
+                      <div className="w-2.5 h-2.5 rounded-full bg-[#28c840]" />
+                    </div>
+                    <div className="text-xs font-mono text-[#8cab87] flex items-center gap-2 bg-[#212525] px-3.5 py-1 rounded border border-[#485346]/60">
+                      <span className="text-[#7fee64]">https://</span>
+                      <span>{activeProject.domain}</span>
+                    </div>
+                    <div className="w-8" />
+                  </div>
+
+                  {/* Mockup Preview Screen */}
+                  <div className="relative flex-1 p-6 flex flex-col justify-between overflow-hidden bg-gradient-to-br from-[#0e120e] via-[#141d14] to-[#0a120a]">
 
                   {/* Mockup 2: Python AI Dactilología */}
                   {activeProject.mockupType === 'ai' && (
@@ -310,9 +344,10 @@ export default function PortfolioShowcase() {
                   )}
                 </div>
               </div>
-            </div>
+            )}
           </div>
-        </ScrollReveal>
+        </div>
+      </ScrollReveal>
       </div>
     </section>
   );

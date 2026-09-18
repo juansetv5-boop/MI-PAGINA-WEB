@@ -46,7 +46,7 @@ function PhaseCanvasBlock({
       ([entry]) => {
         setIsNearViewport(entry.isIntersecting);
       },
-      { rootMargin: '500px 0px 500px 0px' }
+      { rootMargin: '800px 0px 800px 0px' }
     );
 
     observer.observe(el);
@@ -82,14 +82,12 @@ function PhaseCanvasBlock({
     ctx.drawImage(img, ox, oy, dw, dh);
   }, []);
 
-  // 3. Progressive image loader: loads when near viewport, frees memory when scrolled far away
+  // 3. Progressive image loader: loads when near viewport, caches frames to prevent reload flashes
   useEffect(() => {
-    if (!isNearViewport) {
-      if (imagesRef.current.length > 0) {
-        imagesRef.current = [];
-        setIsPreloaded(false);
-        setLoadedCount(0);
-      }
+    if (!isNearViewport && !isPreloaded) {
+      return;
+    }
+    if (imagesRef.current.length === frameCount && isPreloaded) {
       return;
     }
 
@@ -104,8 +102,8 @@ function PhaseCanvasBlock({
         if (!mounted) return;
         count++;
         setLoadedCount(count);
-        if (count === 1) {
-          drawFrame(1);
+        if (count === 1 || i === 1 || i === Math.round(currentFrameRef.current)) {
+          drawFrame(Math.round(currentFrameRef.current));
         }
         if (count === frameCount) {
           setIsPreloaded(true);
@@ -125,9 +123,9 @@ function PhaseCanvasBlock({
     return () => {
       mounted = false;
     };
-  }, [isNearViewport, frameCount, getFrameSrc, drawFrame]);
+  }, [isNearViewport, isPreloaded, frameCount, getFrameSrc, drawFrame]);
 
-  // 4. Scroll progress tracking
+  // 4. Scroll progress tracking across h-[250vh] pinning track
   useEffect(() => {
     let rafId: number;
     const handleScroll = () => {
@@ -135,12 +133,20 @@ function PhaseCanvasBlock({
         const el = containerRef.current;
         if (!el) return;
         const rect = el.getBoundingClientRect();
-        const scrollable = rect.height - window.innerHeight;
+        const stickyEl = canvasRef.current?.parentElement;
+        const stickyHeight = stickyEl ? stickyEl.clientHeight : window.innerHeight;
+        const scrollable = rect.height - stickyHeight;
         if (scrollable <= 0) return;
         const currentScroll = -rect.top;
         const p = Math.max(0, Math.min(1, currentScroll / scrollable));
         const frame = Math.max(1, Math.min(frameCount, Math.round(1 + p * (frameCount - 1))));
         targetFrameRef.current = frame;
+
+        if (p >= 1) {
+          currentFrameRef.current = frameCount;
+        } else if (p <= 0) {
+          currentFrameRef.current = 1;
+        }
       });
     };
 
@@ -163,7 +169,7 @@ function PhaseCanvasBlock({
     const renderLoop = () => {
       const diff = targetFrameRef.current - currentFrameRef.current;
       if (Math.abs(diff) > 0.01) {
-        currentFrameRef.current += diff * 0.15;
+        currentFrameRef.current += diff * 0.25;
       } else {
         currentFrameRef.current = targetFrameRef.current;
       }
@@ -183,18 +189,17 @@ function PhaseCanvasBlock({
   // Resize redraw
   useEffect(() => {
     const onResize = () => {
-      if (renderedFrameRef.current > 0) {
-        drawFrame(renderedFrameRef.current);
-      }
+      const f = renderedFrameRef.current > 0 ? renderedFrameRef.current : Math.round(currentFrameRef.current || 1);
+      drawFrame(f);
     };
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
   }, [drawFrame]);
 
   return (
-    <div id={id} ref={containerRef} className="relative h-[200vh] w-full bg-[#000000] overflow-x-hidden">
+    <div id={id} ref={containerRef} className="relative h-[250vh] w-full bg-[#000000]">
       {/* Sticky Pinning Container: 100dvh edge-to-edge pure cinematic screen */}
-      <div className="sticky top-0 left-0 w-full h-[100dvh] overflow-hidden bg-[#000000] select-none">
+      <div className="sticky top-0 left-0 w-full h-screen h-[100dvh] overflow-hidden bg-[#000000] select-none">
         <canvas
           ref={canvasRef}
           className="absolute inset-0 w-full h-full block"
@@ -344,7 +349,7 @@ function PhaseInfoBlock({
 // ─── Main Component: Alternating Full-Screen Scrollytelling Architecture ─────
 export default function ScrollytellingHero() {
   return (
-    <div id="process" className="w-full flex flex-col bg-[#000000] overflow-x-hidden">
+    <div id="process" className="w-full flex flex-col bg-[#000000]">
       {/* ── BLOQUE 1: Canvas Animación Fase 1 (Código & Arquitectura) ── */}
       <PhaseCanvasBlock
         id="fase1-canvas"
