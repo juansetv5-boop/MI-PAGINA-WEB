@@ -14,21 +14,15 @@ const getFase1Src = (i: number) => `/frames/fase1/${String(i).padStart(2, '0')}.
 const getFase2Src = (i: number) => `/frames/fase2/${String(i).padStart(3, '0')}.webp`;
 const getFase3Src = (i: number) => `/frames/fase3/${String(i).padStart(2, '0')}.webp`;
 
-// ─── Subcomponent: PhaseCanvasBlock (Scroll Pinning Canvas) ───────────────────
+// ─── Subcomponent: PhaseCanvasBlock (Edge-to-Edge 100dvh Cover Pinning) ───────
 interface PhaseCanvasBlockProps {
   id: string;
-  phaseNumber: string;
-  phaseTitle: string;
-  phaseSubtitle: string;
   frameCount: number;
   getFrameSrc: (index: number) => string;
 }
 
 function PhaseCanvasBlock({
   id,
-  phaseNumber,
-  phaseTitle,
-  phaseSubtitle,
   frameCount,
   getFrameSrc,
 }: PhaseCanvasBlockProps) {
@@ -42,10 +36,8 @@ function PhaseCanvasBlock({
   const [isNearViewport, setIsNearViewport] = useState(false);
   const [loadedCount, setLoadedCount] = useState(0);
   const [isPreloaded, setIsPreloaded] = useState(false);
-  const [displayFrame, setDisplayFrame] = useState(1);
-  const [scrollPercent, setScrollPercent] = useState(0);
 
-  // 1. Proximity / Intersection Observer for progressive memory loading
+  // 1. Proximity / Intersection Observer for progressive memory management
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -61,11 +53,11 @@ function PhaseCanvasBlock({
     return () => observer.disconnect();
   }, []);
 
-  // 2. Draw canvas frame
+  // 2. Draw canvas frame with centered object-fit: cover
   const drawFrame = useCallback((frameIdx: number) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: false });
     if (!ctx) return;
     const img = imagesRef.current[frameIdx - 1];
     if (!img || !img.complete || img.naturalWidth === 0) return;
@@ -80,17 +72,13 @@ function PhaseCanvasBlock({
       canvas.height = h;
     }
 
-    ctx.clearRect(0, 0, w, h);
-    const ir = img.naturalWidth / img.naturalHeight;
-    const cr = w / h;
-    let dw = w, dh = h, ox = 0, oy = 0;
-    if (cr > ir) {
-      dw = h * ir;
-      ox = (w - dw) / 2;
-    } else {
-      dh = w / ir;
-      oy = (h - dh) / 2;
-    }
+    // Pure object-fit: cover centered calculation
+    const scale = Math.max(w / img.naturalWidth, h / img.naturalHeight);
+    const dw = Math.round(img.naturalWidth * scale);
+    const dh = Math.round(img.naturalHeight * scale);
+    const ox = Math.round((w - dw) / 2);
+    const oy = Math.round((h - dh) / 2);
+
     ctx.drawImage(img, ox, oy, dw, dh);
   }, []);
 
@@ -151,7 +139,6 @@ function PhaseCanvasBlock({
         if (scrollable <= 0) return;
         const currentScroll = -rect.top;
         const p = Math.max(0, Math.min(1, currentScroll / scrollable));
-        setScrollPercent(Math.round(p * 100));
         const frame = Math.max(1, Math.min(frameCount, Math.round(1 + p * (frameCount - 1))));
         targetFrameRef.current = frame;
       });
@@ -185,7 +172,6 @@ function PhaseCanvasBlock({
       if (f !== renderedFrameRef.current) {
         renderedFrameRef.current = f;
         drawFrame(f);
-        setDisplayFrame(f);
       }
       rafId = requestAnimationFrame(renderLoop);
     };
@@ -206,103 +192,30 @@ function PhaseCanvasBlock({
   }, [drawFrame]);
 
   return (
-    <div id={id} ref={containerRef} className="relative h-[200vh] w-full bg-[#000000]">
-      {/* Sticky Pinning Container: 100vh during scroll consumption */}
-      <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-between overflow-hidden bg-[#000000] p-4 md:px-8 md:py-6 select-none">
-        
-        {/* Ambient Glow */}
-        <div className="absolute w-[80vw] max-w-5xl h-[60vh] rounded-full bg-[#7fee64]/10 blur-3xl pointer-events-none -z-0" />
+    <div id={id} ref={containerRef} className="relative h-[200vh] w-full bg-[#000000] overflow-x-hidden">
+      {/* Sticky Pinning Container: 100dvh edge-to-edge pure cinematic screen */}
+      <div className="sticky top-0 left-0 w-full h-[100dvh] overflow-hidden bg-[#000000] select-none">
+        <canvas
+          ref={canvasRef}
+          className="absolute inset-0 w-full h-full block"
+        />
 
-        {/* Top HUD Header */}
-        <div className="w-full max-w-6xl mx-auto flex items-center justify-between z-10 pt-1 shrink-0">
-          <div className="flex items-center gap-2.5 px-4 py-1.5 rounded-full border border-[#485346]/70 bg-[#181818]/90 text-xs font-sans backdrop-blur-md shadow-lg">
-            <span className="w-2 h-2 rounded-full bg-[#7fee64] animate-pulse" />
-            <span className="font-semibold text-[#7fee64] tracking-wider uppercase">
-              {phaseNumber} // {phaseTitle}
-            </span>
-            <span className="hidden sm:inline text-[#485346]">|</span>
-            <span className="hidden sm:inline text-[#8cab87]">{phaseSubtitle}</span>
-          </div>
-
-          <div className="flex items-center gap-2 text-xs font-sans text-[#8cab87] bg-[#181818]/90 border border-[#485346]/70 px-3.5 py-1.5 rounded-full backdrop-blur-md">
-            <span className="text-[#677d64]">FRAME</span>
-            <span className="text-[#ddffdc] font-mono font-bold">
-              {String(displayFrame).padStart(2, '0')}
-            </span>
-            <span className="text-[#485346]">/</span>
-            <span className="text-[#677d64] font-mono">{frameCount}</span>
-          </div>
-        </div>
-
-        {/* Center Canvas Monitor Frame */}
-        <div className="relative w-full flex-1 flex items-center justify-center min-h-0 my-auto z-10 py-2">
-          <div className="relative w-full max-w-5xl h-full max-h-[82vh] aspect-[16/9] rounded-2xl overflow-hidden border border-[#485346] bg-[#121212] shadow-[0_0_60px_rgba(0,0,0,0.9)] flex flex-col">
-            {/* Window Chrome */}
-            <div className="flex items-center justify-between px-4 py-2 bg-[#181818] border-b border-[#485346]/70 shrink-0">
-              <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]" />
-                <div className="w-2.5 h-2.5 rounded-full bg-[#febc2e]" />
-                <div className="w-2.5 h-2.5 rounded-full bg-[#28c840]" />
+        {/* Minimal preloader bar if not preloaded yet */}
+        {!isPreloaded && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/80 backdrop-blur-sm z-20">
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-36 h-1 rounded-full bg-[#212525] overflow-hidden">
+                <div
+                  className="h-full bg-[#7fee64] transition-all duration-200"
+                  style={{ width: `${Math.round((loadedCount / frameCount) * 100)}%` }}
+                />
               </div>
-              <div className="text-[11px] font-sans text-[#677d64] flex items-center gap-2">
-                <span className="font-medium text-[#8cab87]">CLICKSHOP ENGINE</span>
-                <span className="text-[#485346]">·</span>
-                <span className="uppercase text-[#aed2a4]">{phaseTitle}</span>
-              </div>
-              <div className="text-[10px] font-mono text-[#7fee64] bg-[#7fee64]/10 border border-[#7fee64]/30 px-2 py-0.5 rounded">
-                60 FPS
-              </div>
-            </div>
-
-            {/* Canvas Viewport */}
-            <div className="relative w-full flex-1 bg-black overflow-hidden flex items-center justify-center">
-              <canvas
-                ref={canvasRef}
-                className="w-full h-full object-contain block"
-              />
-
-              {/* Preloader */}
-              {!isPreloaded && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/85 backdrop-blur-sm z-20">
-                  <div className="flex flex-col items-center gap-3">
-                    <div className="text-xs font-sans text-[#8cab87] tracking-widest uppercase">
-                      CARGANDO SECUENCIA {phaseNumber}
-                    </div>
-                    <div className="w-48 h-1.5 rounded-full bg-[#212525] overflow-hidden">
-                      <div
-                        className="h-full bg-[#7fee64] transition-all duration-300 shadow-[0_0_10px_#7fee64]"
-                        style={{ width: `${Math.round((loadedCount / frameCount) * 100)}%` }}
-                      />
-                    </div>
-                    <span className="text-[10px] font-sans text-[#677d64]">
-                      {Math.round((loadedCount / frameCount) * 100)}%
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Progress Bar Line at Bottom of Monitor */}
-            <div className="w-full h-1 bg-[#181818] shrink-0">
-              <div
-                className="h-full bg-[#7fee64] transition-all duration-150 shadow-[0_0_8px_#7fee64]"
-                style={{ width: `${scrollPercent}%` }}
-              />
+              <span className="text-[10px] font-sans text-[#677d64] tracking-widest uppercase">
+                Cargando {Math.round((loadedCount / frameCount) * 100)}%
+              </span>
             </div>
           </div>
-        </div>
-
-        {/* Bottom Scroll Cue */}
-        <div className="w-full max-w-6xl mx-auto flex items-center justify-center z-10 pb-1 shrink-0">
-          <div className="flex items-center gap-2 text-[11px] md:text-xs font-sans text-[#8cab87] bg-[#181818]/90 border border-[#485346]/70 px-4 py-1.5 rounded-full backdrop-blur-md shadow-md">
-            <span>
-              {scrollPercent >= 98
-                ? '✓ Secuencia completada — Desliza para ver la propuesta técnica'
-                : 'Desliza para avanzar la animación'}
-            </span>
-            <span className="text-[#7fee64] font-bold animate-bounce ml-0.5">↓</span>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );
@@ -431,13 +344,10 @@ function PhaseInfoBlock({
 // ─── Main Component: Alternating Full-Screen Scrollytelling Architecture ─────
 export default function ScrollytellingHero() {
   return (
-    <div id="process" className="w-full flex flex-col bg-[#000000]">
+    <div id="process" className="w-full flex flex-col bg-[#000000] overflow-x-hidden">
       {/* ── BLOQUE 1: Canvas Animación Fase 1 (Código & Arquitectura) ── */}
       <PhaseCanvasBlock
         id="fase1-canvas"
-        phaseNumber="01"
-        phaseTitle="Arquitectura Técnica"
-        phaseSubtitle="Compilación limpia en Next.js & TypeScript"
         frameCount={FASE1_FRAMES}
         getFrameSrc={getFase1Src}
       />
@@ -482,9 +392,6 @@ export default function ScrollytellingHero() {
       {/* ── BLOQUE 3: Canvas Animación Fase 2 (UX/UI & Navegación) ── */}
       <PhaseCanvasBlock
         id="fase2-canvas"
-        phaseNumber="02"
-        phaseTitle="Posicionamiento UX/UI"
-        phaseSubtitle="Arquitectura de navegación y diseño responsivo"
         frameCount={FASE2_FRAMES}
         getFrameSrc={getFase2Src}
       />
@@ -529,9 +436,6 @@ export default function ScrollytellingHero() {
       {/* ── BLOQUE 5: Canvas Animación Fase 3 (Conversión & Ventas) ── */}
       <PhaseCanvasBlock
         id="fase3-canvas"
-        phaseNumber="03"
-        phaseTitle="Alta Conversión en Vivo"
-        phaseSubtitle="Optimización final para captación y ventas automáticas"
         frameCount={FASE3_FRAMES}
         getFrameSrc={getFase3Src}
       />

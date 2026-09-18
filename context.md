@@ -159,3 +159,22 @@ pm run build ejecutado exitosamente.
 - **Render loop eficiente a 60 FPS**: Interpolacion suave (lerp) que solo se ejecuta cuando el bloque esta proximo al viewport, reduciendo el consumo de CPU/GPU a cero en reposo.
 - **Escalado adaptativo de Canvas**: Renderizado con object-contain centrado, aceleracion grafica y soporte para pantallas de alta densidad (DPR hasta 2x), evitando distorsiones y desbordamientos horizontales.
 - **Build verificado**: Compilacion exitosa con Next.js 16.3.4 Turbopack y TypeScript (0 errores).
+
+---
+## [2026-09-18] Experiencia Edge-to-Edge Pura con Escalado Cover Centrado (Mobile-First)
+
+### Eliminacion de Marcos, Bordes y Badges
+- Removido el contenedor de ventana simulada (barra superior con botones tipo Mac, titulos tecnicos y badges de 60 FPS).
+- Eliminados bordes exteriores, paddings contenedores y etiquetas flotantes inferiores para una experiencia visual limpia, inmersiva y cinematografica.
+
+### Escalado Full-Screen (Object-Fit: Cover Centrado)
+- Contenedor sticky configurado en w-full h-[100dvh] sticky top-0 left-0 overflow-hidden.
+- Implementado escalado matematico identico a object-fit: cover centrado en el contexto del canvas 2D:
+  * Calculo de escala maxima scale = Math.max(w / imgWidth, h / imgHeight).
+  * Encuadre centrado ox = (w - dw) / 2 y oy = (h - dh) / 2 para asegurar que el nucleo de la accion (mano, smartphone e interfaz) permanezca visible, protegido y enfocado en cualquier resolucion movil.
+  * Eliminacion total de barras negras y margenes vacios.
+
+### Optimizacion Mobile-First & Estabilidad
+- Uso de 100dvh para evitar saltos o desajustes de interfaz por la aparicion/desaparicion de la barra de navegacion en iOS Safari y Android Chrome.
+- Aceleracion por hardware con ctx.getContext('2d', { alpha: false }) y control estricto de desbordamiento horizontal (overflow-x-hidden).
+- Build de produccion verificado (cero errores, codigo 0).
