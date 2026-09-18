@@ -1,4 +1,4 @@
-﻿# Project Context & State Tracking
+# Project Context & State Tracking
 
 ## 1. Current Status
 - **Framework & Build**: Next.js 16 (App Router) + TypeScript 5 + Tailwind CSS v4.
@@ -124,3 +124,38 @@ pm run build ejecutado exitosamente.
 - Añadido efecto de resplandor y desenfoque ambiental posterior (g-[#7fee64]/20 blur-3xl opacity-40) detrás del marco del monitor cuando la Fase 2 (fotogramas verticales) está activa.
 - Garantizado un encuadre estético y limpio que rellena los laterales durante la transición de la Fase 2 sin alterar la proporcionalidad ni generar desplazamientos brúscos de diseño (0 CLS).
 - Build verificado de Next.js (código 0).
+
+---
+## [2026-09-18] Optimización en Lote — Fase 2 (Script Python + Pillow)
+
+### Ejecución del script `scripts/optimize_fase2.py`
+- **Fotogramas procesados**: 100 / 100 (001.png → 001.webp ... 100.png → 100.webp).
+- **Formato de entrada**: PNG (sin compresión).
+- **Formato de salida**: WebP · Calidad 82% · method=6 (compresión máxima) · optimize=True.
+- **Peso total entrada**: 125.31 MB (promedio ~1.25 MB/frame).
+- **Peso total salida**: 5.04 MB (promedio ~51 KB/frame).
+- **Reducción total**: -120.28 MB (-96.0%).
+- **Tiempo de ejecución**: 17.8 s.
+- **Renombrado**: padding numérico estricto de 3 dígitos (001-100) para lectura cronológica garantizada por el Canvas.
+- **Archivos PNG originales**: eliminados tras conversión exitosa.
+- **Errores reales**: 0 (los mensajes de consola eran únicamente charmap de Windows al imprimir la flecha, no fallos de conversión).
+- **Log de ejecución**: `scripts/optimize_fase2_log.txt`.
+
+---
+## [2026-09-18] Arquitectura Modular de Bloques Alternados (Sandwich Full-Screen)
+
+### Reestructuracion del Scrollytelling
+- Desacopladas las animaciones Canvas de las pantallas informativas para eliminar la competencia visual de scroll y textos simultaneos.
+- Implementada la secuencia de bloques modulares alternados a pantalla completa (100vh):
+  * **BLOQUE 1 (Canvas Fase 1)**: Scroll pinning en h-[200vh] con sticky top-0 h-screen w-full que reproduce la secuencia de 84 fotogramas de /frames/fase1/ al ritmo del scroll del usuario.
+  * **BLOQUE 2 (Info Fase 1)**: Pantalla completa estatica (min-h-screen w-full bg-[#080808]) que entra naturalmente al liberarse el pin. Presenta los 3 pilares de Arquitectura Tecnica (Next.js App Router/SSR, TypeScript Estricto 100%, Lighthouse 100/100) con metricas clave y boton CTA directo hacia el Wizard modal.
+  * **BLOQUE 3 (Canvas Fase 2)**: Contenedor con scroll pinning en h-[200vh] que reproduce los 100 fotogramas optimizados de /frames/fase2/ (001.webp a 100.webp).
+  * **BLOQUE 4 (Info Fase 2)**: Pantalla completa estatica dedicada a la Experiencia Visual & UX/UI (Jerarquia Visual de Alta Retencion, Diseno Mobile-First Adaptativo, Micro-interacciones a 60 FPS).
+  * **BLOQUE 5 (Canvas Fase 3)**: Contenedor con scroll pinning en h-[200vh] que reproduce los 92 fotogramas de /frames/fase3/ (01.webp a 92.webp).
+  * **BLOQUE 6 (Info Fase 3)**: Pantalla completa estatica enfocada en Conversion & Ventas 24/7 (Captacion Progresiva sin Friccion, Cierre Inmediato por WhatsApp, Disponibilidad Cloud 99.9%).
+
+### Gestion de Memoria y Rendimiento
+- **Carga y liberacion progresiva**: Cada PhaseCanvasBlock cuenta con un IntersectionObserver (margen de 500px) que precarga los fotogramas de forma anticipada antes de entrar en el viewport y libera las referencias de memoria (imagesRef.current = []) cuando el usuario se desplaza lejos de la seccion.
+- **Render loop eficiente a 60 FPS**: Interpolacion suave (lerp) que solo se ejecuta cuando el bloque esta proximo al viewport, reduciendo el consumo de CPU/GPU a cero en reposo.
+- **Escalado adaptativo de Canvas**: Renderizado con object-contain centrado, aceleracion grafica y soporte para pantallas de alta densidad (DPR hasta 2x), evitando distorsiones y desbordamientos horizontales.
+- **Build verificado**: Compilacion exitosa con Next.js 16.3.4 Turbopack y TypeScript (0 errores).

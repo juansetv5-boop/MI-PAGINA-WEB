@@ -1,177 +1,67 @@
 'use client';
 
-import { useRef, useEffect, useState, useCallback } from 'react';
-import { useScrollProgress } from '@/hooks/useScrollProgress';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
+import { useWizard } from './WizardContext';
+import ScrollReveal from './ScrollReveal';
 
-// ─── Frame counts per chapter ───────────────────────────────────────────────
+// ─── Frame Counts ─────────────────────────────────────────────────────────────
 const FASE1_FRAMES = 84;
-const FASE2_FRAMES = 84;
+const FASE2_FRAMES = 100;
 const FASE3_FRAMES = 92;
-const TOTAL_FRAMES = FASE1_FRAMES + FASE2_FRAMES + FASE3_FRAMES; // 260
 
-// ─── Helper: get image path for a global frame index (1-based) ──────────────
-function getFrameSrc(globalIndex: number): string {
-  if (globalIndex <= FASE1_FRAMES) {
-    return `/frames/fase1/${String(globalIndex).padStart(2, '0')}.webp`;
-  } else if (globalIndex <= FASE1_FRAMES + FASE2_FRAMES) {
-    const local = globalIndex - FASE1_FRAMES;
-    return `/frames/fase2/${String(local).padStart(2, '0')}.webp`;
-  } else {
-    const local = globalIndex - FASE1_FRAMES - FASE2_FRAMES;
-    return `/frames/fase3/${String(local).padStart(2, '0')}.webp`;
-  }
+// ─── Helpers: Frame Image Paths ──────────────────────────────────────────────
+const getFase1Src = (i: number) => `/frames/fase1/${String(i).padStart(2, '0')}.webp`;
+const getFase2Src = (i: number) => `/frames/fase2/${String(i).padStart(3, '0')}.webp`;
+const getFase3Src = (i: number) => `/frames/fase3/${String(i).padStart(2, '0')}.webp`;
+
+// ─── Subcomponent: PhaseCanvasBlock (Scroll Pinning Canvas) ───────────────────
+interface PhaseCanvasBlockProps {
+  id: string;
+  phaseNumber: string;
+  phaseTitle: string;
+  phaseSubtitle: string;
+  frameCount: number;
+  getFrameSrc: (index: number) => string;
 }
 
-// ─── Chapter definitions ─────────────────────────────────────────────────────
-const CHAPTERS = [
-  {
-    id: 1,
-    label: 'Capítulo 1',
-    card: 'Fase 1: Arquitectura & Código',
-    badge: '01 // Arquitectura Técnica',
-    title: (
-      <>
-        Codificando la{' '}
-        <span className="text-[#7fee64]">arquitectura técnica</span>
-      </>
-    ),
-    desc1: 'Construimos las bases del proyecto con Next.js y TypeScript de alto rendimiento.',
-    desc2: 'Sin código redundante ni librerías pesadas: cada componente se compila para responder al instante.',
-    startFrame: 1,
-    endFrame: FASE1_FRAMES,
-  },
-  {
-    id: 2,
-    label: 'Capítulo 2',
-    card: 'Fase 2: Posicionamiento & Experiencia de Usuario',
-    badge: '02 // Posicionamiento UX/UI',
-    title: (
-      <>
-        Diseño y{' '}
-        <span className="text-[#7fee64]">experiencia visual UX/UI</span>
-      </>
-    ),
-    desc1: 'Creamos una estructura de navegación clara que capta la atención en segundos.',
-    desc2: 'Diseño responsive adaptado a los patrones de navegación reales de tus clientes.',
-    startFrame: FASE1_FRAMES + 1,
-    endFrame: FASE1_FRAMES + FASE2_FRAMES,
-  },
-  {
-    id: 3,
-    label: 'Capítulo 3',
-    card: 'Fase 3: Conversión & Ventas Automáticas',
-    badge: '03 // Alta Conversión en Vivo',
-    title: (
-      <>
-        Tu sitio listo para{' '}
-        <span className="text-[#7fee64]">generar ventas 24/7</span>
-      </>
-    ),
-    desc1: 'Rendimiento 100/100 en Lighthouse y tiempos de respuesta ultrarrápidos.',
-    desc2: 'Tu presencia digital transformada en un activo que genera autoridad y ventas de forma automática.',
-    startFrame: FASE1_FRAMES + FASE2_FRAMES + 1,
-    endFrame: TOTAL_FRAMES,
-  },
-];
-
-export default function ScrollytellingHero() {
-  const containerRef = useRef<HTMLElement>(null);
+function PhaseCanvasBlock({
+  id,
+  phaseNumber,
+  phaseTitle,
+  phaseSubtitle,
+  frameCount,
+  getFrameSrc,
+}: PhaseCanvasBlockProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imagesRef = useRef<HTMLImageElement[]>([]);
-  const displayedFrameRef = useRef<number>(1);
-  const [displayedFrame, setDisplayedFrame] = useState<number>(1);
+  const targetFrameRef = useRef<number>(1);
+  const currentFrameRef = useRef<number>(1);
+  const renderedFrameRef = useRef<number>(0);
+
+  const [isNearViewport, setIsNearViewport] = useState(false);
   const [loadedCount, setLoadedCount] = useState(0);
   const [isPreloaded, setIsPreloaded] = useState(false);
+  const [displayFrame, setDisplayFrame] = useState(1);
+  const [scrollPercent, setScrollPercent] = useState(0);
 
-  // Auto-play state & refs
-  const [isInViewport, setIsInViewport] = useState(false);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const autoFrameRef = useRef<number>(1);
-  const userInteractedRef = useRef<boolean>(false);
-
-  const progress = useScrollProgress(containerRef);
-
-  // ── 1. Intersection Observer ───────────────────────────────────────────────
+  // 1. Proximity / Intersection Observer for progressive memory loading
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
+    const el = containerRef.current;
+    if (!el) return;
+
     const observer = new IntersectionObserver(
-      ([entry]) => setIsInViewport(entry.isIntersecting),
-      { threshold: 0.1 }
+      ([entry]) => {
+        setIsNearViewport(entry.isIntersecting);
+      },
+      { rootMargin: '500px 0px 500px 0px' }
     );
-    observer.observe(container);
+
+    observer.observe(el);
     return () => observer.disconnect();
   }, []);
 
-  // ── 2. Detect manual user interaction → cancel auto-play ──────────────────
-  useEffect(() => {
-    const handleInteraction = () => {
-      if (!userInteractedRef.current) {
-        userInteractedRef.current = true;
-        setIsAutoPlaying(false);
-      }
-    };
-    const opts: AddEventListenerOptions = { passive: true };
-    window.addEventListener('wheel', handleInteraction, opts);
-    window.addEventListener('touchstart', handleInteraction, opts);
-    window.addEventListener('touchmove', handleInteraction, opts);
-    window.addEventListener('mousedown', handleInteraction, opts);
-    window.addEventListener('keydown', handleInteraction, opts);
-    return () => {
-      window.removeEventListener('wheel', handleInteraction);
-      window.removeEventListener('touchstart', handleInteraction);
-      window.removeEventListener('touchmove', handleInteraction);
-      window.removeEventListener('mousedown', handleInteraction);
-      window.removeEventListener('keydown', handleInteraction);
-    };
-  }, []);
-
-  // ── 3. Auto-play frame ticker (~26 fps = 38 ms) ────────────────────────────
-  useEffect(() => {
-    if (!isInViewport || !isAutoPlaying || userInteractedRef.current) return;
-    const interval = setInterval(() => {
-      if (autoFrameRef.current < TOTAL_FRAMES) {
-        autoFrameRef.current += 1;
-      } else {
-        setIsAutoPlaying(false);
-        clearInterval(interval);
-      }
-    }, 38);
-    return () => clearInterval(interval);
-  }, [isInViewport, isAutoPlaying]);
-
-  // ── 4. Scroll → target frame mapping (3 equal thirds) ─────────────────────
-  let scrollTargetFrame = 1;
-  if (progress <= 0.33) {
-    const norm = progress / 0.33;
-    scrollTargetFrame = Math.round(1 + norm * (FASE1_FRAMES - 1));
-  } else if (progress <= 0.66) {
-    const norm = (progress - 0.33) / 0.33;
-    scrollTargetFrame = Math.round(FASE1_FRAMES + 1 + norm * (FASE2_FRAMES - 1));
-  } else {
-    const norm = Math.min(1, (progress - 0.66) / 0.34);
-    scrollTargetFrame = Math.round(
-      FASE1_FRAMES + FASE2_FRAMES + 1 + norm * (FASE3_FRAMES - 1)
-    );
-  }
-  scrollTargetFrame = Math.max(1, Math.min(TOTAL_FRAMES, scrollTargetFrame));
-
-  // Auto-play overrides scroll when ahead
-  const targetFrame =
-    !userInteractedRef.current && isAutoPlaying && autoFrameRef.current > scrollTargetFrame
-      ? autoFrameRef.current
-      : scrollTargetFrame;
-
-  // ── 5. Determine active chapter ────────────────────────────────────────────
-  const activeChapter =
-    CHAPTERS.find(
-      (ch) => targetFrame >= ch.startFrame && targetFrame <= ch.endFrame
-    ) ?? CHAPTERS[0];
-
-  // Is chapter fully played? (show frozen card)
-  const chapterComplete = targetFrame >= activeChapter.endFrame;
-
-  // ── 6. Canvas drawing ──────────────────────────────────────────────────────
+  // 2. Draw canvas frame
   const drawFrame = useCallback((frameIdx: number) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -182,8 +72,9 @@ export default function ScrollytellingHero() {
 
     const rect = canvas.getBoundingClientRect();
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const w = Math.max(Math.round(rect.width * dpr), 300);
-    const h = Math.max(Math.round(rect.height * dpr), 200);
+    const w = Math.max(Math.round(rect.width * dpr), 100);
+    const h = Math.max(Math.round(rect.height * dpr), 100);
+
     if (canvas.width !== w || canvas.height !== h) {
       canvas.width = w;
       canvas.height = h;
@@ -193,199 +84,494 @@ export default function ScrollytellingHero() {
     const ir = img.naturalWidth / img.naturalHeight;
     const cr = w / h;
     let dw = w, dh = h, ox = 0, oy = 0;
-    if (cr > ir) { dw = h * ir; ox = (w - dw) / 2; }
-    else { dh = w / ir; oy = (h - dh) / 2; }
+    if (cr > ir) {
+      dw = h * ir;
+      ox = (w - dw) / 2;
+    } else {
+      dh = w / ir;
+      oy = (h - dh) / 2;
+    }
     ctx.drawImage(img, ox, oy, dw, dh);
   }, []);
 
-  // ── 7. Preload all frames ──────────────────────────────────────────────────
+  // 3. Progressive image loader: loads when near viewport, frees memory when scrolled far away
   useEffect(() => {
+    if (!isNearViewport) {
+      if (imagesRef.current.length > 0) {
+        imagesRef.current = [];
+        setIsPreloaded(false);
+        setLoadedCount(0);
+      }
+      return;
+    }
+
     let mounted = true;
     const imgs: HTMLImageElement[] = [];
-    let counter = 0;
-    for (let i = 1; i <= TOTAL_FRAMES; i++) {
+    let count = 0;
+
+    for (let i = 1; i <= frameCount; i++) {
       const img = new Image();
       img.src = getFrameSrc(i);
       img.onload = () => {
         if (!mounted) return;
-        counter++;
-        setLoadedCount(counter);
-        if (counter === 1) drawFrame(1);
-        if (counter === TOTAL_FRAMES) { setIsPreloaded(true); drawFrame(displayedFrameRef.current); }
+        count++;
+        setLoadedCount(count);
+        if (count === 1) {
+          drawFrame(1);
+        }
+        if (count === frameCount) {
+          setIsPreloaded(true);
+          drawFrame(Math.round(currentFrameRef.current));
+        }
       };
-      img.onerror = () => { if (!mounted) return; counter++; setLoadedCount(counter); };
+      img.onerror = () => {
+        if (!mounted) return;
+        count++;
+        setLoadedCount(count);
+      };
       imgs.push(img);
     }
-    imagesRef.current = imgs;
-    return () => { mounted = false; };
-  }, [drawFrame]);
 
-  // ── 8. Smooth lerp render loop ─────────────────────────────────────────────
-  useEffect(() => {
-    let raf: number;
-    const loop = () => {
-      const diff = targetFrame - displayedFrameRef.current;
-      if (Math.abs(diff) > 0.005) displayedFrameRef.current += diff * 0.09;
-      else displayedFrameRef.current = targetFrame;
-      const f = Math.round(displayedFrameRef.current);
-      setDisplayedFrame(f);
-      drawFrame(f);
-      raf = requestAnimationFrame(loop);
+    imagesRef.current = imgs;
+
+    return () => {
+      mounted = false;
     };
-    raf = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(raf);
-  }, [targetFrame, drawFrame]);
+  }, [isNearViewport, frameCount, getFrameSrc, drawFrame]);
+
+  // 4. Scroll progress tracking
+  useEffect(() => {
+    let rafId: number;
+    const handleScroll = () => {
+      rafId = requestAnimationFrame(() => {
+        const el = containerRef.current;
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        const scrollable = rect.height - window.innerHeight;
+        if (scrollable <= 0) return;
+        const currentScroll = -rect.top;
+        const p = Math.max(0, Math.min(1, currentScroll / scrollable));
+        setScrollPercent(Math.round(p * 100));
+        const frame = Math.max(1, Math.min(frameCount, Math.round(1 + p * (frameCount - 1))));
+        targetFrameRef.current = frame;
+      });
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll, { passive: true });
+    handleScroll();
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+      cancelAnimationFrame(rafId);
+    };
+  }, [frameCount]);
+
+  // 5. 60 FPS lerp render loop (only runs when near viewport)
+  useEffect(() => {
+    if (!isNearViewport) return;
+
+    let rafId: number;
+    const renderLoop = () => {
+      const diff = targetFrameRef.current - currentFrameRef.current;
+      if (Math.abs(diff) > 0.01) {
+        currentFrameRef.current += diff * 0.15;
+      } else {
+        currentFrameRef.current = targetFrameRef.current;
+      }
+
+      const f = Math.round(currentFrameRef.current);
+      if (f !== renderedFrameRef.current) {
+        renderedFrameRef.current = f;
+        drawFrame(f);
+        setDisplayFrame(f);
+      }
+      rafId = requestAnimationFrame(renderLoop);
+    };
+
+    rafId = requestAnimationFrame(renderLoop);
+    return () => cancelAnimationFrame(rafId);
+  }, [isNearViewport, drawFrame]);
 
   // Resize redraw
   useEffect(() => {
-    const onResize = () => drawFrame(displayedFrameRef.current);
+    const onResize = () => {
+      if (renderedFrameRef.current > 0) {
+        drawFrame(renderedFrameRef.current);
+      }
+    };
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
   }, [drawFrame]);
 
   return (
-    <section ref={containerRef} className="relative h-[600vh] w-full bg-black">
-      <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden px-4 md:px-10 lg:px-16">
+    <div id={id} ref={containerRef} className="relative h-[200vh] w-full bg-[#000000]">
+      {/* Sticky Pinning Container: 100vh during scroll consumption */}
+      <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-between overflow-hidden bg-[#000000] p-4 md:px-8 md:py-6 select-none">
+        
+        {/* Ambient Glow */}
+        <div className="absolute w-[80vw] max-w-5xl h-[60vh] rounded-full bg-[#7fee64]/10 blur-3xl pointer-events-none -z-0" />
 
-        {/* ── Top hint badge ── */}
-        <div className="mb-5 flex items-center gap-2 text-xs md:text-sm font-sans text-[#8cab87] bg-[#181818]/80 border border-[#485346]/70 px-4 py-1.5 rounded-full backdrop-blur-md shadow-lg select-none">
-          <span className="w-2 h-2 rounded-full bg-[#7fee64] animate-pulse" />
-          <span>
-            {isAutoPlaying && !userInteractedRef.current
-              ? 'Avance automático activo — Desliza para explorar a tu ritmo'
-              : 'Desliza para explorar a tu ritmo'}
-          </span>
-          <span className="text-[#7fee64] font-bold animate-bounce ml-0.5">↓</span>
+        {/* Top HUD Header */}
+        <div className="w-full max-w-6xl mx-auto flex items-center justify-between z-10 pt-1 shrink-0">
+          <div className="flex items-center gap-2.5 px-4 py-1.5 rounded-full border border-[#485346]/70 bg-[#181818]/90 text-xs font-sans backdrop-blur-md shadow-lg">
+            <span className="w-2 h-2 rounded-full bg-[#7fee64] animate-pulse" />
+            <span className="font-semibold text-[#7fee64] tracking-wider uppercase">
+              {phaseNumber} // {phaseTitle}
+            </span>
+            <span className="hidden sm:inline text-[#485346]">|</span>
+            <span className="hidden sm:inline text-[#8cab87]">{phaseSubtitle}</span>
+          </div>
+
+          <div className="flex items-center gap-2 text-xs font-sans text-[#8cab87] bg-[#181818]/90 border border-[#485346]/70 px-3.5 py-1.5 rounded-full backdrop-blur-md">
+            <span className="text-[#677d64]">FRAME</span>
+            <span className="text-[#ddffdc] font-mono font-bold">
+              {String(displayFrame).padStart(2, '0')}
+            </span>
+            <span className="text-[#485346]">/</span>
+            <span className="text-[#677d64] font-mono">{frameCount}</span>
+          </div>
         </div>
 
-        {/* ── Chapter progress pills ── */}
-        <div className="mb-4 flex items-center gap-3">
-          {CHAPTERS.map((ch) => (
-            <div
-              key={ch.id}
-              className={`flex items-center gap-1.5 px-3 py-1 rounded-full border text-[10px] font-sans font-medium tracking-widest uppercase transition-all duration-300 ${
-                ch.id === activeChapter.id
-                  ? 'bg-[#7fee64]/10 border-[#7fee64]/50 text-[#7fee64]'
-                  : targetFrame > ch.endFrame
-                  ? 'bg-[#181818] border-[#485346]/40 text-[#677d64]'
-                  : 'bg-transparent border-[#485346]/30 text-[#485346]'
-              }`}
-            >
-              {targetFrame > ch.endFrame && (
-                <span className="text-[#7fee64]">✓</span>
-              )}
-              {ch.label}
+        {/* Center Canvas Monitor Frame */}
+        <div className="relative w-full flex-1 flex items-center justify-center min-h-0 my-auto z-10 py-2">
+          <div className="relative w-full max-w-5xl h-full max-h-[82vh] aspect-[16/9] rounded-2xl overflow-hidden border border-[#485346] bg-[#121212] shadow-[0_0_60px_rgba(0,0,0,0.9)] flex flex-col">
+            {/* Window Chrome */}
+            <div className="flex items-center justify-between px-4 py-2 bg-[#181818] border-b border-[#485346]/70 shrink-0">
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]" />
+                <div className="w-2.5 h-2.5 rounded-full bg-[#febc2e]" />
+                <div className="w-2.5 h-2.5 rounded-full bg-[#28c840]" />
+              </div>
+              <div className="text-[11px] font-sans text-[#677d64] flex items-center gap-2">
+                <span className="font-medium text-[#8cab87]">CLICKSHOP ENGINE</span>
+                <span className="text-[#485346]">·</span>
+                <span className="uppercase text-[#aed2a4]">{phaseTitle}</span>
+              </div>
+              <div className="text-[10px] font-mono text-[#7fee64] bg-[#7fee64]/10 border border-[#7fee64]/30 px-2 py-0.5 rounded">
+                60 FPS
+              </div>
             </div>
+
+            {/* Canvas Viewport */}
+            <div className="relative w-full flex-1 bg-black overflow-hidden flex items-center justify-center">
+              <canvas
+                ref={canvasRef}
+                className="w-full h-full object-contain block"
+              />
+
+              {/* Preloader */}
+              {!isPreloaded && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/85 backdrop-blur-sm z-20">
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="text-xs font-sans text-[#8cab87] tracking-widest uppercase">
+                      CARGANDO SECUENCIA {phaseNumber}
+                    </div>
+                    <div className="w-48 h-1.5 rounded-full bg-[#212525] overflow-hidden">
+                      <div
+                        className="h-full bg-[#7fee64] transition-all duration-300 shadow-[0_0_10px_#7fee64]"
+                        style={{ width: `${Math.round((loadedCount / frameCount) * 100)}%` }}
+                      />
+                    </div>
+                    <span className="text-[10px] font-sans text-[#677d64]">
+                      {Math.round((loadedCount / frameCount) * 100)}%
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Progress Bar Line at Bottom of Monitor */}
+            <div className="w-full h-1 bg-[#181818] shrink-0">
+              <div
+                className="h-full bg-[#7fee64] transition-all duration-150 shadow-[0_0_8px_#7fee64]"
+                style={{ width: `${scrollPercent}%` }}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Scroll Cue */}
+        <div className="w-full max-w-6xl mx-auto flex items-center justify-center z-10 pb-1 shrink-0">
+          <div className="flex items-center gap-2 text-[11px] md:text-xs font-sans text-[#8cab87] bg-[#181818]/90 border border-[#485346]/70 px-4 py-1.5 rounded-full backdrop-blur-md shadow-md">
+            <span>
+              {scrollPercent >= 98
+                ? '✓ Secuencia completada — Desliza para ver la propuesta técnica'
+                : 'Desliza para avanzar la animación'}
+            </span>
+            <span className="text-[#7fee64] font-bold animate-bounce ml-0.5">↓</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Subcomponent: PhaseInfoBlock (Full-Screen Value Proposition) ─────────────
+interface PillarItem {
+  number: string;
+  title: string;
+  description: string;
+  metricLabel: string;
+  metricValue: string;
+}
+
+interface PhaseInfoBlockProps {
+  id: string;
+  badge: string;
+  title: React.ReactNode;
+  subtitle: string;
+  pillars: PillarItem[];
+  nextPrompt: string;
+}
+
+function PhaseInfoBlock({
+  id,
+  badge,
+  title,
+  subtitle,
+  pillars,
+  nextPrompt,
+}: PhaseInfoBlockProps) {
+  const { openWizard } = useWizard();
+
+  return (
+    <section
+      id={id}
+      className="relative min-h-screen w-full bg-[#080808] flex items-center justify-center py-24 px-6 md:px-12 lg:px-20 border-t border-b border-[#212525]/80 overflow-hidden"
+    >
+      {/* Background radial highlight */}
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] md:w-[1000px] h-[500px] pointer-events-none -z-0"
+        style={{
+          background: 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(127, 238, 100, 0.05), transparent 70%)',
+          filter: 'blur(60px)',
+        }}
+      />
+
+      <div className="relative z-10 max-w-6xl w-full mx-auto flex flex-col justify-center">
+        {/* Header Block */}
+        <div className="mb-14 max-w-3xl">
+          <ScrollReveal delay={100}>
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#485346]/70 bg-[#181818]/90 text-xs font-sans text-[#7fee64] font-medium uppercase tracking-wider mb-5 shadow-sm">
+              <span className="w-2 h-2 rounded-full bg-[#7fee64]" />
+              <span>{badge}</span>
+            </div>
+          </ScrollReveal>
+
+          <ScrollReveal delay={200}>
+            <h2
+              className="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-[#ddffdc] leading-[1.15] mb-5"
+              style={{ letterSpacing: '-0.02em' }}
+            >
+              {title}
+            </h2>
+          </ScrollReveal>
+
+          <ScrollReveal delay={300}>
+            <p className="text-[#8cab87] text-base md:text-lg leading-relaxed">
+              {subtitle}
+            </p>
+          </ScrollReveal>
+        </div>
+
+        {/* Pillars Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          {pillars.map((item, idx) => (
+            <ScrollReveal key={idx} delay={200 + idx * 100}>
+              <div className="h-full p-6 sm:p-7 rounded-2xl bg-[#141616]/80 border border-[#485346]/60 hover:border-[#7fee64]/60 transition-all duration-300 flex flex-col justify-between group shadow-lg">
+                <div>
+                  <div className="text-xs font-mono font-bold text-[#7fee64] mb-3 tracking-widest">
+                    {item.number}
+                  </div>
+                  <h3 className="text-lg md:text-xl font-medium text-[#ddffdc] mb-3 leading-snug group-hover:text-[#7fee64] transition-colors">
+                    {item.title}
+                  </h3>
+                  <p className="text-[#8cab87] text-sm leading-relaxed mb-6">
+                    {item.description}
+                  </p>
+                </div>
+
+                <div className="pt-4 border-t border-[#212525] flex items-center justify-between">
+                  <span className="text-[11px] font-sans uppercase tracking-wider text-[#677d64]">
+                    {item.metricLabel}
+                  </span>
+                  <span className="text-base font-mono font-bold text-[#7fee64]">
+                    {item.metricValue}
+                  </span>
+                </div>
+              </div>
+            </ScrollReveal>
           ))}
         </div>
 
-        {/* ── Main 2-column layout ── */}
-        <div className="w-full max-w-6xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-12">
+        {/* Bottom CTA Bar */}
+        <ScrollReveal delay={500}>
+          <div className="pt-6 border-t border-[#212525]/70 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <button
+              onClick={openWizard}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#7fee64] text-[#000000] rounded-full px-7 py-3 font-medium text-sm tracking-tight transition-all hover:shadow-[0_0_20px_rgba(127,238,100,0.3)] active:scale-95"
+            >
+              <span>Diseña tu muestra interactiva</span>
+              <span className="text-base font-bold">→</span>
+            </button>
 
-          {/* LEFT: Text column */}
-          <div className="w-full lg:w-5/12 relative min-h-[200px] md:min-h-[240px] flex items-start lg:items-center">
-            {CHAPTERS.map((ch) => {
-              const isActive = ch.id === activeChapter.id;
-              const isPast = targetFrame > ch.endFrame;
-              return (
-                <div
-                  key={ch.id}
-                  className={`transition-all duration-500 ease-out transform ${
-                    isActive
-                      ? 'opacity-100 translate-x-0 relative z-10 w-full'
-                      : isPast
-                      ? 'opacity-0 -translate-x-[60px] absolute inset-0 pointer-events-none z-0'
-                      : 'opacity-0 translate-x-[60px] absolute inset-0 pointer-events-none z-0'
-                  }`}
-                  style={{ transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)' }}
-                >
-                  <div className="text-xs font-sans font-medium text-[#7fee64] tracking-wider mb-2 uppercase">
-                    {ch.badge}
-                  </div>
-                  <h3
-                    className="text-[#ddffdc] text-2xl md:text-3xl lg:text-4xl font-medium mb-4 leading-tight"
-                    style={{ letterSpacing: '-0.015em' }}
-                  >
-                    {ch.title}
-                  </h3>
-                  <div className="space-y-2 text-[#8cab87] text-sm md:text-base leading-relaxed mb-5">
-                    <p>{ch.desc1}</p>
-                    <p>{ch.desc2}</p>
-                  </div>
-
-                  {/* Chapter-complete card */}
-                  <div
-                    className={`transition-all duration-700 ${
-                      chapterComplete && isActive
-                        ? 'opacity-100 translate-y-0'
-                        : 'opacity-0 translate-y-2 pointer-events-none'
-                    }`}
-                  >
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[#7fee64]/30 bg-[#7fee64]/5 text-[#7fee64] text-sm font-medium">
-                      <span className="text-base">✓</span>
-                      <span>{ch.card}</span>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* RIGHT: Canvas / monitor column */}
-          <div className="w-full lg:w-7/12 flex items-center justify-center relative">
-            {/* Ambient blur background for Phase 2 (vertical frames) */}
-            <div
-              className={`absolute inset-0 rounded-2xl bg-[#7fee64]/20 blur-3xl transition-opacity duration-700 pointer-events-none ${
-                activeChapter.id === 2 ? 'opacity-40 scale-105' : 'opacity-0'
-              }`}
-            />
-
-            <div className="relative w-full max-w-[760px] aspect-[16/10] rounded-lg overflow-hidden border border-[#485346] bg-[#181818] shadow-2xl flex flex-col z-10">
-
-              {/* Window chrome */}
-              <div className="flex items-center justify-between px-4 py-2 bg-[#181818] border-b border-[#485346] shrink-0">
-                <div className="flex items-center gap-2">
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#febc2e]" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#28c840]" />
-                </div>
-                <div className="text-[10px] md:text-xs font-sans text-[#677d64] flex items-center gap-2">
-                  <span className="font-medium text-[#8cab87]">CLICKSHOP ENGINE</span>
-                  <span className="hidden sm:inline text-[#485346]">|</span>
-                  <span className="hidden sm:inline text-[#677d64]">
-                    {activeChapter.label.toUpperCase()} · FRAME {String(displayedFrame - activeChapter.startFrame + 1).padStart(2, '0')} / {String(activeChapter.endFrame - activeChapter.startFrame + 1).padStart(2, '0')}
-                  </span>
-                </div>
-                <div className="w-8" />
-              </div>
-
-              {/* Canvas */}
-              <div className="relative w-full flex-1 bg-black overflow-hidden">
-                <canvas
-                  ref={canvasRef}
-                  className="w-full h-full block"
-                />
-                {!isPreloaded && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/60">
-                    <div className="flex flex-col items-center gap-3">
-                      <div className="w-40 h-1 rounded-full bg-[#485346] overflow-hidden">
-                        <div
-                          className="h-full bg-[#7fee64] transition-all duration-300"
-                          style={{ width: `${Math.round((loadedCount / TOTAL_FRAMES) * 100)}%` }}
-                        />
-                      </div>
-                      <span className="text-[10px] font-sans text-[#677d64]">
-                        Cargando {Math.round((loadedCount / TOTAL_FRAMES) * 100)}%
-                      </span>
-                    </div>
-                  </div>
-                )}
-              </div>
+            <div className="flex items-center gap-2 text-xs font-sans text-[#677d64]">
+              <span>{nextPrompt}</span>
+              <span className="text-[#7fee64] animate-bounce">↓</span>
             </div>
           </div>
-
-        </div>
+        </ScrollReveal>
       </div>
     </section>
+  );
+}
+
+// ─── Main Component: Alternating Full-Screen Scrollytelling Architecture ─────
+export default function ScrollytellingHero() {
+  return (
+    <div id="process" className="w-full flex flex-col bg-[#000000]">
+      {/* ── BLOQUE 1: Canvas Animación Fase 1 (Código & Arquitectura) ── */}
+      <PhaseCanvasBlock
+        id="fase1-canvas"
+        phaseNumber="01"
+        phaseTitle="Arquitectura Técnica"
+        phaseSubtitle="Compilación limpia en Next.js & TypeScript"
+        frameCount={FASE1_FRAMES}
+        getFrameSrc={getFase1Src}
+      />
+
+      {/* ── BLOQUE 2: Pantalla Info Fase 1 (Propuesta de Valor Código) ── */}
+      <PhaseInfoBlock
+        id="fase1-info"
+        badge="Fase 01 // Fundamentos de Ingeniería"
+        title={
+          <>
+            Bases sólidas. Código limpio.{' '}
+            <span className="text-[#7fee64]">Cero redundancia.</span>
+          </>
+        }
+        subtitle="La mayoría de agencias usan constructores visuales lentos como WordPress o plantillas pesadas con decenas de plugins. En Clickshop codificamos a medida sobre Next.js 16 y TypeScript para garantizar tiempos de respuesta instantáneos y posicionamiento orgánico imbatible."
+        pillars={[
+          {
+            number: '01.1',
+            title: 'Next.js App Router & SSR',
+            description: 'Renderizado híbrido ultraveloz desde servidores Edge. Tu contenido se indexa de inmediato en Google y carga antes del primer parpadeo.',
+            metricLabel: 'Tiempo a Interactivo',
+            metricValue: '<0.6s',
+          },
+          {
+            number: '01.2',
+            title: 'TypeScript Estricto 100%',
+            description: 'Código fuertemente tipado que previene fallos inesperados en producción. Estructura modular lista para crecer sin acumular deuda técnica.',
+            metricLabel: 'Fiabilidad Técnica',
+            metricValue: '100%',
+          },
+          {
+            number: '01.3',
+            title: 'Lighthouse Score 100/100',
+            description: 'Optimización milimétrica de Core Web Vitals (LCP, INP, CLS). Cumplimiento riguroso de los estándares que Google premia con mayor visibilidad.',
+            metricLabel: 'Google Score',
+            metricValue: '100/100',
+          },
+        ]}
+        nextPrompt="Desliza para ver la Fase 2: Experiencia Visual UX/UI"
+      />
+
+      {/* ── BLOQUE 3: Canvas Animación Fase 2 (UX/UI & Navegación) ── */}
+      <PhaseCanvasBlock
+        id="fase2-canvas"
+        phaseNumber="02"
+        phaseTitle="Posicionamiento UX/UI"
+        phaseSubtitle="Arquitectura de navegación y diseño responsivo"
+        frameCount={FASE2_FRAMES}
+        getFrameSrc={getFase2Src}
+      />
+
+      {/* ── BLOQUE 4: Pantalla Info Fase 2 (Propuesta de Valor UX/UI) ── */}
+      <PhaseInfoBlock
+        id="fase2-info"
+        badge="Fase 02 // Experiencia Visual & Retención"
+        title={
+          <>
+            Diseño que cautiva en 3 segundos.{' '}
+            <span className="text-[#7fee64]">Construido para convencer.</span>
+          </>
+        }
+        subtitle="Un cliente decide si confiar en tu negocio en los primeros 3 segundos de visita. Diseñamos experiencias visuales sofisticadas con jerarquía calculada, micro-interacciones a 60 FPS y flujos claros que guían al usuario sin fricciones hacia el contacto."
+        pillars={[
+          {
+            number: '02.1',
+            title: 'Jerarquía Visual de Alta Retención',
+            description: 'Flujos de lectura estudiados para captar y retener la atención, resaltando tu propuesta de valor antes de que el visitante abandone la pestaña.',
+            metricLabel: 'Retención en Hero',
+            metricValue: '+80%',
+          },
+          {
+            number: '02.2',
+            title: 'Diseño Mobile-First Adaptativo',
+            description: 'Más del 70% de tus clientes llegarán desde su teléfono móvil. Adaptamos cada interacción táctil para que navegar sea tan ágil como una aplicación nativa.',
+            metricLabel: 'Adaptación Mobile',
+            metricValue: '100%',
+          },
+          {
+            number: '02.3',
+            title: 'Micro-interacciones a 60 FPS',
+            description: 'Transiciones suaves y respuestas hápticas visuales que transmiten prestigio tecnológico y solidez corporativa sin distraer del objetivo.',
+            metricLabel: 'Tasa de Refresco',
+            metricValue: '60 FPS',
+          },
+        ]}
+        nextPrompt="Desliza para ver la Fase 3: Conversión & Ventas"
+      />
+
+      {/* ── BLOQUE 5: Canvas Animación Fase 3 (Conversión & Ventas) ── */}
+      <PhaseCanvasBlock
+        id="fase3-canvas"
+        phaseNumber="03"
+        phaseTitle="Alta Conversión en Vivo"
+        phaseSubtitle="Optimización final para captación y ventas automáticas"
+        frameCount={FASE3_FRAMES}
+        getFrameSrc={getFase3Src}
+      />
+
+      {/* ── BLOQUE 6: Pantalla Info Fase 3 (Propuesta de Valor Conversión) ── */}
+      <PhaseInfoBlock
+        id="fase3-info"
+        badge="Fase 03 // Conversión & Ventas 24/7"
+        title={
+          <>
+            Tu plataforma digital.{' '}
+            <span className="text-[#7fee64]">Tu mejor activo comercial 24/7.</span>
+          </>
+        }
+        subtitle="Una página web sin ventas es solo un gasto estético. Integramos terminales interactivas paso a paso, cotizadores guiados y canales directos a WhatsApp para transformar cada visita anónima en una oportunidad de negocio calificada."
+        pillars={[
+          {
+            number: '03.1',
+            title: 'Captación Progresiva sin Fricción',
+            description: 'Formularios interactivos en etapas que reducen la fatiga del usuario y triplican la tasa de respuesta frente a los formularios estáticos comunes.',
+            metricLabel: 'Tasa de Contacto',
+            metricValue: '3x Más Leads',
+          },
+          {
+            number: '03.2',
+            title: 'Cierre Inmediato por WhatsApp',
+            description: 'Enrutamiento inteligente con mensajes precargados para entablar conversación en tiempo real cuando el interés del cliente está en su punto máximo.',
+            metricLabel: 'Velocidad de Respuesta',
+            metricValue: '<1 min',
+          },
+          {
+            number: '03.3',
+            title: 'Infraestructura Cloud 99.9% Uptime',
+            description: 'Despliegue distribuido en redes globales Edge. Tu plataforma soporta campañas publicitarias de alto tráfico sin ralentizarse ni caerse jamás.',
+            metricLabel: 'Disponibilidad Cloud',
+            metricValue: '99.9%',
+          },
+        ]}
+        nextPrompt="Explora nuestros pilares y herramientas a continuación"
+      />
+    </div>
   );
 }

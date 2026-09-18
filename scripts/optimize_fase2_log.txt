@@ -1,0 +1,9 @@
+Optimizacion Fase 2 — 2026-09-18 18:02:26
+Fotogramas procesados : 100 / 100
+Peso entrada          : 125.31 MB
+Peso salida           : 5.04 MB
+Reduccion             : -120.28 MB (-96.0%)
+Tiempo                : 17.8s
+Calidad WebP          : 82%
+Errores reales        : 0  (los 100 "errores" previos eran solo charmap de consola Windows, no fallos de conversion)
+Verificacion          : 100 archivos .webp confirmados en public/frames/fase2/
