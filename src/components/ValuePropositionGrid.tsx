@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React from 'react';
 import { useWizard } from './WizardContext';
@@ -57,10 +57,10 @@ export default function ValuePropositionGrid() {
   const { openWizard } = useWizard();
 
   return (
-    <section id="services" className="w-full max-w-full overflow-hidden bg-[#000000] py-20 px-4 sm:px-6 md:px-12 lg:px-20">
-      <div className="max-w-[1360px] w-full mx-auto">
+    <section id="services" className="w-full bg-[#000000] py-20 px-6 md:px-12 lg:px-20">
+      <div className="max-w-[1360px] mx-auto">
         <ScrollReveal delay={0}>
-          <h2 className="text-[#ddffdc] text-[28px] sm:text-[32px] md:text-[42px] tracking-[-0.336px] mb-12 font-medium break-words">
+          <h2 className="text-[#ddffdc] text-[32px] md:text-[42px] tracking-[-0.336px] mb-12 font-medium">
             Soluciones diseñadas para <span className="text-[#7fee64]">cada etapa de tu negocio</span>
           </h2>
         </ScrollReveal>
@@ -69,7 +69,7 @@ export default function ValuePropositionGrid() {
           {cards.map((card, idx) => (
             <ScrollReveal key={idx} delay={idx * 150} className="h-full">
               <div 
-                className="bg-[#181818] rounded-lg border border-[#485346] p-6 sm:p-[32px] transition-all duration-300 hover:border-[#677d64] hover:shadow-[0_0_30px_rgba(127,238,100,0.06)] flex flex-col justify-between h-full max-w-full overflow-hidden"
+                className="bg-[#181818] rounded-lg border border-[#485346] p-[32px] transition-all duration-300 hover:border-[#677d64] hover:shadow-[0_0_30px_rgba(127,238,100,0.06)] flex flex-col justify-between h-full"
               >
                 <div>
                   <div className="flex items-center justify-between mb-6">

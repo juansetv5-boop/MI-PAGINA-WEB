@@ -197,12 +197,12 @@ function PhaseCanvasBlock({
   }, [drawFrame]);
 
   return (
-    <div id={id} ref={containerRef} className="relative h-[250vh] w-full max-w-full overflow-hidden bg-[#000000]">
+    <div id={id} ref={containerRef} className="relative h-[250vh] w-full bg-[#000000]">
       {/* Sticky Pinning Container: 100dvh edge-to-edge pure cinematic screen */}
-      <div className="sticky top-0 left-0 w-full max-w-full h-screen h-[100dvh] overflow-hidden bg-[#000000] select-none">
+      <div className="sticky top-0 left-0 w-full h-screen h-[100dvh] overflow-hidden bg-[#000000] select-none">
         <canvas
           ref={canvasRef}
-          className="absolute inset-0 w-full h-full max-w-full block"
+          className="absolute inset-0 w-full h-full block"
         />
 
         {/* Minimal preloader bar if not preloaded yet */}
@@ -257,11 +257,11 @@ function PhaseInfoBlock({
   return (
     <section
       id={id}
-      className="relative min-h-screen w-full max-w-full bg-[#080808] flex items-center justify-center py-24 px-4 sm:px-6 md:px-12 lg:px-20 border-t border-b border-[#212525]/80 overflow-hidden"
+      className="relative min-h-screen w-full bg-[#080808] flex items-center justify-center py-24 px-6 md:px-12 lg:px-20 border-t border-b border-[#212525]/80 overflow-hidden"
     >
       {/* Background radial highlight */}
       <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] md:w-[1000px] h-[500px] pointer-events-none -z-0 max-w-full"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] md:w-[1000px] h-[500px] pointer-events-none -z-0"
         style={{
           background: 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(127, 238, 100, 0.05), transparent 70%)',
           filter: 'blur(60px)',
@@ -280,7 +280,7 @@ function PhaseInfoBlock({
 
           <ScrollReveal delay={200}>
             <h2
-              className="text-2xl sm:text-4xl md:text-5xl font-medium tracking-tight text-[#ddffdc] leading-[1.15] mb-5 break-words"
+              className="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-[#ddffdc] leading-[1.15] mb-5"
               style={{ letterSpacing: '-0.02em' }}
             >
               {title}
@@ -288,7 +288,7 @@ function PhaseInfoBlock({
           </ScrollReveal>
 
           <ScrollReveal delay={300}>
-            <p className="text-[#8cab87] text-sm sm:text-base md:text-lg leading-relaxed break-words">
+            <p className="text-[#8cab87] text-base md:text-lg leading-relaxed">
               {subtitle}
             </p>
           </ScrollReveal>
@@ -349,7 +349,7 @@ function PhaseInfoBlock({
 // ─── Main Component: Alternating Full-Screen Scrollytelling Architecture ─────
 export default function ScrollytellingHero() {
   return (
-    <div id="process" className="w-full max-w-full overflow-hidden flex flex-col bg-[#000000]">
+    <div id="process" className="w-full flex flex-col bg-[#000000]">
       {/* ── BLOQUE 1: Canvas Animación Fase 1 (Código & Arquitectura) ── */}
       <PhaseCanvasBlock
         id="fase1-canvas"
