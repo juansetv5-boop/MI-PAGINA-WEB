@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React from 'react';
 import { useWizard } from './WizardContext';
@@ -83,7 +83,7 @@ export default function TrustToolSection() {
             </div>
             <button
               onClick={openWizard}
-              className="whitespace-nowrap bg-[#7fee64] text-[#000000] rounded-full px-6 py-3 font-medium text-sm transition-all hover:opacity-95 hover:shadow-[0_0_20px_rgba(127,238,100,0.3)] active:scale-[0.98]"
+              className="w-full sm:w-auto min-h-[48px] whitespace-nowrap bg-[#7fee64] text-[#000000] rounded-full px-6 py-3 font-medium text-sm transition-all hover:opacity-95 hover:shadow-[0_0_20px_rgba(127,238,100,0.3)] active:scale-[0.98] flex items-center justify-center"
             >
               Solicitar Muestra Personalizada
             </button>

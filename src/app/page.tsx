@@ -7,6 +7,7 @@ import PortfolioShowcase from "@/components/PortfolioShowcase";
 import TerminalContactFooter from "@/components/TerminalContactFooter";
 import ConversionWizardModal from "@/components/ConversionWizardModal";
 import FloatingWhatsAppButton from "@/components/FloatingWhatsAppButton";
+import MobileBottomNav from "@/components/MobileBottomNav";
 import { WizardProvider } from "@/components/WizardContext";
 
 export default function Home() {
@@ -24,6 +25,7 @@ export default function Home() {
         <TerminalContactFooter />
         <ConversionWizardModal />
         <FloatingWhatsAppButton />
+        <MobileBottomNav />
       </div>
     </WizardProvider>
   );

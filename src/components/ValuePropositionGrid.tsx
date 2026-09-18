@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React from 'react';
 import { useWizard } from './WizardContext';
@@ -93,7 +93,7 @@ export default function ValuePropositionGrid() {
                 <div className="mt-8 pt-4 border-t border-[#485346]/40 flex items-center justify-between">
                   <button
                     onClick={openWizard}
-                    className="text-[14px] font-medium text-[#ddffdc] hover:text-[#7fee64] transition-colors flex items-center gap-1.5"
+                    className="text-[14px] font-medium text-[#ddffdc] hover:text-[#7fee64] active:text-[#7fee64] transition-colors flex items-center gap-1.5 min-h-[44px] py-2"
                   >
                     <span>Solicitar propuesta</span>
                     <span>→</span>

@@ -9,7 +9,7 @@ export default function FloatingWhatsAppButton() {
   return (
     <button
       onClick={openWizard}
-      className="fixed bottom-6 right-6 z-40 bg-[#7fee64] text-[#000000] p-3.5 rounded-full shadow-[0_0_25px_rgba(127,238,100,0.4)] transition-all duration-300 hover:scale-105 active:scale-95 flex items-center justify-center group"
+      className="fixed bottom-20 md:bottom-6 right-5 md:right-6 z-40 bg-[#7fee64] text-[#000000] p-3.5 min-w-[48px] min-h-[48px] rounded-full shadow-[0_0_25px_rgba(127,238,100,0.4)] transition-all duration-300 hover:scale-105 active:scale-95 flex items-center justify-center group"
       title="Diseñar Muestra / Enviar mensaje por WhatsApp"
       aria-label="Abrir asistente de muestra personalizada"
     >

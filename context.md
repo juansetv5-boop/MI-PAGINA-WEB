@@ -21,6 +21,30 @@
 ## 2. Architecture Notes
 - Distribución visual fija de 2 columnas (Texto a la izquierda | Canvas a la derecha) para una lectura fluida, natural e ininterrumpida durante el scroll.
 
+## 18/09/2026 - Refactorización Integral de Arquitectura Dual (Mobile vs Desktop)
+- **Estrategia Dual de Componentes**:
+  - **Navegación & Ergonomía del Pulgar**:
+    - Creado componente `MobileBottomNav.tsx` accesible con el pulgar para pantallas móviles (`block md:hidden`), con accesos directos a Proyectos, Servicios, Proceso, Contacto y botón central "Cotizar" destacado en `#7fee64`.
+    - Ajustado `FloatingWhatsAppButton.tsx` para situarse de forma ergonómica sobre la barra de navegación inferior móvil (`bottom-20 md:bottom-6`).
+    - Modificado `StickyHeader.tsx` para desktop con enlaces expandidos y drawer móvil con enlaces y botones táctiles de mínimo 44px de altura.
+  - **Portafolio y Casos de Estudio (`PortfolioShowcase.tsx`)**:
+    - En móvil (`block md:hidden`): Tarjetas táctiles limpias de borde a borde para RLP Compliance, Dactilología AI y UI/UX Lab, eliminando barras de navegador simuladas innecesarias y proporcionando botones CTA con mínimo 48px de alto para accionar con el pulgar.
+    - En escritorio (`hidden md:block`): Mockups detallados de ventana de navegador simulada con controles tipo Mac, indicador `● EN VIVO` animado, estado `HTTP/3 FAST CACHE` y microinteracciones de cursor (`hover:scale-[1.03]` y overlay emergente).
+    - SegmentedControl con swipe táctil e inercia nativa (`overflow-x-auto snap-x snap-mandatory pb-2`) y botones táctiles `min-h-[44px]`.
+  - **Scrollytelling & Hero (`ScrollytellingHero.tsx`, `HeroSection.tsx`)**:
+    - En móvil: Canvas y visualización edge-to-edge sin etiquetas de depuración ni barras decorativas.
+    - En escritorio: HUD técnico superpuesto con indicadores de `RENDER ENGINE: 60 FPS CANVAS` y aceleración por hardware.
+    - Botones de acción y CTA con altura mínima de 48px en Hero y fases del recorrido.
+  - **Consola y Formulario de Contacto (`TerminalContactFooter.tsx`)**:
+    - En móvil (`flex md:hidden`): Encabezado limpio en tarjeta con contador de pasos `Paso X de 4`, inputs con tamaño de fuente base `text-base` (16px) que evitan el auto-zoom indeseado en iOS Safari, botones de opción táctiles de 50px de altura y botón de envío a ancho completo.
+    - En escritorio (`hidden md:flex`): Encabezado estilo terminal Unix `clickshop@terminal:~ $ contact.sh` con botones de ventana tipo Mac y reinicio de consola.
+  - **Modal de Conversión (`ConversionWizardModal.tsx`)**:
+    - Opciones táctiles con altura mínima de 48px, botones de navegación responsivos a ancho completo en mobile.
+  - **Servicios y Garantía (`ValuePropositionGrid.tsx`, `TrustToolSection.tsx`)**:
+    - Botones y enlaces con targets táctiles de mínimo 44-48px.
+- **Validación de Rendimiento y Build**:
+  - `npm run build` ejecutado exitosamente con 0 errores y 0 advertencias.
+
 ## 18/09/2026 - Previsualización Interactiva RLP Compliance en Mockup de Portafolio
 - Capturada imagen de alta resolución (1440x900) del sitio real en producción `https://rlpcompliance.com`.
 - Optimizada y guardada como `/public/assets/portfolio/rlpcompliance-preview.webp` (WebP 85%, ~58 KB) para máxima velocidad de carga y 0 CLS.

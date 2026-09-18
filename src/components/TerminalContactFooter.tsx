@@ -111,11 +111,11 @@ export default function TerminalContactFooter() {
           </div>
         </ScrollReveal>
 
-        {/* Window Frame */}
+        {/* Window Frame: Terminal Style on Desktop, Clean Card on Mobile */}
         <ScrollReveal delay={150}>
-          <div className="bg-[#181818] rounded-lg border border-[#485346] overflow-hidden shadow-2xl">
-            {/* Header Bar */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-[#485346] bg-[#181818]">
+          <div className="bg-[#181818] rounded-2xl md:rounded-lg border border-[#485346] overflow-hidden shadow-2xl">
+            {/* Desktop Header Bar (hidden md:flex) */}
+            <div className="hidden md:flex items-center justify-between px-4 py-3 border-b border-[#485346] bg-[#181818]">
               <div className="flex items-center space-x-2">
                 <div className="w-3 h-3 rounded-full bg-[#ff5f56]" />
                 <div className="w-3 h-3 rounded-full bg-[#febc2e]" />
@@ -133,8 +133,24 @@ export default function TerminalContactFooter() {
               </button>
             </div>
 
+            {/* Mobile Header Bar (flex md:hidden) */}
+            <div className="flex md:hidden items-center justify-between px-5 py-3.5 border-b border-[#485346]/60 bg-[#141616]">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#7fee64]" />
+                <span className="font-sans font-bold text-xs text-[#ddffdc] tracking-wider uppercase">
+                  Paso {step} de 4
+                </span>
+              </div>
+              <button
+                onClick={handleReset}
+                className="text-xs font-sans text-[#8cab87] hover:text-[#7fee64] p-1 min-h-[36px] flex items-center"
+              >
+                Reiniciar
+              </button>
+            </div>
+
             {/* Form Content Area */}
-            <div className="p-6 font-mono text-sm md:text-base min-h-[320px] flex flex-col justify-between">
+            <div className="p-5 sm:p-6 md:p-8 font-mono text-sm md:text-base min-h-[320px] flex flex-col justify-between">
               {toast === 'success' ? (
                 /* Success Terminal Screen */
                 <div className="space-y-5 my-auto">
@@ -196,18 +212,18 @@ export default function TerminalContactFooter() {
                     {/* Step 1: Nombre Completo */}
                     {step === 1 && (
                       <div className="space-y-2">
-                        <label className="block text-[#aed2a4] text-xs md:text-sm">
+                        <label className="block text-[#aed2a4] text-xs md:text-sm font-sans">
                           system: Por favor ingresa tu nombre completo:
                         </label>
-                        <div className="flex items-center bg-[#212525] border border-[#485346] rounded-md px-3.5 py-2.5 focus-within:border-[#7fee64] transition-colors">
-                          <span className="text-[#7fee64] mr-2">&gt;</span>
+                        <div className="flex items-center bg-[#212525] border border-[#485346] rounded-lg px-3.5 min-h-[50px] focus-within:border-[#7fee64] transition-colors">
+                          <span className="text-[#7fee64] mr-2 font-mono">&gt;</span>
                           <input
                             type="text"
                             required
                             value={formData.userName}
                             onChange={(e) => setFormData({ ...formData, userName: e.target.value })}
                             placeholder="Ej: Carlos Mendoza"
-                            className="bg-transparent border-none outline-none text-[#7fee64] placeholder-[#677d64] flex-1 text-sm font-mono focus:ring-0"
+                            className="bg-transparent border-none outline-none text-[#7fee64] placeholder-[#677d64] flex-1 text-base font-mono focus:ring-0 w-full"
                           />
                         </div>
                       </div>
@@ -216,18 +232,18 @@ export default function TerminalContactFooter() {
                     {/* Step 2: Email de contacto */}
                     {step === 2 && (
                       <div className="space-y-2">
-                        <label className="block text-[#aed2a4] text-xs md:text-sm">
+                        <label className="block text-[#aed2a4] text-xs md:text-sm font-sans">
                           system: Ingresa tu email de contacto:
                         </label>
-                        <div className="flex items-center bg-[#212525] border border-[#485346] rounded-md px-3.5 py-2.5 focus-within:border-[#7fee64] transition-colors">
-                          <span className="text-[#7fee64] mr-2">&gt;</span>
+                        <div className="flex items-center bg-[#212525] border border-[#485346] rounded-lg px-3.5 min-h-[50px] focus-within:border-[#7fee64] transition-colors">
+                          <span className="text-[#7fee64] mr-2 font-mono">&gt;</span>
                           <input
                             type="email"
                             required
                             value={formData.userEmail}
                             onChange={(e) => setFormData({ ...formData, userEmail: e.target.value })}
                             placeholder="Ej: carlos@miempresa.com"
-                            className="bg-transparent border-none outline-none text-[#7fee64] placeholder-[#677d64] flex-1 text-sm font-mono focus:ring-0"
+                            className="bg-transparent border-none outline-none text-[#7fee64] placeholder-[#677d64] flex-1 text-base font-mono focus:ring-0 w-full"
                           />
                         </div>
                       </div>
@@ -236,10 +252,10 @@ export default function TerminalContactFooter() {
                     {/* Step 3: Tipo de servicio u opción (incluye Asesoría 1 a 1) */}
                     {step === 3 && (
                       <div className="space-y-3">
-                        <label className="block text-[#aed2a4] text-xs md:text-sm">
+                        <label className="block text-[#aed2a4] text-xs md:text-sm font-sans">
                           system: Selecciona el servicio o tipo de proyecto:
                         </label>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           {serviceOptions.map((opt) => (
                             <button
                               key={opt.val}
@@ -247,10 +263,10 @@ export default function TerminalContactFooter() {
                               onClick={() => {
                                 setFormData({ ...formData, serviceType: opt.val });
                               }}
-                              className={`px-4 py-3 rounded-md text-xs md:text-sm font-mono text-left transition-all flex items-center justify-between ${
+                              className={`min-h-[50px] px-4 py-3 rounded-lg text-xs md:text-sm font-mono text-left transition-all flex items-center justify-between active:scale-[0.98] ${
                                 formData.serviceType === opt.val
                                   ? 'bg-[#7fee64] text-[#000000] font-bold shadow-[0_0_12px_rgba(127,238,100,0.3)]'
-                                  : 'bg-[#212525] text-[#8cab87] border border-[#485346] hover:border-[#7fee64] hover:text-[#ddffdc]'
+                                  : 'bg-[#212525] text-[#8cab87] border border-[#485346] hover:border-[#7fee64] hover:text-[#ddffdc] active:bg-[#282c2c]'
                               }`}
                             >
                               <span>{opt.label}</span>
@@ -264,34 +280,36 @@ export default function TerminalContactFooter() {
                     {/* Step 4: Mensaje / Detalle */}
                     {step === 4 && (
                       <div className="space-y-2">
-                        <label className="block text-[#aed2a4] text-xs md:text-sm">
+                        <label className="block text-[#aed2a4] text-xs md:text-sm font-sans">
                           system: ¿A qué se dedica tu negocio o qué necesitas? (Mensaje / Detalle):
                         </label>
-                        <div className="flex items-start bg-[#212525] border border-[#485346] rounded-md px-3.5 py-2.5 focus-within:border-[#7fee64] transition-colors">
-                          <span className="text-[#7fee64] mr-2 mt-1">&gt;</span>
+                        <div className="flex items-start bg-[#212525] border border-[#485346] rounded-lg px-3.5 py-3 focus-within:border-[#7fee64] transition-colors">
+                          <span className="text-[#7fee64] mr-2 mt-0.5 font-mono">&gt;</span>
                           <textarea
                             required
-                            rows={3}
+                            rows={4}
                             value={formData.message}
                             onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                             placeholder="Ej: Necesitamos una página web para nuestra empresa de consultoría financiera..."
-                            className="bg-transparent border-none outline-none text-[#7fee64] placeholder-[#677d64] flex-1 text-sm font-mono focus:ring-0 resize-none"
+                            className="bg-transparent border-none outline-none text-[#7fee64] placeholder-[#677d64] flex-1 text-base font-mono focus:ring-0 resize-none w-full"
                           />
                         </div>
                       </div>
                     )}
 
                     {/* Step Controls */}
-                    <div className="flex justify-between items-center pt-4">
-                      <div className="flex items-center gap-2">
-                        {step > 1 && (
+                    <div className="flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-3 pt-4">
+                      <div className="flex items-center justify-between sm:justify-start gap-3">
+                        {step > 1 ? (
                           <button
                             type="button"
                             onClick={() => setStep((prev) => prev - 1)}
-                            className="text-xs font-mono text-[#8cab87] hover:text-[#7fee64] transition-colors"
+                            className="min-h-[44px] px-3 text-xs font-mono text-[#8cab87] hover:text-[#7fee64] transition-colors flex items-center"
                           >
                             ← Anterior
                           </button>
+                        ) : (
+                          <div className="min-h-[44px]" />
                         )}
                         <span className="text-xs text-[#677d64] font-mono">
                           Paso {step} de 4
@@ -301,12 +319,12 @@ export default function TerminalContactFooter() {
                       <button
                         type="submit"
                         disabled={isLoading}
-                        className="bg-[#7fee64] text-[#000000] px-6 py-2.5 rounded-md font-sans text-xs md:text-sm font-bold uppercase tracking-wider transition-all hover:opacity-95 hover:shadow-[0_0_20px_rgba(127,238,100,0.3)] disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
+                        className="w-full sm:w-auto min-h-[48px] bg-[#7fee64] text-[#000000] px-7 py-3 rounded-lg font-sans text-xs md:text-sm font-bold uppercase tracking-wider transition-all hover:opacity-95 hover:shadow-[0_0_20px_rgba(127,238,100,0.3)] active:scale-98 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                       >
                         {isLoading ? (
                           <>
                             <svg
-                              className="animate-spin h-3.5 w-3.5 text-[#000000]"
+                              className="animate-spin h-4 w-4 text-[#000000]"
                               xmlns="http://www.w3.org/2000/svg"
                               fill="none"
                               viewBox="0 0 24 24"

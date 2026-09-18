@@ -221,6 +221,17 @@ function PhaseCanvasBlock({
             </div>
           </div>
         )}
+
+        {/* Desktop Cinematic HUD overlay (hidden md:flex) - No clutter on mobile */}
+        <div className="hidden md:flex absolute top-6 left-8 right-8 justify-between items-center pointer-events-none z-10">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#181818]/70 backdrop-blur-md border border-[#485346]/60 text-[11px] font-mono text-[#8cab87]">
+            <span className="w-2 h-2 rounded-full bg-[#7fee64] animate-pulse" />
+            <span>RENDER ENGINE: 60 FPS CANVAS</span>
+          </div>
+          <div className="px-3 py-1.5 rounded-full bg-[#181818]/70 backdrop-blur-md border border-[#485346]/60 text-[11px] font-mono text-[#677d64]">
+            HARDWARE ACCELERATED &bull; SCROLL SYNC
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -329,7 +340,7 @@ function PhaseInfoBlock({
           <div className="pt-6 border-t border-[#212525]/70 flex flex-col sm:flex-row items-center justify-between gap-4">
             <button
               onClick={openWizard}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#7fee64] text-[#000000] rounded-full px-7 py-3 font-medium text-sm tracking-tight transition-all hover:shadow-[0_0_20px_rgba(127,238,100,0.3)] active:scale-95"
+              className="w-full sm:w-auto min-h-[48px] inline-flex items-center justify-center gap-2 bg-[#7fee64] text-[#000000] rounded-full px-7 py-3 font-medium text-sm tracking-tight transition-all hover:shadow-[0_0_20px_rgba(127,238,100,0.3)] active:scale-95"
             >
               <span>Diseña tu muestra interactiva</span>
               <span className="text-base font-bold">→</span>

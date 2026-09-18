@@ -136,13 +136,14 @@ export default function ConversionWizardModal() {
                       key={opt}
                       type="button"
                       onClick={() => setFormData({ ...formData, siteType: opt })}
-                      className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium border transition-all ${
+                      className={`w-full text-left px-4 py-3.5 min-h-[48px] rounded-lg text-sm font-medium border transition-all flex items-center justify-between ${
                         formData.siteType === opt
                           ? 'bg-[#7fee64] text-[#000000] border-[#7fee64] font-semibold shadow-[0_0_15px_rgba(127,238,100,0.25)]'
-                          : 'bg-[#212525] text-[#8cab87] border-[#485346] hover:border-[#677d64] hover:text-[#ddffdc]'
+                          : 'bg-[#212525] text-[#8cab87] border-[#485346] hover:border-[#677d64] hover:text-[#ddffdc] active:bg-[#282c2c]'
                       }`}
                     >
-                      {opt}
+                      <span>{opt}</span>
+                      {formData.siteType === opt && <span className="font-bold">✓</span>}
                     </button>
                   ))}
                 </div>
@@ -150,22 +151,22 @@ export default function ConversionWizardModal() {
             )}
 
             {/* Navigation Buttons */}
-            <div className="flex items-center justify-between pt-4 border-t border-[#485346]/40">
+            <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-4 border-t border-[#485346]/40">
               {step > 1 ? (
                 <button
                   type="button"
                   onClick={() => setStep((prev) => prev - 1)}
-                  className="text-xs font-medium text-[#8cab87] hover:text-[#ddffdc] transition-colors"
+                  className="min-h-[44px] px-3 text-xs font-medium text-[#8cab87] hover:text-[#ddffdc] transition-colors flex items-center justify-center sm:justify-start"
                 >
                   ← Paso anterior
                 </button>
               ) : (
-                <div />
+                <div className="hidden sm:block" />
               )}
 
               <button
                 type="submit"
-                className="bg-[#7fee64] text-[#000000] px-6 py-3 rounded-full font-sans text-sm font-semibold transition-all hover:opacity-95 hover:shadow-[0_0_20px_rgba(127,238,100,0.3)] active:scale-[0.98] flex items-center gap-2"
+                className="w-full sm:w-auto min-h-[48px] bg-[#7fee64] text-[#000000] px-6 py-3 rounded-full font-sans text-sm font-semibold transition-all hover:opacity-95 hover:shadow-[0_0_20px_rgba(127,238,100,0.3)] active:scale-[0.98] flex items-center justify-center gap-2"
               >
                 <span>{step < 3 ? 'Siguiente Paso →' : 'Completar y enviar por WhatsApp 💬'}</span>
               </button>

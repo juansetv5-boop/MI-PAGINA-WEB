@@ -75,7 +75,7 @@ export default function StickyHeader() {
               <Link
                 key={item.label}
                 href={item.href}
-                className="text-[#ddffdc] text-[16px] font-medium tracking-[-0.026em]"
+                className="text-[#ddffdc] text-[16px] font-medium tracking-[-0.026em] min-h-[44px] flex items-center px-2 py-1 rounded hover:bg-[#181818]"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {item.label}
@@ -88,7 +88,7 @@ export default function StickyHeader() {
                 setIsMobileMenuOpen(false);
                 openWizard();
               }}
-              className="inline-block bg-[#7fee64] text-[#000000] rounded-full px-5 py-2.5 font-medium w-full text-center"
+              className="inline-flex items-center justify-center bg-[#7fee64] text-[#000000] rounded-full px-5 min-h-[44px] font-medium w-full text-center font-sans font-bold"
             >
               INICIAR PROYECTO
             </button>
