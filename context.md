@@ -21,6 +21,22 @@
 ## 2. Architecture Notes
 - Distribución visual fija de 2 columnas (Texto a la izquierda | Canvas a la derecha) para una lectura fluida, natural e ininterrumpida durante el scroll.
 
+## 18/09/2026 - Auditoría y Blindaje contra Desbordamiento Horizontal (Mobile-First 100% Responsivo)
+- **Blindaje Global**:
+  - Aplicadas propiedades `overflow-x: hidden; max-width: 100%;` en `<html>`, `<body>` y contenedor raíz de `layout.tsx` y `page.tsx`.
+  - Configurado `overflow-wrap: anywhere;` en `body` dentro de `globals.css` para evitar que cadenas de texto continuas o enlaces empujen el viewport.
+  - Verificado el uso de `w-full` en lugar de `w-screen` / `100vw` en todos los contenedores estructurales para eliminar el exceso producido por el cálculo del scrollbar del navegador.
+- **Componentes Críticos Protegidos**:
+  - `ScrollytellingHero.tsx`: canvas y envoltorios con `max-w-full overflow-hidden`, contenedor edge-to-edge al 100% y padding móvil responsive `px-4 sm:px-6`.
+  - `PortfolioShowcase.tsx`: `SegmentedControl` asegurado con `max-w-full overflow-hidden`, contenedor de layout blindado con `p-4 sm:p-6 md:p-10 max-w-full`, y títulos con `break-words`.
+  - `HeroSection.tsx`, `ValuePropositionGrid.tsx`, `TrustToolSection.tsx`, `TerminalContactFooter.tsx` y `StickyHeader.tsx`: paddings adaptados con `px-4 sm:px-6 md:px-12` y `break-words` en encabezados.
+  - Páginas legales (`/politica-de-privacidad`, `/terminos-y-condiciones`, `/aviso-legal`): contenedores `<main>` con `w-full max-w-full overflow-x-hidden`.
+- **Inspección con Script de Detección en Navegador Real (Selenium Headless Chrome)**:
+  - Ejecutado script de detección de elementos desbordantes (`offsetWidth > document.documentElement.offsetWidth`):
+    - Auditoría a **375px** (Mobile estándar iPhone): **0 elementos desbordados `[]`**.
+    - Auditoría a **320px** (Mobile estrecho iPhone SE): **0 elementos desbordados `[]`**.
+- `npm run build` ejecutado exitosamente con 0 errores y 0 advertencias.
+
 ## 18/09/2026 - Previsualización Interactiva RLP Compliance en Mockup de Portafolio
 - Capturada imagen de alta resolución (1440x900) del sitio real en producción `https://rlpcompliance.com`.
 - Optimizada y guardada como `/public/assets/portfolio/rlpcompliance-preview.webp` (WebP 85%, ~58 KB) para máxima velocidad de carga y 0 CLS.
@@ -185,5 +201,28 @@ pm run build ejecutado exitosamente.
 
 ### Optimizacion Mobile-First & Estabilidad
 - Uso de 100dvh para evitar saltos o desajustes de interfaz por la aparicion/desaparicion de la barra de navegacion en iOS Safari y Android Chrome.
-- Aceleracion por hardware con ctx.getContext('2d', { alpha: false }) y control estricto de desbordamiento horizontal (overflow-x-hidden).
+- Aceleracion por hardware con ctx.getContext('2d', { alpha: false }) y control estricto de desbordamiento horizontal.
 - Build de produccion verificado (cero errores, codigo 0).
+
+---
+## [2026-09-18] Corrección de Posicionamiento Sticky & Sincronización de Fotogramas (Scrollytelling)
+
+### Diagnóstico y Corrección de `position: sticky`
+- **Causa Raíz Identificada**: Los contenedores ancestros `#process` y el contenedor padre de cada bloque de fase (`containerRef`) tenían la clase `overflow-x-hidden`. Según la especificación CSS, un valor de `overflow-x` distinto de `visible` fuerza a que `overflow-y` se compute como scroll/clip, creando un nuevo contexto de desplazamiento que anula la propiedad nativa `position: sticky` respecto al viewport del navegador. Esto provocaba que el canvas no se anclara, desplazándose hacia arriba con el primer 100vh de scroll y dejando el resto del bloque en una pantalla negra vacía antes de alcanzar la tarjeta informativa.
+- **Solución Aplicada**:
+  * Se eliminó `overflow-x-hidden` tanto del contenedor principal `#process` como del contenedor padre de cada fase (`containerRef`).
+  * Se verificó que toda la jerarquía de ancestros (`html`, `body`, `#process`, `containerRef`) mantenga `overflow: visible` y cero `transform` activos que interfieran con el anclaje.
+  * El contenedor interno del canvas permanece sólidamente anclado en `sticky top-0 left-0 w-full h-screen h-[100dvh] overflow-hidden` durante todo el recorrido de la fase.
+
+### Sincronización de Avance de Fotogramas (Track `h-[250vh]`)
+- **Ampliación de recorrido a `h-[250vh]`**: Cada bloque de fase dispone de una pista de desplazamiento de 250vh, proporcionando 1.5 alturas de viewport de scroll fluido para reproducir la secuencia completa de fotogramas del 0% al 100%.
+- **Medición milimétrica del pinning**: `scrollable` se calcula dinámicamente restando la altura real del contenedor sticky (`rect.height - stickyHeight`), asegurando que el progreso `p = 0..1` sincronice exactamente con el anclaje físico de CSS.
+- **Fijación en el POV**: El Canvas permanece completamente fijo en la vista del usuario durante la animación.
+- **Desanclaje suave sin vacío**: Al alcanzar `p >= 1` (100% de fotogramas consumidos), se garantiza que el último fotograma (`frameCount`) quede firmemente dibujado en el Canvas. Solo al superar la altura total del contenedor padre, el Canvas se desancla con naturalidad ascendente para dar paso al bloque informativo adyacente (`PhaseInfoBlock`).
+- **Interpolación lerp optimizada (factor 0.25)**: Transición ágil y fluida entre fotogramas sin latencia ni tirones, con anclaje inmediato en los extremos (`p <= 0` en frame 1, `p >= 1` en frame final).
+
+### Estabilidad en Dispositivos Móviles (100dvh & Caché de Memoria)
+- **Compatibilidad con `100dvh`**: Resuelto el parpadeo y salto visual ante la expansión o contracción de la barra de direcciones en navegadores móviles (iOS Safari / Android Chrome).
+- **Persistencia de fotogramas en memoria**: Se mantiene el array de imágenes decodificadas una vez precargadas para evitar solicitudes de red redundantes, eliminando cualquier parpadeo a negro al navegar en retroceso por la página.
+- **Redibujo adaptativo en resize**: Re-renderizado instantáneo en eventos de cambio de dimensiones sin borrar el lienzo.
+- **Build verificado**: Compilación de producción exitosa con Next.js 16.3.4 y Turbopack (0 errores, código 0).

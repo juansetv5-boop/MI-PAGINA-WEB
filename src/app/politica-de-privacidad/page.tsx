@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import Link from 'next/link';
 
 export const metadata = {
@@ -8,7 +8,7 @@ export const metadata = {
 
 export default function PrivacyPolicyPage() {
   return (
-    <main className="min-h-screen bg-[#000000] pt-32 pb-24 px-6 md:px-12 lg:px-20 font-sans">
+    <main className="min-h-screen w-full max-w-full overflow-x-hidden bg-[#000000] pt-32 pb-24 px-6 md:px-12 lg:px-20 font-sans">
       <div className="max-w-3xl mx-auto">
         <Link href="/" className="text-[#697368] hover:text-[#7fee64] transition-colors text-sm mb-8 inline-block">
           &larr; Volver al inicio

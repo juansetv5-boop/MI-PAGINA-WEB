@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React from 'react';
 import { useWizard } from './WizardContext';
@@ -26,18 +26,18 @@ export default function TrustToolSection() {
   const { openWizard } = useWizard();
 
   return (
-    <section id="process" className="w-full bg-[#000000] py-24 px-6 md:px-12 lg:px-20 border-t border-[#1f2a33]">
-      <div className="max-w-[1360px] mx-auto">
+    <section id="process" className="w-full max-w-full overflow-hidden bg-[#000000] py-24 px-4 sm:px-6 md:px-12 lg:px-20 border-t border-[#1f2a33]">
+      <div className="max-w-[1360px] w-full mx-auto">
         {/* Header Block */}
         <ScrollReveal delay={0} className="max-w-3xl mb-16">
           <h2 
-            className="text-[#ddffdc] text-[32px] md:text-[46px] font-medium leading-tight tracking-[-0.015em] mb-6"
+            className="text-[#ddffdc] text-[28px] sm:text-[32px] md:text-[46px] font-medium leading-tight tracking-[-0.015em] mb-6 break-words"
             style={{ fontFamily: 'var(--font-sans, sans-serif)' }}
           >
             Tu página web es el activo que demuestra el <span className="text-[#7fee64]">nivel real de tu marca</span>.
           </h2>
 
-          <p className="text-[#aed2a4] text-[17px] md:text-[19px] leading-relaxed tracking-[-0.018em]">
+          <p className="text-[#aed2a4] text-[15px] sm:text-[17px] md:text-[19px] leading-relaxed tracking-[-0.018em] break-words">
             En un mercado competitivo, tu presencia digital no es solo un folleto con información. Es la primera impresión que determina si un cliente decide contratarte o buscar a la competencia. Diseñamos plataformas que transmiten solidez, seriedad y el respaldo que tu negocio merece.
           </p>
         </ScrollReveal>

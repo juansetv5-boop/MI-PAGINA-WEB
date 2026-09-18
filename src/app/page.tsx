@@ -12,9 +12,9 @@ import { WizardProvider } from "@/components/WizardContext";
 export default function Home() {
   return (
     <WizardProvider>
-      <div className="relative min-h-screen bg-[#000000] text-[#ddffdc]">
+      <div className="relative min-h-screen w-full max-w-full overflow-x-hidden bg-[#000000] text-[#ddffdc]">
         <StickyHeader />
-        <main className="w-full flex flex-col">
+        <main className="w-full max-w-full overflow-x-hidden flex flex-col">
           <HeroSection />
           <ScrollytellingHero />
           <ValuePropositionGrid />

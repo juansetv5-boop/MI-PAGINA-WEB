@@ -17,8 +17,8 @@ export default function StickyHeader() {
   const { openWizard } = useWizard();
 
   return (
-    <header className="fixed top-0 w-full z-50 bg-[#212525]/80 backdrop-blur-md border-b border-[#1f2a33] h-20 px-6 md:px-12 lg:px-20">
-      <div className="max-w-[1360px] mx-auto h-full flex items-center justify-between">
+    <header className="fixed top-0 w-full max-w-full z-50 bg-[#212525]/80 backdrop-blur-md border-b border-[#1f2a33] h-20 px-4 sm:px-6 md:px-12 lg:px-20">
+      <div className="max-w-[1360px] w-full mx-auto h-full flex items-center justify-between">
         
         {/* Left side: Clean Brand Logo JPG (No border/outline) */}
         <Link href="/" className="flex items-center gap-3 group">

@@ -89,13 +89,13 @@ export default function PortfolioShowcase() {
   };
 
   return (
-    <section id="work" className="w-full bg-[#000000] py-24 px-6 md:px-12 lg:px-20 border-t border-[#1f2a33]">
-      <div className="max-w-[1360px] mx-auto">
+    <section id="work" className="w-full max-w-full overflow-hidden bg-[#000000] py-24 px-4 sm:px-6 md:px-12 lg:px-20 border-t border-[#1f2a33]">
+      <div className="max-w-[1360px] w-full mx-auto">
         {/* Section Header */}
         <ScrollReveal delay={0}>
           <div className="text-center max-w-3xl mx-auto mb-12">
             <h2
-              className="text-[#ddffdc] text-[32px] md:text-[44px] font-medium leading-tight"
+              className="text-[#ddffdc] text-[32px] md:text-[44px] font-medium leading-tight break-words"
               style={{
                 fontFamily: 'var(--font-sans, sans-serif)',
                 letterSpacing: '-0.012em',
@@ -103,7 +103,7 @@ export default function PortfolioShowcase() {
             >
               Proyectos Destacados <span className="text-[#7fee64]">e Investigación</span>
             </h2>
-            <p className="text-[#8cab87] text-[15px] md:text-base mt-3 tracking-[-0.022em]">
+            <p className="text-[#8cab87] text-[15px] md:text-base mt-3 tracking-[-0.022em] break-words">
               Explora nuestras soluciones desarrolladas: desde sitios web corporativos en producción hasta algoritmos de visión por computadora e investigación UI/UX.
             </p>
           </div>
@@ -111,7 +111,7 @@ export default function PortfolioShowcase() {
 
         {/* 1. SegmentedControl (Top Tabs Bar) */}
         <ScrollReveal delay={100}>
-          <div className="flex justify-center mb-12">
+          <div className="flex justify-center mb-12 w-full max-w-full overflow-hidden">
             <div className="inline-flex p-1.5 rounded-xl bg-[#181818] border border-[#485346] shadow-xl gap-1.5 overflow-x-auto max-w-full">
               {projects.map((p) => {
                 const isSelected = activeProjectId === p.id;
@@ -119,7 +119,7 @@ export default function PortfolioShowcase() {
                   <button
                     key={p.id}
                     onClick={() => handleSelectTab(p.id)}
-                    className={`px-5 py-2.5 rounded-lg text-xs md:text-sm font-sans font-medium whitespace-nowrap transition-all duration-300 flex items-center gap-2 ${
+                    className={`px-3 sm:px-5 py-2 sm:py-2.5 rounded-lg text-xs md:text-sm font-sans font-medium whitespace-nowrap transition-all duration-300 flex items-center gap-1.5 sm:gap-2 ${
                       isSelected
                         ? 'bg-[#7fee64] text-[#000000] font-bold shadow-[0_0_16px_rgba(127,238,100,0.35)]'
                         : 'text-[#8cab87] hover:text-[#ddffdc] hover:bg-[#212525]'
@@ -137,23 +137,23 @@ export default function PortfolioShowcase() {
         {/* 2. Split Layout (2 Columns: Info Left, Preview Right) */}
         <ScrollReveal delay={200}>
           <div
-            className={`grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center bg-[#181818] border border-[#485346] rounded-2xl p-6 md:p-10 shadow-2xl relative overflow-hidden transition-all duration-300 ${
+            className={`grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center bg-[#181818] border border-[#485346] rounded-2xl p-4 sm:p-6 md:p-10 shadow-2xl relative overflow-hidden max-w-full transition-all duration-300 ${
               isAnimating ? 'opacity-40 scale-[0.995]' : 'opacity-100 scale-100'
             }`}
           >
             {/* LEFT COLUMN: Project Info */}
-            <div className="lg:col-span-6 flex flex-col justify-between space-y-6">
+            <div className="lg:col-span-6 flex flex-col justify-between space-y-6 max-w-full overflow-hidden">
               <div>
-                <div className="text-xs font-sans font-bold text-[#7fee64] tracking-widest uppercase mb-2">
+                <div className="text-xs font-sans font-bold text-[#7fee64] tracking-widest uppercase mb-2 break-words">
                   // {activeProject.category}
                 </div>
                 <h3
-                  className="text-[#ddffdc] text-2xl md:text-3xl lg:text-4xl font-medium tracking-tight leading-tight mb-4"
+                  className="text-[#ddffdc] text-2xl md:text-3xl lg:text-4xl font-medium tracking-tight leading-tight mb-4 break-words"
                   style={{ fontFamily: 'var(--font-sans, sans-serif)' }}
                 >
                   {activeProject.title}
                 </h3>
-                <p className="text-[#8cab87] text-sm md:text-base leading-relaxed mb-6">
+                <p className="text-[#8cab87] text-sm md:text-base leading-relaxed mb-6 break-words">
                   {activeProject.description}
                 </p>
 

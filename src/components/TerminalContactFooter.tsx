@@ -96,16 +96,16 @@ export default function TerminalContactFooter() {
   };
 
   return (
-    <footer id="contact" className="w-full bg-[#000000] pt-24 pb-12 flex flex-col items-center">
-      <div id="start" className="w-full max-w-3xl px-6 md:px-12 mb-16 scroll-mt-24">
+    <footer id="contact" className="w-full max-w-full overflow-hidden bg-[#000000] pt-24 pb-12 flex flex-col items-center">
+      <div id="start" className="w-full max-w-3xl px-4 sm:px-6 md:px-12 mb-16 scroll-mt-24">
 
         {/* Section Title Header */}
         <ScrollReveal delay={0}>
           <div className="text-center mb-10">
-            <h2 className="text-[#ddffdc] text-[32px] md:text-[42px] font-medium tracking-[-0.015em]">
+            <h2 className="text-[#ddffdc] text-[28px] sm:text-[32px] md:text-[42px] font-medium tracking-[-0.015em] break-words">
               Consola de contacto <span className="text-[#7fee64]">directo</span>
             </h2>
-            <p className="text-[#8cab87] text-base mt-2">
+            <p className="text-[#8cab87] text-sm sm:text-base mt-2 break-words">
               Ingresa tus datos paso a paso para comunicarte con nuestro equipo.
             </p>
           </div>
@@ -361,8 +361,8 @@ export default function TerminalContactFooter() {
       </div>
 
       {/* Footer Navigation Bar */}
-      <div className="w-full border-t border-[#1f2a33] px-6 md:px-12 lg:px-20 py-8">
-        <div className="max-w-[1360px] mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+      <div className="w-full max-w-full overflow-hidden border-t border-[#1f2a33] px-4 sm:px-6 md:px-12 lg:px-20 py-8">
+        <div className="max-w-[1360px] w-full mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-3">
             <span className="text-[#ddffdc] text-sm font-medium tracking-tight">CLICKSHOP LABS</span>
             <span className="text-[#485346]">/</span>

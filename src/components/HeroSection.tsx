@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React from 'react';
 import Link from 'next/link';
@@ -9,10 +9,10 @@ export default function HeroSection() {
   const { openWizard } = useWizard();
 
   return (
-    <section className="relative w-full bg-[#000000] min-h-[92vh] pt-[160px] pb-16 px-6 md:px-12 lg:px-20 flex flex-col items-center justify-center text-center overflow-hidden">
+    <section className="relative w-full max-w-full bg-[#000000] min-h-[92vh] pt-[140px] sm:pt-[160px] pb-16 px-4 sm:px-6 md:px-12 lg:px-20 flex flex-col items-center justify-center text-center overflow-hidden">
       {/* Ambient phosphor glow */}
       <div 
-        className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] md:w-[900px] h-[360px] md:h-[500px] pointer-events-none"
+        className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] md:w-[900px] h-[360px] md:h-[500px] pointer-events-none max-w-full"
         style={{
           background: 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(127, 238, 100, 0.07), transparent 70%)',
           filter: 'blur(50px)',
@@ -23,7 +23,7 @@ export default function HeroSection() {
         {/* Display Headline Stack */}
         <ScrollReveal delay={100}>
           <h1 
-            className="flex flex-col font-medium text-[36px] sm:text-[48px] md:text-[62px] lg:text-[72px] leading-[1.05] mb-8"
+            className="flex flex-col font-medium text-[32px] sm:text-[48px] md:text-[62px] lg:text-[72px] leading-[1.08] mb-8 break-words"
             style={{ 
               letterSpacing: '-0.015em', 
               fontFamily: 'var(--font-sans, sans-serif)' 
@@ -36,7 +36,7 @@ export default function HeroSection() {
 
         {/* Subhead */}
         <ScrollReveal delay={200}>
-          <p className="text-[#aed2a4] text-[16px] sm:text-[18px] md:text-[20px] max-w-[720px] tracking-[-0.018em] leading-relaxed mb-10">
+          <p className="text-[#aed2a4] text-[15px] sm:text-[18px] md:text-[20px] max-w-[720px] tracking-[-0.018em] leading-relaxed mb-10 break-words">
             Sin tecnicismos raros ni procesos complicados. Transformamos la visión de tu negocio en una herramienta digital que genera confianza, transmite profesionalismo y atrae más clientes.
           </p>
         </ScrollReveal>
