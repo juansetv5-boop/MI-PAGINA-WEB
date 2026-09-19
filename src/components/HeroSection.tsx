@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React from 'react';
 import Link from 'next/link';
@@ -61,17 +61,17 @@ export default function HeroSection() {
 
         {/* Specs Bar focused on Value & Trust */}
         <ScrollReveal delay={400} className="w-full max-w-2xl">
-          <div className="mt-16 pt-8 border-t border-[#1f2a33] w-full grid grid-cols-3 gap-4 text-center">
+          <div className="mt-16 pt-8 border-t border-[#1f2a33] w-full grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-4 text-center">
             <div>
-              <div className="text-[#ddffdc] font-sans text-lg md:text-xl font-medium">+100%</div>
+              <div className="text-[#ddffdc] font-sans text-base sm:text-lg md:text-xl font-medium">+100%</div>
               <div className="text-[#677d64] text-xs font-sans mt-0.5">Imagen Profesional</div>
             </div>
             <div>
-              <div className="text-[#7fee64] font-sans text-lg md:text-xl font-medium">3 Revisiones Estratégicas</div>
+              <div className="text-[#7fee64] font-sans text-base sm:text-lg md:text-xl font-medium">3 Revisiones Estratégicas</div>
               <div className="text-[#677d64] text-xs font-sans mt-0.5">Ajustes a Medida</div>
             </div>
             <div>
-              <div className="text-[#ddffdc] font-sans text-lg md:text-xl font-medium">Diseño Mobile-First</div>
+              <div className="text-[#ddffdc] font-sans text-base sm:text-lg md:text-xl font-medium">Diseño Mobile-First</div>
               <div className="text-[#677d64] text-xs font-sans mt-0.5">Optimización Total</div>
             </div>
           </div>

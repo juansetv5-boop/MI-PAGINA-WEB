@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -21,6 +21,13 @@ const geistMono = Geist_Mono({
 /* ================================================================
    METADATA & BRAND ASSETS
    ================================================================ */
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
 
 export const metadata: Metadata = {
   title: "Clickshop — Desarrollo Web & UX de Alto Rendimiento",
@@ -55,9 +62,9 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased overflow-x-hidden max-w-full`}
     >
-      <body className="min-h-full flex flex-col bg-void text-phosphor-white font-sans">
+      <body className="min-h-full flex flex-col bg-void text-phosphor-white font-sans overflow-x-hidden max-w-full relative">
         <SmoothScrollProvider>
           {children}
         </SmoothScrollProvider>

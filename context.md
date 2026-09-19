@@ -211,3 +211,34 @@ pm run build ejecutado exitosamente.
 - Uso de 100dvh para evitar saltos o desajustes de interfaz por la aparicion/desaparicion de la barra de navegacion en iOS Safari y Android Chrome.
 - Aceleracion por hardware con ctx.getContext('2d', { alpha: false }) y control estricto de desbordamiento horizontal (overflow-x-hidden).
 - Build de produccion verificado (cero errores, codigo 0).
+
+---
+## [2026-09-18] Diagnóstico y Corrección de Desbordamiento Horizontal (Overflow-X) en Móvil
+
+### Diagnóstico Ejecutado
+- **Elemento culpable identificado**: La fila de métricas/estadísticas del Hero (`HeroSection.tsx`, línea 64) usaba `grid grid-cols-3 gap-4` sin breakpoint responsivo, forzando 3 columnas incluso en pantallas de 320-375px. El texto "3 Revisiones Estratégicas" y "Diseño Mobile-First" no cabía en 1/3 del ancho de pantalla móvil, generando desbordamiento horizontal y el espacio negro visible a la derecha.
+- **Glows/resplandores ambientales**: Los blobs de `HeroSection.tsx` (`w-[600px]`) y `ScrollytellingHero.tsx` (`w-[700px]`) están contenidos en padres con `overflow-hidden`, por lo que NO contribuían al overflow.
+- **`w-screen` / `100vw`**: No se encontraron instancias en ningún componente.
+
+### Correcciones Aplicadas
+
+#### 1. HeroSection.tsx — Specs Bar Responsiva
+- `grid-cols-3` → `grid-cols-1 sm:grid-cols-3` para colapsar a 1 columna en móvil.
+- `gap-4` → `gap-6 sm:gap-4` para mejor separación vertical en stack.
+- Textos de métricas: `text-lg` → `text-base sm:text-lg` para escalado seguro en pantallas pequeñas.
+
+#### 2. globals.css — Blindaje Global
+- `html`: Añadido `overflow-x: hidden; max-width: 100%;`.
+- `body`: Añadido `overflow-x: hidden; max-width: 100%; position: relative;`.
+
+#### 3. layout.tsx — Viewport Meta + Clases de Protección
+- Exportado `viewport: Viewport` con `width: 'device-width'`, `initialScale: 1`, `maximumScale: 1`, `userScalable: false`.
+- `<html>`: Añadido `overflow-x-hidden max-w-full`.
+- `<body>`: Añadido `overflow-x-hidden max-w-full relative`.
+
+#### 4. page.tsx — Contenedores Raíz
+- Wrapper `<div>`: Añadido `overflow-x-hidden max-w-full`.
+- `<main>`: Añadido `max-w-full overflow-x-hidden`.
+
+### Validación
+- `npm run build` ejecutado exitosamente (0 errores, código 0).
