@@ -18,7 +18,7 @@ interface Project {
     badge: string;
   }[];
   tags: string[];
-  mockupType: 'rlp' | 'ai' | 'lab';
+  mockupType: 'rlp' | 'ai';
 }
 
 const projects: Project[] = [
@@ -55,22 +55,6 @@ const projects: Project[] = [
     tags: ['Python 3.10', 'Computer Vision', 'OpenCV', 'AI Pipeline', 'Real-Time R&D'],
     mockupType: 'ai',
   },
-  {
-    id: 'lab',
-    tabLabel: 'Clickshop UI/UX Lab',
-    title: 'Clickshop UI/UX Lab',
-    domain: 'lab.clickshop.dev',
-    category: 'LABORATORIO DE PROTOTIPADO Y MICRO-INTERACCIONES',
-    description:
-      'Banco de pruebas interactivas y prototipos de alta fidelidad desarrollados internamente para probar velocidades de renderizado, animaciones compuestas de 60 FPS y patrones de conversión.',
-    metrics: [
-      { label: 'Render Cycle', value: '<0.4ms', badge: 'ULTRA FAST' },
-      { label: 'Frame Rate', value: '60 FPS', badge: 'HARDWARE ACCEL' },
-      { label: 'Conversión UX', value: '+100%', badge: 'PROTOTIPO' },
-    ],
-    tags: ['React / Next.js', 'Framer Motion', 'Micro-Interactions', 'CSS Canvas', 'Performance Design'],
-    mockupType: 'lab',
-  },
 ];
 
 export default function PortfolioShowcase() {
@@ -104,7 +88,7 @@ export default function PortfolioShowcase() {
               Proyectos Destacados <span className="text-[#7fee64]">e Investigación</span>
             </h2>
             <p className="text-[#8cab87] text-[15px] md:text-base mt-3 tracking-[-0.022em]">
-              Explora nuestras soluciones desarrolladas: desde sitios web corporativos en producción hasta algoritmos de visión por computadora e investigación UI/UX.
+              Explora nuestras soluciones desarrolladas: desde sitios web corporativos en producción hasta algoritmos de visión por computadora e inteligencia artificial.
             </p>
           </div>
         </ScrollReveal>
@@ -248,7 +232,7 @@ export default function PortfolioShowcase() {
                       </span>
                     </div>
                   </a>
-                ) : activeProject.mockupType === 'ai' ? (
+                ) : (
                   <div className="rounded-xl overflow-hidden border border-[#485346] bg-[#181818] p-5 shadow-xl space-y-4">
                     <div className="flex justify-between items-center text-xs font-mono border-b border-[#485346]/60 pb-3">
                       <span className="text-[#ddffdc] font-bold">DACTILOLOGIA AI PIPELINE</span>
@@ -266,26 +250,6 @@ export default function PortfolioShowcase() {
                     </div>
                     <div className="text-[11px] font-mono text-[#677d64] text-center pt-1">
                       MODELO: PYTHON 3.10 / OPENCV
-                    </div>
-                  </div>
-                ) : (
-                  <div className="rounded-xl overflow-hidden border border-[#485346] bg-[#181818] p-5 shadow-xl space-y-4">
-                    <div className="flex justify-between items-center text-xs font-mono border-b border-[#485346]/60 pb-3">
-                      <span className="text-[#ddffdc] font-bold">UI/UX BENCHMARK LAB</span>
-                      <span className="text-[#7fee64]">● 0.4ms RENDER</span>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="bg-[#0e120e] p-3 rounded-lg border border-[#485346]/40 text-center">
-                        <div className="text-[10px] text-[#677d64] uppercase font-mono">Animaciones</div>
-                        <div className="text-base font-bold text-[#7fee64] mt-1">60 FPS Fluid</div>
-                      </div>
-                      <div className="bg-[#0e120e] p-3 rounded-lg border border-[#485346]/40 text-center">
-                        <div className="text-[10px] text-[#677d64] uppercase font-mono">Lighthouse</div>
-                        <div className="text-base font-bold text-[#ddffdc] mt-1">100 / 100</div>
-                      </div>
-                    </div>
-                    <div className="text-[11px] font-mono text-[#677d64] text-center pt-1">
-                      STACK: NEXT.JS 16 &bull; TURBOPACK
                     </div>
                   </div>
                 )}
@@ -367,55 +331,26 @@ export default function PortfolioShowcase() {
 
                     {/* Mockup Preview Screen */}
                     <div className="relative flex-1 p-6 flex flex-col justify-between overflow-hidden bg-gradient-to-br from-[#0e120e] via-[#141d14] to-[#0a120a]">
-                      {/* Mockup 2: Python AI Dactilología */}
-                      {activeProject.mockupType === 'ai' && (
-                        <div className="w-full h-full flex flex-col justify-between font-sans text-xs">
-                          <div className="flex justify-between items-center text-[#8cab87] pb-2 border-b border-[#485346]/40">
-                            <span className="font-semibold text-[#ddffdc]">DACTILOLOGIA AI PIPELINE</span>
-                            <span className="text-[#7fee64] font-mono text-[11px]">● 60 FPS</span>
+                      <div className="w-full h-full flex flex-col justify-between font-sans text-xs">
+                        <div className="flex justify-between items-center text-[#8cab87] pb-2 border-b border-[#485346]/40">
+                          <span className="font-semibold text-[#ddffdc]">DACTILOLOGIA AI PIPELINE</span>
+                          <span className="text-[#7fee64] font-mono text-[11px]">● 60 FPS</span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3 my-auto">
+                          <div className="bg-[#181818] border border-[#485346] rounded-lg p-3 text-center shadow-lg">
+                            <div className="text-[10px] text-[#677d64] uppercase font-mono">Detección de Manos</div>
+                            <div className="text-sm md:text-base font-bold text-[#7fee64] mt-1">21 Keypoints</div>
                           </div>
-                          <div className="grid grid-cols-2 gap-3 my-auto">
-                            <div className="bg-[#181818] border border-[#485346] rounded-lg p-3 text-center shadow-lg">
-                              <div className="text-[10px] text-[#677d64] uppercase font-mono">Detección de Manos</div>
-                              <div className="text-sm md:text-base font-bold text-[#7fee64] mt-1">21 Keypoints</div>
-                            </div>
-                            <div className="bg-[#181818] border border-[#485346] rounded-lg p-3 text-center shadow-lg">
-                              <div className="text-[10px] text-[#677d64] uppercase font-mono">Modelo IA</div>
-                              <div className="text-sm md:text-base font-bold text-[#ddffdc] mt-1">98.4% Precision</div>
-                            </div>
-                          </div>
-                          <div className="flex justify-between text-[11px] text-[#677d64] pt-2 border-t border-[#485346]/40 font-mono">
-                            <span>MODEL: DACTILOLOGIA_V1</span>
-                            <span className="text-[#7fee64]">PYTHON 3.10 / OPENCV</span>
+                          <div className="bg-[#181818] border border-[#485346] rounded-lg p-3 text-center shadow-lg">
+                            <div className="text-[10px] text-[#677d64] uppercase font-mono">Modelo IA</div>
+                            <div className="text-sm md:text-base font-bold text-[#ddffdc] mt-1">98.4% Precision</div>
                           </div>
                         </div>
-                      )}
-
-                      {/* Mockup 3: Clickshop UI/UX Lab */}
-                      {activeProject.mockupType === 'lab' && (
-                        <div className="w-full h-full flex flex-col justify-between font-sans text-xs">
-                          <div className="flex justify-between items-center text-[#8cab87] pb-2 border-b border-[#485346]/40">
-                            <span className="font-semibold text-[#ddffdc]">UI/UX BENCHMARK LAB</span>
-                            <span className="text-[#7fee64] font-mono text-[11px]">● RENDER 0.4ms</span>
-                          </div>
-                          <div className="bg-[#181818] border border-[#485346] rounded-lg p-4 my-auto space-y-3 shadow-lg">
-                            <div className="flex justify-around text-center">
-                              <div>
-                                <div className="text-[10px] text-[#677d64] uppercase font-mono">Micro-Animaciones</div>
-                                <div className="text-sm font-bold text-[#7fee64] mt-0.5">Fluid 60FPS</div>
-                              </div>
-                              <div className="w-[1px] bg-[#485346]" />
-                              <div>
-                                <div className="text-[10px] text-[#677d64] uppercase font-mono">Lighthouse Score</div>
-                                <div className="text-sm font-bold text-[#ddffdc] mt-0.5">100 / 100</div>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="text-center text-[11px] text-[#677d64] pt-2 border-t border-[#485346]/40 font-mono">
-                            TAILWIND CSS &bull; NEXT.JS 16 &bull; TURBOPACK
-                          </div>
+                        <div className="flex justify-between text-[11px] text-[#677d64] pt-2 border-t border-[#485346]/40 font-mono">
+                          <span>MODEL: DACTILOLOGIA_V1</span>
+                          <span className="text-[#7fee64]">PYTHON 3.10 / OPENCV</span>
                         </div>
-                      )}
+                      </div>
                     </div>
                   </div>
                 )}

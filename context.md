@@ -272,3 +272,22 @@ pm run build ejecutado exitosamente.
 - Verificado con compilación limpia en producción local (`npm run build` Turbopack: 0 errores).
 - Cambios mantenidos estrictamente en entorno local (sin `git push`).
 
+---
+## [2026-09-18] Eliminación de 'Clickshop UI/UX Lab' del Portafolio & Cierre de Estabilización
+
+### Modificaciones en Portafolio (`src/components/PortfolioShowcase.tsx`)
+- **Eliminación de pestaña y caso de estudio**: Se retiró completamente el proyecto interno `Clickshop UI/UX Lab` (`lab.clickshop.dev`) del listado de proyectos.
+- **Enfoque en Proyectos Principales**: El portafolio ahora se concentra exclusivamente en casos de alto impacto:
+  1. **RLP Compliance S.A.S.** (`rlp`): Plataforma web corporativa en producción (`rlpcompliance.com`), previsualización interactiva de Home, métricas de 99.8% disponibilidad y enlace directo.
+  2. **Traductor de Dactilología Alpha** (`dactilologia`): Proyecto de visión por computadora con IA, pipeline a 60 FPS, 21 keypoints y 98.4% de precisión.
+- **Selector por defecto**: Inicializado en `rlp` (RLP Compliance).
+- **Limpieza de Mockups**: Eliminados los bloques condicionales de benchmark/prototipado en las vistas duales (Mobile y Desktop).
+- **Actualización de encabezado**: Subtítulo ajustado para reflejar el enfoque corporativo e inteligencia artificial.
+
+### Resumen de Estabilización Responsiva & Scroll Pinning Completada
+- **Desbordamiento móvil resuelto**: Grid del Hero colapsado a 1 columna en móvil (`grid-cols-1 sm:grid-cols-3`), evitando desbordamiento por textos largos.
+- **Compatibilidad con sticky pinning**: Transición de `overflow-x: hidden` a `overflow-x: clip` en toda la jerarquía (`globals.css`, `layout.tsx`, `page.tsx`), garantizando que `position: sticky` mantenga el Canvas anclado durante el 100% del recorrido en Scrollytelling.
+- **Contenedores de Scrollytelling**: Track `h-[250vh]` con Canvas sticky `h-screen h-[100dvh] flex items-center justify-center overflow-hidden`.
+- **Compilación**: `npm run build` verificado exitosamente (0 errores, código 0).
+
+
