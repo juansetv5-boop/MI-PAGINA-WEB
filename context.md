@@ -242,3 +242,33 @@ pm run build ejecutado exitosamente.
 
 ### Validación
 - `npm run build` ejecutado exitosamente (0 errores, código 0).
+
+---
+## [2026-09-18] Corrección de Raíz de Sticky Pinning en Scrollytelling (`overflow-x: clip`)
+
+### Causa Raíz del Desplazamiento Prematuro del Canvas
+- La aplicación previa de `overflow-x: hidden` en contenedores ancestros (`html`, `body`, el `div` raíz de `page.tsx` y `<main>`) creaba un contexto de recorte de desbordamiento (overflow clipping/scroll container).
+- Según la especificación CSS, cuando un contenedor ancestro tiene `overflow-x: hidden`, el navegador anula el comportamiento de `position: sticky` relativo a la ventana de visualización (viewport) para los elementos descendientes, provocando que el Canvas se desplazara hacia arriba como flujo normal en lugar de quedarse fijado.
+
+### Solución Implementada: Transición a `overflow-x: clip`
+- **`overflow-x: clip` vs `overflow-x: hidden`**: `overflow-x: clip` bloquea estrictamente cualquier desbordamiento horizontal en el eje X SIN crear un mecanismo de scroll ni un nuevo contexto de desplazamiento de contenedor, manteniendo intacto el comportamiento de `position: sticky` de los elementos hijos respecto al viewport.
+
+### Archivos Modificados
+1. **`src/app/globals.css`**:
+   - `html`: `overflow-x: clip; max-width: 100%;`
+   - `body`: `overflow-x: clip; max-width: 100%; position: relative;`
+2. **`src/app/layout.tsx`**:
+   - `<html>`: Reemplazado `overflow-x-hidden` por `overflow-x-clip`.
+   - `<body>`: Reemplazado `overflow-x-hidden` por `overflow-x-clip`.
+3. **`src/app/page.tsx`**:
+   - Contenedor raíz (`<div>`): Reemplazado `overflow-x-hidden` por `overflow-x-clip`.
+   - Contenedor principal (`<main>`): Reemplazado `overflow-x-hidden` por `overflow-x-clip`.
+4. **`src/components/ScrollytellingHero.tsx`**:
+   - Contenedor Padre (Track de scroll): `relative h-[250vh] w-full bg-[#000000]`.
+   - Contenedor Hijo (Canvas/Viewport): `sticky top-0 left-0 w-full h-screen h-[100dvh] flex items-center justify-center overflow-hidden bg-[#000000] select-none`.
+   - El Canvas permanece anclado al viewport durante todo el avance de los fotogramas (0% a 100%) y se libera hacia la pantalla de información al completar la altura del padre (`h-[250vh]`).
+
+### Validación y Estado
+- Verificado con compilación limpia en producción local (`npm run build` Turbopack: 0 errores).
+- Cambios mantenidos estrictamente en entorno local (sin `git push`).
+

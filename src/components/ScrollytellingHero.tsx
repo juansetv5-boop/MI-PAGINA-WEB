@@ -199,7 +199,7 @@ function PhaseCanvasBlock({
   return (
     <div id={id} ref={containerRef} className="relative h-[250vh] w-full bg-[#000000]">
       {/* Sticky Pinning Container: 100dvh edge-to-edge pure cinematic screen */}
-      <div className="sticky top-0 left-0 w-full h-screen h-[100dvh] overflow-hidden bg-[#000000] select-none">
+      <div className="sticky top-0 left-0 w-full h-screen h-[100dvh] flex items-center justify-center overflow-hidden bg-[#000000] select-none">
         <canvas
           ref={canvasRef}
           className="absolute inset-0 w-full h-full block"
