@@ -290,4 +290,26 @@ pm run build ejecutado exitosamente.
 - **Contenedores de Scrollytelling**: Track `h-[250vh]` con Canvas sticky `h-screen h-[100dvh] flex items-center justify-center overflow-hidden`.
 - **Compilación**: `npm run build` verificado exitosamente (0 errores, código 0).
 
+---
+## [2026-09-19] Optimización de Navegación Móvil & Auto-Scroll Asistido en Scrollytelling
+
+### 1. Navegación Móvil Limpia (`src/components/StickyHeader.tsx`)
+- **Ocultamiento del menú hamburguesa en móvil**: Se ocultó el botón hamburguesa en móviles (`className="hidden"`).
+- **Enfoque minimalista en cabecera**: En pantallas móviles únicamente permanece visible el logotipo de Clickshop con alineación limpia y espaciado despejado, ya que la navegación táctil ergonómica y el botón de cotización están completamente cubiertos por la barra inferior `MobileBottomNav.tsx`.
+
+### 2. Auto-Scroll Asistido / Reproducción en Scrollytelling (`src/components/ScrollytellingHero.tsx`)
+- **Píldora Flotante Glassmorphism**:
+  - Incorporado botón elegante centrado horizontalmente y posicionado con holgura sobre la barra móvil (`bottom-24 md:bottom-10 left-1/2 -translate-x-1/2`).
+  - Estados visuales: "▶ Explorar automáticamente" / "❚❚ Pausar animación" con acentos verde fósforo `#7fee64` y micro-etiqueta sutil "o desliza libremente".
+- **Lógica de Auto-Scroll Suave**:
+  - Al pulsar el botón o tras 2 segundos de reposo con el bloque anclado en pantalla (pinning activo), inicia un avance continuo y suave a lo largo del track de la fase (`h-[250vh]`), animando los fotogramas del Canvas al ritmo ideal.
+  - Al completar la secuencia de la fase, el auto-scroll se detiene naturalmente entregando al usuario en la tarjeta de información correspondiente.
+- **Cancelación Instantánea por Interacción**:
+  - Listeners pasivos globales para `touchstart`, `wheel`, `keydown` y `mousedown`. Cualquier interacción táctil o de rueda desactiva el auto-scroll de inmediato y cede el control manual del scroll al usuario sin saltos ni bloqueos.
+
+### 3. Validación & Entorno
+- `npm run build` ejecutado en local con Turbopack (0 errores, 0 advertencias).
+- Cambios mantenidos estrictamente en local sin `git push`.
+
+
 

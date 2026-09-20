@@ -55,9 +55,9 @@ export default function StickyHeader() {
           </button>
         </div>
 
-        {/* Mobile menu toggle */}
+        {/* Mobile menu toggle — Oculto en móvil (Navegación cubierta ergonómicamente por MobileBottomNav) */}
         <button
-          className="md:hidden flex flex-col justify-center items-center gap-[5px] w-11 h-11 p-2.5 rounded-lg border border-[#485346] hover:border-[#7fee64] transition-colors"
+          className="hidden"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           aria-label="Alternar menú"
         >
