@@ -37,13 +37,101 @@ function PhaseCanvasBlock({
   const [loadedCount, setLoadedCount] = useState(0);
   const [isPreloaded, setIsPreloaded] = useState(false);
   const [isAutoScrolling, setIsAutoScrolling] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
   const [progress, setProgress] = useState(0);
 
+  const hasStartedOnceRef = useRef(false);
+  const hasCompletedRef = useRef(false);
   const hasManuallyInteractedRef = useRef(false);
   const autoScrollRafRef = useRef<number | null>(null);
-  const autoStartTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // 1. Proximity / Intersection Observer for progressive memory management
+  // 1. Assisted Auto-Scroll Engine (~3.5 px/frame smooth progression)
+  const stopAutoScroll = useCallback(() => {
+    if (autoScrollRafRef.current !== null) {
+      cancelAnimationFrame(autoScrollRafRef.current);
+      autoScrollRafRef.current = null;
+    }
+    setIsAutoScrolling(false);
+  }, []);
+
+  const handleUserInteraction = useCallback(() => {
+    hasManuallyInteractedRef.current = true;
+    stopAutoScroll();
+  }, [stopAutoScroll]);
+
+  const startAutoScroll = useCallback(() => {
+    if (autoScrollRafRef.current !== null) {
+      cancelAnimationFrame(autoScrollRafRef.current);
+    }
+    setIsAutoScrolling(true);
+    setIsCompleted(false);
+    hasCompletedRef.current = false;
+
+    const stepScroll = () => {
+      const el = containerRef.current;
+      if (!el) {
+        stopAutoScroll();
+        return;
+      }
+      const rect = el.getBoundingClientRect();
+      const stickyEl = canvasRef.current?.parentElement;
+      const stickyHeight = stickyEl ? stickyEl.clientHeight : window.innerHeight;
+      const scrollable = rect.height - stickyHeight;
+      if (scrollable <= 0) {
+        stopAutoScroll();
+        return;
+      }
+
+      const currentScroll = -rect.top;
+      const p = currentScroll / scrollable;
+
+      if (p >= 0.985) {
+        hasCompletedRef.current = true;
+        setIsCompleted(true);
+        stopAutoScroll();
+        return;
+      }
+
+      // Smooth progression advance (~3.5 px/frame)
+      const step = 3.5;
+      window.scrollBy(0, step);
+
+      autoScrollRafRef.current = requestAnimationFrame(stepScroll);
+    };
+
+    autoScrollRafRef.current = requestAnimationFrame(stepScroll);
+  }, [stopAutoScroll]);
+
+  const toggleAutoScroll = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (isAutoScrolling) {
+      stopAutoScroll();
+    } else {
+      hasManuallyInteractedRef.current = false;
+      startAutoScroll();
+    }
+  }, [isAutoScrolling, startAutoScroll, stopAutoScroll]);
+
+  // Cancel immediately on manual interaction ('touchstart', 'wheel', 'keydown')
+  useEffect(() => {
+    const onManualInteraction = () => {
+      if (isAutoScrolling) {
+        handleUserInteraction();
+      }
+    };
+
+    window.addEventListener('wheel', onManualInteraction, { passive: true });
+    window.addEventListener('touchstart', onManualInteraction, { passive: true });
+    window.addEventListener('keydown', onManualInteraction, { passive: true });
+
+    return () => {
+      window.removeEventListener('wheel', onManualInteraction);
+      window.removeEventListener('touchstart', onManualInteraction);
+      window.removeEventListener('keydown', onManualInteraction);
+    };
+  }, [handleUserInteraction, isAutoScrolling]);
+
+  // 2. Proximity & Immediate Auto-Play Intersection Observer (30% - 50% visibility)
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -51,15 +139,27 @@ function PhaseCanvasBlock({
     const observer = new IntersectionObserver(
       ([entry]) => {
         setIsNearViewport(entry.isIntersecting);
+
+        // Immediate Auto-Play: triggers as soon as block reaches 30% - 50% visibility in viewport
+        if (!hasStartedOnceRef.current && !hasCompletedRef.current) {
+          const rect = entry.boundingClientRect;
+          const visibleHeight = Math.max(0, Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0));
+          const viewportVisibility = visibleHeight / window.innerHeight;
+
+          if (viewportVisibility >= 0.35 && rect.top <= window.innerHeight * 0.7) {
+            hasStartedOnceRef.current = true;
+            startAutoScroll();
+          }
+        }
       },
-      { rootMargin: '800px 0px 800px 0px' }
+      { threshold: [0, 0.1, 0.2, 0.3, 0.35, 0.4, 0.5] }
     );
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, []);
+  }, [startAutoScroll]);
 
-  // 2. Draw canvas frame with centered object-fit: cover
+  // 3. Draw canvas frame with centered object-fit: cover
   const drawFrame = useCallback((frameIdx: number) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -88,7 +188,7 @@ function PhaseCanvasBlock({
     ctx.drawImage(img, ox, oy, dw, dh);
   }, []);
 
-  // 3. Progressive image loader: loads when near viewport, caches frames to prevent reload flashes
+  // 4. Progressive image loader: loads when near viewport, caches frames to prevent reload flashes
   useEffect(() => {
     if (!isNearViewport && !isPreloaded) {
       return;
@@ -131,7 +231,7 @@ function PhaseCanvasBlock({
     };
   }, [isNearViewport, isPreloaded, frameCount, getFrameSrc, drawFrame]);
 
-  // 4. Scroll progress tracking across h-[250vh] pinning track
+  // 5. Scroll progress tracking across h-[250vh] pinning track
   useEffect(() => {
     let rafId: number;
     const handleScroll = () => {
@@ -146,6 +246,26 @@ function PhaseCanvasBlock({
         const currentScroll = -rect.top;
         const p = Math.max(0, Math.min(1, currentScroll / scrollable));
         setProgress(p);
+
+        // Completion detection: hide pill smoothly and stop auto-scroll when reaching end of phase
+        if (p >= 0.985) {
+          hasCompletedRef.current = true;
+          setIsCompleted(true);
+          stopAutoScroll();
+        } else if (p < 0.95 && hasCompletedRef.current) {
+          hasCompletedRef.current = false;
+          setIsCompleted(false);
+        }
+
+        // Secondary auto-play trigger if scrolled quickly into view
+        if (!hasStartedOnceRef.current && !hasCompletedRef.current && !hasManuallyInteractedRef.current) {
+          const visibleHeight = Math.max(0, Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0));
+          const viewportVisibility = visibleHeight / window.innerHeight;
+          if (viewportVisibility >= 0.35 && rect.top <= window.innerHeight * 0.7) {
+            hasStartedOnceRef.current = true;
+            startAutoScroll();
+          }
+        }
 
         const frame = Math.max(1, Math.min(frameCount, Math.round(1 + p * (frameCount - 1))));
         targetFrameRef.current = frame;
@@ -167,9 +287,9 @@ function PhaseCanvasBlock({
       window.removeEventListener('resize', handleScroll);
       cancelAnimationFrame(rafId);
     };
-  }, [frameCount]);
+  }, [frameCount, startAutoScroll, stopAutoScroll]);
 
-  // 5. 60 FPS lerp render loop (only runs when near viewport)
+  // 6. 60 FPS lerp render loop (only runs when near viewport)
   useEffect(() => {
     if (!isNearViewport) return;
 
@@ -194,138 +314,11 @@ function PhaseCanvasBlock({
     return () => cancelAnimationFrame(rafId);
   }, [isNearViewport, drawFrame]);
 
-  // 6. Assisted Auto-Scroll Engine
-  const stopAutoScroll = useCallback(() => {
-    if (autoScrollRafRef.current !== null) {
-      cancelAnimationFrame(autoScrollRafRef.current);
-      autoScrollRafRef.current = null;
-    }
-    setIsAutoScrolling(false);
-  }, []);
-
-  const handleUserInteraction = useCallback(() => {
-    hasManuallyInteractedRef.current = true;
-    if (autoStartTimerRef.current) {
-      clearTimeout(autoStartTimerRef.current);
-      autoStartTimerRef.current = null;
-    }
-    stopAutoScroll();
-  }, [stopAutoScroll]);
-
-  const startAutoScroll = useCallback(() => {
-    if (autoScrollRafRef.current !== null) {
-      cancelAnimationFrame(autoScrollRafRef.current);
-    }
-    setIsAutoScrolling(true);
-
-    const stepScroll = () => {
-      const el = containerRef.current;
-      if (!el) {
-        stopAutoScroll();
-        return;
-      }
-      const rect = el.getBoundingClientRect();
-      const stickyEl = canvasRef.current?.parentElement;
-      const stickyHeight = stickyEl ? stickyEl.clientHeight : window.innerHeight;
-      const scrollable = rect.height - stickyHeight;
-      if (scrollable <= 0) {
-        stopAutoScroll();
-        return;
-      }
-
-      const currentScroll = -rect.top;
-      const p = currentScroll / scrollable;
-
-      if (p >= 0.99) {
-        stopAutoScroll();
-        return;
-      }
-
-      // Smooth, natural progression step
-      const step = 3.5;
-      window.scrollBy(0, step);
-
-      autoScrollRafRef.current = requestAnimationFrame(stepScroll);
-    };
-
-    autoScrollRafRef.current = requestAnimationFrame(stepScroll);
-  }, [stopAutoScroll]);
-
-  const toggleAutoScroll = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (isAutoScrolling) {
-      stopAutoScroll();
-    } else {
-      hasManuallyInteractedRef.current = false;
-      startAutoScroll();
-    }
-  }, [isAutoScrolling, startAutoScroll, stopAutoScroll]);
-
-  // Cancel auto-scroll immediately upon user manual interaction
-  useEffect(() => {
-    const onInteraction = () => {
-      handleUserInteraction();
-    };
-
-    window.addEventListener('wheel', onInteraction, { passive: true });
-    window.addEventListener('touchstart', onInteraction, { passive: true });
-    window.addEventListener('keydown', onInteraction, { passive: true });
-    window.addEventListener('mousedown', onInteraction, { passive: true });
-
-    return () => {
-      window.removeEventListener('wheel', onInteraction);
-      window.removeEventListener('touchstart', onInteraction);
-      window.removeEventListener('keydown', onInteraction);
-      window.removeEventListener('mousedown', onInteraction);
-    };
-  }, [handleUserInteraction]);
-
-  // Auto-start timer after 2 seconds if pinned and user hasn't scrolled
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el || hasManuallyInteractedRef.current || isAutoScrolling) return;
-
-    const checkPinned = () => {
-      if (hasManuallyInteractedRef.current || isAutoScrolling) return;
-      const rect = el.getBoundingClientRect();
-      const isPinned = rect.top <= 10 && rect.bottom > window.innerHeight + 150;
-
-      if (isPinned) {
-        if (!autoStartTimerRef.current) {
-          autoStartTimerRef.current = setTimeout(() => {
-            if (!hasManuallyInteractedRef.current) {
-              startAutoScroll();
-            }
-          }, 2000);
-        }
-      } else {
-        if (autoStartTimerRef.current) {
-          clearTimeout(autoStartTimerRef.current);
-          autoStartTimerRef.current = null;
-        }
-      }
-    };
-
-    window.addEventListener('scroll', checkPinned, { passive: true });
-    checkPinned();
-
-    return () => {
-      window.removeEventListener('scroll', checkPinned);
-      if (autoStartTimerRef.current) {
-        clearTimeout(autoStartTimerRef.current);
-        autoStartTimerRef.current = null;
-      }
-    };
-  }, [isAutoScrolling, startAutoScroll]);
-
   // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (autoScrollRafRef.current !== null) {
         cancelAnimationFrame(autoScrollRafRef.current);
-      }
-      if (autoStartTimerRef.current) {
-        clearTimeout(autoStartTimerRef.current);
       }
     };
   }, []);
@@ -377,25 +370,59 @@ function PhaseCanvasBlock({
           </div>
         </div>
 
-        {/* Floating Auto-Scroll Assistant Pill */}
-        <div className="absolute bottom-24 md:bottom-10 left-1/2 -translate-x-1/2 z-30 pointer-events-auto">
+        {/* Floating Auto-Scroll Assistant Pill with Smooth Fade on Completion */}
+        <div
+          className={`absolute bottom-24 md:bottom-10 left-1/2 -translate-x-1/2 z-30 transition-all duration-500 ${
+            isCompleted
+              ? 'opacity-0 pointer-events-none scale-95'
+              : 'opacity-100 pointer-events-auto scale-100'
+          }`}
+        >
           <button
             type="button"
             onMouseDown={(e) => e.stopPropagation()}
             onTouchStart={(e) => e.stopPropagation()}
             onClick={toggleAutoScroll}
-            aria-label={isAutoScrolling ? "Pausar animación" : "Reproducir animación"}
-            className="group inline-flex items-center gap-2.5 px-4 py-2 sm:px-5 sm:py-2.5 rounded-full bg-[#141616]/85 hover:bg-[#1f251e] border border-[#485346]/80 hover:border-[#7fee64]/70 backdrop-blur-md shadow-[0_4px_24px_rgba(0,0,0,0.7)] text-xs sm:text-sm font-sans transition-all duration-300 active:scale-95"
+            aria-label={isAutoScrolling ? "Pausar animación" : "Reanudar animación"}
+            className="group inline-flex items-center gap-2.5 px-4 py-2 sm:px-5 sm:py-2.5 rounded-full bg-[#141616]/90 hover:bg-[#1a2219] border border-[#485346]/80 hover:border-[#7fee64]/70 backdrop-blur-md shadow-[0_4px_24px_rgba(0,0,0,0.7)] text-xs sm:text-sm font-sans transition-all duration-300 active:scale-95"
           >
-            <span className="flex items-center justify-center w-5 h-5 rounded-full bg-[#7fee64]/20 border border-[#7fee64]/50 text-[#7fee64] text-[10px] transition-transform group-hover:scale-110">
-              {isAutoScrolling ? '❚❚' : '▶'}
+            {/* Status Icon Badge */}
+            <span
+              className={`flex items-center justify-center w-5 h-5 rounded-full transition-colors ${
+                isAutoScrolling
+                  ? 'bg-[#7fee64]/20 border border-[#7fee64]/60 text-[#7fee64]'
+                  : 'bg-[#212525] border border-[#485346] text-[#8cab87] group-hover:text-[#7fee64] group-hover:border-[#7fee64]/50'
+              }`}
+            >
+              {isAutoScrolling ? (
+                <span className="text-[9px] font-bold">❚❚</span>
+              ) : (
+                <span className="text-[10px] ml-0.5">▶</span>
+              )}
             </span>
+
+            {/* Status Text: Pausar vs Reanudar */}
             <span className="text-[#ddffdc] font-medium tracking-tight">
-              {isAutoScrolling ? 'Pausar animación' : 'Explorar automáticamente'}
+              {isAutoScrolling ? 'Pausar animación' : 'Reanudar animación'}
             </span>
-            <span className="text-[10px] text-[#677d64] hidden sm:inline border-l border-[#485346] pl-2">
-              o desliza libremente
-            </span>
+
+            {/* Active Pulsing Indicator when playing */}
+            {isAutoScrolling && (
+              <span className="flex items-center gap-1.5 border-l border-[#485346]/80 pl-2 font-mono text-[10px] text-[#7fee64]">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#7fee64] opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#7fee64]"></span>
+                </span>
+                <span className="hidden sm:inline uppercase">Auto</span>
+              </span>
+            )}
+
+            {/* Manual gesture hint when paused */}
+            {!isAutoScrolling && (
+              <span className="text-[10px] text-[#677d64] hidden sm:inline border-l border-[#485346]/80 pl-2">
+                o desliza
+              </span>
+            )}
           </button>
         </div>
       </div>

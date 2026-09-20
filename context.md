@@ -311,5 +311,26 @@ pm run build ejecutado exitosamente.
 - `npm run build` ejecutado en local con Turbopack (0 errores, 0 advertencias).
 - Cambios mantenidos estrictamente en local sin `git push`.
 
+---
+## [2026-09-19] Auto-Play Inmediato por IntersectionObserver & Control de Pausa/Reanudación en Scrollytelling
+
+### 1. Auto-Play Inmediato (`src/components/ScrollytellingHero.tsx`)
+- **Eliminación del retardo de 2 segundos**: Se reemplazó el temporizador pasivo previo por detección reactiva en tiempo real.
+- **Disparo reactivo por visibilidad (30% - 50%)**: Configurado un `IntersectionObserver` con thresholds `[0, 0.1, 0.2, 0.3, 0.35, 0.4, 0.5]`. En cuanto el bloque alcanza el 35% de visibilidad en el viewport, se inicia de inmediato el desplazamiento suave asistido (~3.5 px/frame).
+- **Estado inicial activo**: La píldora flotante entra directamente mostrando `❚❚ Pausar animación`, badge verde activo y señal pulsante `● AUTO`.
+
+### 2. Control Manual de Pausa y Reanudación
+- **Interrupción instantánea**: Al detectar cualquier interacción de scroll manual (`touchstart`, `wheel`, `keydown`), el avance automatizado se interrumpe de inmediato para otorgar el control completo al usuario sin tirones.
+- **Estado de reanudación**: La píldora cambia a `▶ Reanudar animación` (con micro-indicador *“o desliza”*), permitiendo al usuario reactivar el avance automático desde cualquier punto de la fase con un solo toque.
+- **Alternancia por clic**: Al hacer clic en la píldora, conmuta fluidamente entre pausa y reanudación de la animación.
+
+### 3. Finalización Limpia & Ocultamiento Suave
+- Al alcanzar el tramo final de la fase (`p >= 0.985`) y acceder a la tarjeta de información correspondiente, el motor detiene el auto-play y la píldora flotante se desvanece suavemente (`opacity-0 scale-95 transition-all duration-500 pointer-events-none`).
+
+### 4. Validación & Entorno
+- Compilación de producción local verificada con Turbopack (`npm run build`: 0 errores, 0 advertencias).
+- Cambios conservados estrictamente en el entorno local (sin `git push`).
+
+
 
 
