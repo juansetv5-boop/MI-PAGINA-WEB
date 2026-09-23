@@ -2,14 +2,8 @@
 
 import React from 'react';
 import ScrollReveal from './ScrollReveal';
-import { useWizard } from './WizardContext';
 
-interface CleanEditorialAboutProps {
-  onReturnToEditor?: () => void;
-}
-
-export default function CleanEditorialAbout({ onReturnToEditor }: CleanEditorialAboutProps = {}) {
-  const { openWizard } = useWizard();
+export default function CleanEditorialAbout() {
 
   return (
     <section id="about" className="relative w-full bg-[#000000] text-[#ddffdc] py-24 sm:py-32 px-6 sm:px-12 md:px-20 lg:px-32 scroll-mt-12 selection:bg-[#7fee64]/20 selection:text-[#ddffdc] border-t border-[#1f2a33]">
@@ -114,33 +108,6 @@ export default function CleanEditorialAbout({ onReturnToEditor }: CleanEditorial
                 </p>
               </div>
             </div>
-          </div>
-        </div>
-
-        {/* Team Quote & Signature */}
-        <div className="p-10 md:p-14 rounded-3xl bg-[#0e120e] border border-[#485346] flex flex-col md:flex-row items-center justify-between gap-8 mb-20">
-          <div className="space-y-3">
-            <div className="text-2xl sm:text-3xl font-medium text-[#ddffdc] leading-snug">
-              &ldquo;Hacemos las cosas bien porque el mal software nos quita el sueño.&rdquo;
-            </div>
-            <div className="text-sm font-mono text-[#7fee64]">
-              — El equipo de ingeniería de Clickshop Labs
-            </div>
-          </div>
-
-          <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
-            <button
-              onClick={openWizard}
-              className="w-full sm:w-auto px-8 min-h-[48px] py-3.5 rounded-full bg-[#7fee64] text-[#000000] font-sans font-bold text-sm tracking-tight hover:opacity-95 shadow-[0_0_20px_rgba(127,238,100,0.3)] transition-all text-center"
-            >
-              Diseña tu muestra interactiva
-            </button>
-            <a
-              href="#contact"
-              className="w-full sm:w-auto px-6 min-h-[48px] py-3.5 rounded-full bg-transparent border border-[#485346] hover:border-[#ddffdc] text-[#ddffdc] font-mono text-xs transition-colors flex items-center justify-center text-center"
-            >
-              Ir a la consola de contacto ↓
-            </a>
           </div>
         </div>
       </div>

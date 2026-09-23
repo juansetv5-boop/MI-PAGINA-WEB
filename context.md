@@ -19,9 +19,22 @@
   - Repositorio remoto: `https://github.com/juansetv5-boop/MI-PAGINA-WEB.git`.
 
 ## 2. Architecture Notes
-- Entorno de ventana enmarcada flotante (Look Lonzo Visuals) con bordes redondeados (rounded-2xl md:rounded-3xl) y marco de editor (#1e1e1e sobre fondo exterior #0a0a0a).
-- Pestañas técnicas superiores (page.tsx, portfolio.ts, services.json) con flujo global común que desemboca en 'Sobre Nosotros' y 'Contacto'.
-- Scrollytelling obsoleto y Status Bar eliminados por completo para una experiencia limpia y enfocada.
+- Ventana superior enmarcada flotante (Look Lonzo Visuals) con bordes redondeados (rounded-2xl md:rounded-3xl) conteniendo exclusivamente la cabecera y el Hero inicial.
+- A partir de la sección `#services`, el layout se expande a pantalla completa (full-width edge-to-edge, w-full max-w-none px-0) con contenedores internos tipográficos max-w-[1360px] mx-auto.
+- Eliminación de badges decorativos de versión y del bloque de cita/banner redundante en Sobre Nosotros.
+
+## 22/09/2026 - Eliminación de Banner CTA/Badge y Expansión a Pantalla Completa (Full-Width) desde #services
+- **Eliminación de Elementos Obsoletos**:
+  - Eliminado el banner con la cita del equipo ("Hacemos las cosas bien porque el mal software nos quita el sueño") y sus botones hijos de llamada a la acción en `CleanEditorialAbout.tsx`.
+  - Eliminada la etiqueta de versión (`v2.4.0`) de la cabecera del editor en `IDETabManager.tsx`.
+- **Reestructuración de Layout: Enmarcado Superior + Pantalla Completa desde #services**:
+  - El contenedor flotante con bordes redondeados (`max-w-7xl mx-auto rounded-2xl md:rounded-3xl border border-[#2d2d2d]`) cierra justo después del Hero inicial.
+  - A partir de `<section id="services">` (`ValuePropositionGrid.tsx`) y en todas las secciones subsiguientes (Proceso, Sobre Nosotros y Consola de Contacto), los bloques se montan directamente sobre el flujo raíz: `w-full max-w-none px-0` ocupando el 100% del ancho de pantalla de borde a borde.
+  - Se conservan contenedores internos centrados (`max-w-[1360px] mx-auto px-6 md:px-12`) para mantener una lectura tipográfica equilibrada.
+- **Control Responsivo y Compilación**:
+  - Preservado `overflow-x: clip` en html, body y contenedores para blindaje contra overflow lateral.
+  - `npm run build` ejecutado exitosamente con 0 errores y 0 advertencias.
+  - Conservado estrictamente en local (sin `git push`).
 
 ## 22/09/2026 - Refactorización de Layout: Remoción de Scrollytelling, Enmarcado Flotante Redondeado y Flujo Global de About & Contact
 - **Eliminación de Componentes Obsoletos y Barras Sobrantes**:
