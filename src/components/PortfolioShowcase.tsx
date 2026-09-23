@@ -304,7 +304,7 @@ export default function PortfolioShowcase() {
                     </div>
                   </a>
                 ) : (
-                  <div className="relative w-full aspect-[16/10] rounded-xl overflow-hidden border border-[#485346] bg-[#0e120e] shadow-2xl flex flex-col">
+                  <div className="relative w-full aspect-[16/10] min-h-[380px] lg:min-h-[440px] rounded-xl overflow-hidden border border-[#485346] bg-[#0e120e] shadow-2xl flex flex-col">
                     {/* Browser Header Bar */}
                     <div className="flex items-center justify-between px-4 py-2.5 bg-[#181818] border-b border-[#485346]">
                       <div className="flex items-center gap-2">
