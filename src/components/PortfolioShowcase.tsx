@@ -28,15 +28,15 @@ const projects: Project[] = [
     title: 'RLP Compliance S.A.S.',
     url: 'https://rlpcompliance.com',
     domain: 'rlpcompliance.com',
-    category: 'PÁGINA WEB CORPORATIVA & CUMPLIMIENTO',
+    category: 'PÁGINA WEB CORPORATIVA',
     description:
-      'Plataforma web institucional desarrollada para RLP Compliance. Arquitectura limpia, máxima velocidad de carga y presentación corporativa diseñada para generar autoridad y confianza en el sector normativo.',
+      'Plataforma web desarrollada para RLP Compliance. Un sitio rápido, sobrio y ordenado que transmite autoridad y tranquilidad inmediata a quienes buscan asesoría jurídica y normativa.',
     metrics: [
-      { label: 'Disponibilidad', value: '99.8%', badge: 'HTTP/3 EDGE' },
-      { label: 'Rendimiento', value: '100/100', badge: 'LIGHTHOUSE' },
-      { label: 'Experiencia', value: 'Mobile-First', badge: 'RESPONSIVE' },
+      { label: 'Velocidad', value: 'Instantánea', badge: 'SIN ESPERAS' },
+      { label: 'Claridad', value: '100%', badge: 'FÁCIL DE NAVEGAR' },
+      { label: 'Experiencia', value: 'Mobile-First', badge: 'EN CUALQUIER PANTALLA' },
     ],
-    tags: ['Next.js 16', 'TypeScript', 'Tailwind CSS', 'SEO Corporate', 'Edge Cache'],
+    tags: ['Diseño a Medida', 'Estructura Clara', 'Carga Rápida', 'Presencia Corporativa'],
     mockupType: 'rlp',
   },
   {
@@ -44,15 +44,15 @@ const projects: Project[] = [
     tabLabel: 'Traductor Dactilología Alpha',
     title: 'Traductor de Dactilología Alpha',
     domain: 'dactilologia.clickshop.dev',
-    category: 'VISIÓN POR COMPUTADORA & INTELIGENCIA ARTIFICIAL',
+    category: 'INVESTIGACIÓN & DESARROLLO',
     description:
-      'Proyecto de investigación y desarrollo con IA para la detección y traducción en tiempo real de lenguaje de señas (deletreo dactilológico) mediante visión artificial de alta frecuencia de actualización.',
+      'Proyecto de desarrollo con inteligencia artificial para la traducción en tiempo real de lenguaje de señas mediante la cámara, pensado para facilitar la comunicación inclusiva.',
     metrics: [
-      { label: 'Tasa de FPS', value: '60 FPS', badge: 'REAL-TIME' },
-      { label: 'Puntos Clave', value: '21 Keypoints', badge: 'LANDMARKS' },
-      { label: 'Precisión IA', value: '98.4%', badge: 'ALPHA v1.0' },
+      { label: 'Fluidez', value: 'Tiempo Real', badge: 'AL INSTANTE' },
+      { label: 'Precisión', value: '98.4%', badge: 'ALTA EXACTITUD' },
+      { label: 'Enfoque', value: 'Inclusivo', badge: 'ACCESIBILIDAD' },
     ],
-    tags: ['Python 3.10', 'Computer Vision', 'OpenCV', 'AI Pipeline', 'Real-Time R&D'],
+    tags: ['Inteligencia Artificial', 'Cámara en Vivo', 'Visión Computarizada', 'Innovación'],
     mockupType: 'ai',
   },
 ];
@@ -73,7 +73,7 @@ export default function PortfolioShowcase() {
   };
 
   return (
-    <section id="work" className="w-full bg-[#000000] py-24 px-6 md:px-12 lg:px-20 border-t border-[#1f2a33]">
+    <section id="work" className="w-full bg-[#0a0a0a] py-24 md:py-32 px-6 md:px-12 lg:px-20">
       <div className="max-w-[1360px] mx-auto">
         {/* Section Header */}
         <ScrollReveal delay={0}>
@@ -85,32 +85,39 @@ export default function PortfolioShowcase() {
                 letterSpacing: '-0.012em',
               }}
             >
-              Proyectos Destacados <span className="text-[#7fee64]">e Investigación</span>
+              Proyectos reales <span className="text-[#7fee64]">que hablan por sí solos</span>
             </h2>
             <p className="text-[#8cab87] text-[15px] md:text-base mt-3 tracking-[-0.022em]">
-              Explora nuestras soluciones desarrolladas: desde sitios web corporativos en producción hasta algoritmos de visión por computadora e inteligencia artificial.
+              Echa un vistazo a cómo ayudamos a otros negocios a transformar ideas confusas en páginas claras, profesionales y que generan confianza desde el primer segundo.
             </p>
           </div>
         </ScrollReveal>
 
-        {/* 1. SegmentedControl (Top Tabs Bar: with native inertia swipe on mobile) */}
+        {/* 1. SegmentedControl (Top Tabs Bar: responsive auto width with no-scrollbar) */}
         <ScrollReveal delay={100}>
-          <div className="flex justify-start sm:justify-center mb-8 md:mb-12 overflow-x-auto snap-x snap-mandatory pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
-            <div className="inline-flex p-1.5 rounded-xl bg-[#181818] border border-[#485346] shadow-xl gap-1.5 max-w-full">
+          <div className="w-full flex justify-center mb-8 md:mb-12 px-2">
+            <div className="w-full max-w-sm sm:max-w-md mx-auto p-1 bg-[#121612] border border-[#2d2d2d] rounded-xl flex items-center justify-between overflow-x-auto no-scrollbar gap-1">
               {projects.map((p) => {
                 const isSelected = activeProjectId === p.id;
                 return (
                   <button
                     key={p.id}
                     onClick={() => handleSelectTab(p.id)}
-                    className={`min-h-[44px] px-4 sm:px-5 py-2.5 rounded-lg text-xs md:text-sm font-sans font-medium whitespace-nowrap snap-center transition-all duration-300 flex items-center gap-2 ${
+                    className={`whitespace-nowrap px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-lg flex-1 text-center transition-all font-sans min-h-[40px] flex items-center justify-center gap-1.5 ${
                       isSelected
                         ? 'bg-[#7fee64] text-[#000000] font-bold shadow-[0_0_16px_rgba(127,238,100,0.35)]'
                         : 'text-[#8cab87] hover:text-[#ddffdc] hover:bg-[#212525] active:bg-[#212525]'
                     }`}
                   >
-                    {isSelected && <span className="w-2 h-2 rounded-full bg-[#000000]" />}
-                    <span>{p.tabLabel}</span>
+                    {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-[#000000] shrink-0" />}
+                    {p.id === 'dactilologia' ? (
+                      <>
+                        <span className="sm:hidden">Dactilología AI</span>
+                        <span className="hidden sm:inline">Traductor Dactilología Alpha</span>
+                      </>
+                    ) : (
+                      <span>{p.tabLabel}</span>
+                    )}
                   </button>
                 );
               })}
@@ -121,28 +128,28 @@ export default function PortfolioShowcase() {
         {/* 2. Split Layout (2 Columns: Info Left, Preview Right) */}
         <ScrollReveal delay={200}>
           <div
-            className={`grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-center bg-[#181818] border border-[#485346] rounded-2xl p-5 sm:p-7 md:p-10 shadow-2xl relative overflow-hidden transition-all duration-300 ${
+            className={`grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6 lg:gap-12 items-center bg-[#181818] border border-[#485346] rounded-2xl p-4 sm:p-7 md:p-10 shadow-2xl relative overflow-hidden transition-all duration-300 ${
               isAnimating ? 'opacity-40 scale-[0.995]' : 'opacity-100 scale-100'
             }`}
           >
-            {/* LEFT COLUMN: Project Info */}
-            <div className="lg:col-span-6 flex flex-col justify-between space-y-6">
+            {/* LEFT COLUMN: Project Info (Minimalist on mobile: Title only) */}
+            <div className="lg:col-span-6 flex flex-col justify-between space-y-4 md:space-y-6">
               <div>
-                <div className="text-xs font-sans font-bold text-[#7fee64] tracking-widest uppercase mb-2">
+                <div className="hidden md:block text-xs font-sans font-bold text-[#7fee64] tracking-widest uppercase mb-2">
                   // {activeProject.category}
                 </div>
                 <h3
-                  className="text-[#ddffdc] text-2xl md:text-3xl lg:text-4xl font-medium tracking-tight leading-tight mb-4"
+                  className="text-[#ddffdc] text-xl sm:text-2xl md:text-3xl lg:text-4xl font-medium tracking-tight leading-tight mb-2 md:mb-4 text-center md:text-left"
                   style={{ fontFamily: 'var(--font-sans, sans-serif)' }}
                 >
                   {activeProject.title}
                 </h3>
-                <p className="text-[#8cab87] text-sm md:text-base leading-relaxed mb-6">
+                <p className="hidden md:block text-[#8cab87] text-sm md:text-base leading-relaxed mb-6">
                   {activeProject.description}
                 </p>
 
-                {/* Metrics Row */}
-                <div className="grid grid-cols-3 gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl bg-[#0e120e] border border-[#485346]/60 mb-6">
+                {/* Metrics Row - Hidden on mobile */}
+                <div className="hidden md:grid grid-cols-3 gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl bg-[#0e120e] border border-[#485346]/60 mb-6">
                   {activeProject.metrics.map((m) => (
                     <div key={m.label} className="text-center">
                       <div className="text-[10px] md:text-xs text-[#677d64] uppercase font-sans tracking-wider font-medium">
@@ -158,8 +165,8 @@ export default function PortfolioShowcase() {
                   ))}
                 </div>
 
-                {/* Tech Stack Tags */}
-                <div>
+                {/* Tech Stack Tags - Hidden on mobile */}
+                <div className="hidden md:block">
                   <div className="text-xs text-[#677d64] uppercase tracking-wider mb-2.5 font-sans font-medium">
                     Stack Tecnológico:
                   </div>
@@ -176,9 +183,9 @@ export default function PortfolioShowcase() {
                 </div>
               </div>
 
-              {/* Action Button - Only rendered for projects without direct live URL */}
+              {/* Action Button - Only rendered for projects without direct live URL (Desktop only) */}
               {!activeProject.url && (
-                <div className="pt-4 border-t border-[#485346]/40">
+                <div className="hidden md:block pt-4 border-t border-[#485346]/40">
                   <a
                     href="#start"
                     className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#212525] border border-[#7fee64] text-[#7fee64] px-6 min-h-[48px] py-3 rounded-lg font-sans text-xs md:text-sm font-bold uppercase tracking-wider hover:bg-[#7fee64] hover:text-[#000000] active:scale-98 transition-all"

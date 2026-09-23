@@ -26,10 +26,10 @@ export default function TrustToolSection() {
   const { openWizard } = useWizard();
 
   return (
-    <section id="process" className="w-full max-w-full bg-[#0a0a0a] py-24 px-4 md:px-12 lg:px-24 border-t border-[#1f2a33]">
+    <section id="process" className="w-full max-w-full bg-[#0a0a0a] py-24 md:py-32 px-4 md:px-12 lg:px-24">
       <div className="max-w-[1360px] mx-auto">
         {/* Header Block */}
-        <ScrollReveal delay={0} className="max-w-3xl mb-16">
+        <ScrollReveal variant="text" delay={0} className="max-w-3xl mb-16">
           <h2 
             className="text-[#ddffdc] text-[32px] md:text-[46px] font-medium leading-tight tracking-[-0.015em] mb-6"
             style={{ fontFamily: 'var(--font-sans, sans-serif)' }}
@@ -44,31 +44,39 @@ export default function TrustToolSection() {
 
         {/* Process Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {steps.map((step, idx) => (
-            <ScrollReveal key={step.number} delay={idx * 150} className="h-full">
-              <div
-                className="bg-[#181818] rounded-lg border border-[#485346] p-8 flex flex-col justify-between h-full transition-colors hover:border-[#677d64]"
+          {steps.map((step, idx) => {
+            const cardDirections: ('left' | 'up' | 'right')[] = ['left', 'up', 'right'];
+            return (
+              <ScrollReveal
+                key={step.number}
+                direction={cardDirections[idx % 3]}
+                delay={idx * 120}
+                className="h-full"
               >
-                <div>
-                  <div className="flex items-center justify-between mb-6">
-                    <span className="text-sm font-sans font-semibold text-[#7fee64]">
-                      PASO {step.number}
-                    </span>
+                <div
+                  className="bg-[#181818] rounded-lg border border-[#485346] p-8 flex flex-col justify-between h-full transition-colors hover:border-[#677d64]"
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-6">
+                      <span className="text-sm font-sans font-semibold text-[#7fee64]">
+                        PASO {step.number}
+                      </span>
+                    </div>
+                    <h3 className="text-[#ddffdc] text-[22px] font-medium mb-3">
+                      {step.title}
+                    </h3>
+                    <p className="text-[#8cab87] text-[15px] leading-relaxed">
+                      {step.desc}
+                    </p>
                   </div>
-                  <h3 className="text-[#ddffdc] text-[22px] font-medium mb-3">
-                    {step.title}
-                  </h3>
-                  <p className="text-[#8cab87] text-[15px] leading-relaxed">
-                    {step.desc}
-                  </p>
                 </div>
-              </div>
-            </ScrollReveal>
-          ))}
+              </ScrollReveal>
+            );
+          })}
         </div>
 
         {/* Trust Callout */}
-        <ScrollReveal delay={300} className="mt-12">
+        <ScrollReveal variant="card" direction="up" delay={280} className="mt-12">
           <div className="p-8 rounded-lg bg-[#181818] border border-[#7fee64]/30 flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-full bg-[#7fee64]/10 border border-[#7fee64] flex items-center justify-center text-[#7fee64] text-xl font-bold">

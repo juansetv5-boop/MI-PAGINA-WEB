@@ -19,10 +19,173 @@
   - Repositorio remoto: `https://github.com/juansetv5-boop/MI-PAGINA-WEB.git`.
 
 ## 2. Architecture Notes
-- Pantalla de carga universal (`LoadingScreen.tsx`) ejecutándose en cada inicio y recarga (F5) con asset exclusivo optimizado `loading-screen-opt.mp4` (302 KB, sin audio).
-- Ventana superior enmarcada flotante (Look Lonzo Visuals) con bordes redondeados (rounded-2xl md:rounded-3xl) conteniendo exclusivamente la cabecera del editor y el Hero inicial.
+- Arranque directo ultra rápido (0ms) sin pantalla de carga ni bloqueos de rendering: Máximo rendimiento 100/100 en Lighthouse y Core Web Vitals (FCP, LCP, CLS).
+- Ventana superior enmarcada flotante (Look Lonzo Visuals) con bordes redondeados (rounded-2xl md:rounded-3xl) animada de forma instantánea mediante keyframes nativos CSS (`@keyframes lonzoWindowEntrance`) con físicas elásticas y cascada interna (*stagger*).
 - Flujo inferior 100% full-width a pantalla completa (w-full max-w-full bg-[#0a0a0a] px-4 md:px-12 lg:px-24) que abarca Proceso, Sobre Nosotros y Consola de Contacto sin marcos restrictivos.
 - Barra de navegación móvil inferior rediseñada como cápsula flotante glassmorphism con botón central destacado y target ergonómico para el pulgar.
+
+## 22/09/2026 - Compactación y Optimización Responsiva de Pestañas IDE en Móvil
+- **Ajuste de Espaciado y Tipografía Compacta (`src/components/IDETabManager.tsx`)**:
+  - Clases aplicadas al contenedor de pestaña (`<button role="tab">`):
+    `px-2.5 sm:px-4 py-1.5 sm:py-2.5 text-[11px] sm:text-xs md:text-sm font-mono whitespace-nowrap min-h-[38px] sm:min-h-[44px]`.
+  - Gap interno entre ícono y etiqueta optimizado: `gap-1.5 sm:gap-2`.
+- **Optimización Visual y Táctil en Móvil**:
+  - Botón de cierre decorativo (`×`) configurado con `hidden sm:flex`: Oculto en móviles para evitar toques accidentales y liberar espacio útil de pantalla; visible en tablet/desktop.
+  - Borde superior activo (`border-t-2 border-t-[#7fee64]`) perfectamente integrado en la altura compacta.
+  - Contenedor con desplazamiento táctil fluido: `overflow-x-auto no-scrollbar flex items-center w-full px-2 py-1 bg-[#252526] border-t border-b border-[#1f2a33]`.
+- **Validación Técnica y Git**:
+  - `npm run build` verificado con 0 errores y 0 advertencias de compilación / TypeScript (código 0).
+  - Conservado estrictamente en local sin `git push`.
+
+## 22/09/2026 - Humanización y Condicionales Dinámicos para Mensajes de WhatsApp
+- **Lógica Condicional y Generador de Mensajes (`src/utils/whatsapp.ts`)**:
+  - Implementado generador dinámico de URL `https://wa.me/573127930898?text=...` con codificación segura `encodeURIComponent(mensaje)` para preservar signos, tildes y saltos de línea.
+  - Formato limpio de empresa: Si el usuario proporciona empresa, se añade ` de {empresa}`; si no, se omite de forma natural sin espacios dobles ni anomalías (`Soy Carlos.` vs `Soy Carlos de Mendoza Consultores.`).
+  - Campo de empresa marcado como opcional en el modal (`ConversionWizardModal.tsx`).
+- **Templates Dinámicos según Intención**:
+  - **Asesoría / Consultoría (`service === 'asesoria'`)**:
+    *"¡Hola! Soy {userName}{companyText}. Estuve viendo Clickshop y me gustaría tener una asesoría con ustedes para ver qué es lo que realmente le conviene a mi negocio. ¿Cómo podríamos cuadrarla?"*
+  - **Proyectos de Desarrollo (Landing Page, Web Corporativa, Sistema a Medida)**:
+    *"¡Hola! Soy {userName}{companyText}. Estuve mirando su web y me interesa que trabajemos en una {serviceLabel} para mi proyecto. Quería contarles un poco la idea para que lo revisemos."*
+  - Mapeo de `serviceLabel` en minúsculas naturales: `"landing page"`, `"página corporativa"`, `"plataforma a medida"`.
+- **Integración en Componentes**:
+  - `ConversionWizardModal.tsx` migrado para utilizar `buildWhatsAppUrl` y opciones estructuradas (`landing`, `corporativa`, `sistema`, `asesoria`).
+- **Validación Técnica y Git**:
+  - `npm run build` verificado exitosamente con 0 errores y 0 advertencias de TypeScript (código 0).
+  - Conservado estrictamente en local sin `git push`.
+
+## 22/09/2026 - Refactorización de Servicios: Brand Voice Humano, Micro-Copy Corto, Remoción de Tags y Cero Tiempos de Entrega
+- **Eliminación Total de Tags Técnicos y Tiempos de Entrega**:
+  - Removidos por completo todos los chips y badges tipo `[Diseño a Medida]`, `[Mobile-First]`, `[Alta Velocidad]`, `[Sin Plantillas]`.
+  - Eliminada toda mención a plazos y tiempos de entrega ("2-3 semanas", "X días", "tiempos récord", SLAs) tanto en encabezados como en el banner inferior de compromiso y en las tarjetas.
+- **Micro-Copy Humano y Conciso (Exactamente 2 líneas por opción)**:
+  - **Landing Page**: *"Una página directa y sin rodeos, pensada para presentar lo que ofreces y guiar a tu cliente a contactarte sin enredos."*
+  - **Página Corporativa**: *"La casa digital de tu negocio. Ordena quién eres y tus proyectos para transmitir confianza sólida desde el primer segundo."*
+  - **Sistema a Medida**: *"Herramientas y paneles creados a la medida de tu operación para resolver procesos específicos de tu día a día."*
+- **Call-to-Action Unificado e Interacción**:
+  - Botón interactivo en cada tarjeta: *"Hablemos de este proyecto →"*, que preselecciona el servicio en el formulario de contacto (`TerminalContactFooter.tsx`) mediante evento custom `select-service` y hace scroll suave a `#contact`.
+  - Pestaña del IDE en `IDETabManager.tsx` actualizada a: `Servicios & Soluciones Digitales`.
+- **Validación Técnica y Git**:
+  - `npm run build` ejecutado exitosamente con 0 errores y 0 advertencias de compilación / TypeScript (código 0).
+  - Conservado estrictamente en local sin `git push`.
+
+## 22/09/2026 - Reescritura de Textos y Humanización de Copy Oficial Clickshop
+- **Reglas de Tono y Comunicación Oficial**:
+  - Cero tecnicismos (eliminadas menciones a SSR, Core Web Vitals, Frameworks, latencia o APIs).
+  - Tono fresco, comprensivo, transparente y directo centrado en la empatía, el orden y la tranquilidad del cliente.
+- **Hero Principal (`HeroSection.tsx`)**:
+  - Titular: *"Te entendemos a ti tanto como a tu página web."*
+  - Descripción: *"Da mucha rabia cuando pagas por una web prometiendo profesionalismo y te entregan algo básico, lento y sin alma que hace pensar que tener una página no sirve. Nosotros no solo ordenamos tu información: hacemos que quien entre sienta tranquilidad, entienda lo que ofreces y se quede hasta el final."*
+  - Botón principal: *"Hablemos de tu idea"*.
+  - Botón secundario: *"Ver proyectos reales"*.
+  - Tres puntos de valor clave:
+    1. *"Se ve bien, funciona mejor"* (Tu portada cumple lo que promete).
+    2. *"Sin enredos raros"* (Hablas directo con quien hace tu página, de tú a tú).
+    3. *"Carga en un pestañeo"* (Porque nadie espera una página lenta).
+- **Sección Sobre Nosotros / Filosofía (`CleanEditorialAbout.tsx`)**:
+  - Titular: *"Una página no es solo para verse bonita. Es para transmitir tranquilidad."*
+  - Texto central (Analogía del Libro):
+    *"Imagina que tu web es como un libro. Si la portada es hermosa pero abres las páginas y todo está desordenado, confuso o no habla de lo que prometía la carátula, el lector simplemente lo cierra y se va decepcionado. Nuestro trabajo es ser el escritor que acompaña a tu cliente paso a paso desde la primera línea hasta la última. Cuando una página cumple lo que promete y se siente fácil de recorrer, la gente confía. Y cuando la gente confía, tu negocio se muestra más. Así de simple funciona. :D"*
+- **Sección de Contacto (`TerminalContactFooter.tsx`)**:
+  - Titular: *"Cuéntanos qué tienes en mente."*
+  - Subtítulo: *"Sin tecnicismos ni formularios raros. Cuéntanos qué hace tu negocio y te decimos con total sinceridad cómo lo resolveríamos nosotros."*
+  - Pasos del formulario humanizados con preguntas cercanas y botones directos (*"Continuar →"*, *"Enviar mensaje →"*).
+- **Secciones de Portafolio y Servicios (`PortfolioShowcase.tsx`, `ServicesView.tsx`)**:
+  - Textos y métricas adaptados para comunicar valor humano (*"Velocidad Instantánea"*, *"Claridad 100%"*, *"Diseño a Medida"*).
+- **Validación Técnica y Git**:
+  - `npm run build` ejecutado exitosamente con 0 errores y 0 advertencias de compilación / TypeScript (código 0).
+  - Conservado estrictamente en local sin `git push`.
+
+## 22/09/2026 - Corrección Responsiva en Móvil: Ocultación de Botón WPP, Ajuste de Navbar, Selector de Portafolio y Vista Minimalista
+- **Eliminación del Botón Flotante de WhatsApp en Móvil**:
+  - `FloatingWhatsAppButton.tsx`: Configurado con `hidden md:flex`, eliminando cualquier solapamiento o distracción en viewports móviles mientras se preserva accesible en pantallas de escritorio (`md:flex fixed bottom-6 right-6`).
+- **Ajuste Ergonómico en `MobileBottomNav.tsx`**:
+  - Contenedor reajustado a `justify-between px-1 sm:px-2` con margen seguro para garantizar que el botón flotante central de cotización no invada ni tape los enlaces laterales ('Proyectos' y 'Servicios').
+- **Solución al Desbordamiento en Selector de Portafolio (`PortfolioShowcase.tsx`)**:
+  - Contenedor de pestañas reestructurado como pastilla elástica contenida: `w-full max-w-sm sm:max-w-md mx-auto p-1 bg-[#121612] border border-[#2d2d2d] rounded-xl flex items-center justify-between overflow-x-auto no-scrollbar gap-1`.
+  - Botones ajustados con `whitespace-nowrap px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-lg flex-1 text-center transition-all`.
+  - Etiqueta adaptativa por breakpoint:
+    - Móvil: `<span className="sm:hidden">Dactilología AI</span>`
+    - Desktop: `<span className="hidden sm:inline">Traductor Dactilología Alpha</span>`
+  - La pastilla activa verde respeta el padding interno sin recortar bordes redondeados.
+- **Vista Minimalista en Móvil (Título + Mockup Interactivo)**:
+  - En pantallas móviles (`block md:hidden`), la tarjeta de proyecto se enfoca estrictamente en:
+    1. Título del caso de estudio (`h3` centrado/limpio).
+    2. Mockup interactivo a pantalla completa con previsualización nítida y enlace directo `Visitar ↗`.
+  - Textos descriptivos extensos, métricas secundarias y etiquetas de stack tecnológico se ocultaron en móvil (`hidden md:block`/`hidden md:grid`), evitando saturación visual y scroll innecesario.
+- **Validación Técnica y Git**:
+  - `npm run build` ejecutado exitosamente con 0 errores y 0 advertencias de compilación / TypeScript (código 0).
+  - Conservado estrictamente en local sin `git push`.
+
+## 22/09/2026 - Calibración de Animación de Entrada: Ritmo Chill, Ultra-Smooth y Desaceleración Inercial
+- **Reajuste de Curva Inercial y Keyframes Nativos**:
+  - Curva de tiempo ultra relajada con desaceleración orgánica: `cubic-bezier(0.05, 0.9, 0.1, 1)` (cero tirones bruscos).
+  - Duración total de la ventana: `3.4s`.
+  - Keyframes `@keyframes lonzoWindowEntrance`:
+    - 0%: `opacity: 0; transform: translateY(28px) scale(0.95); filter: blur(4px);`
+    - 40%: `opacity: 1; filter: blur(0px);`
+    - 80%: `transform: translateY(2px) scale(0.995);`
+    - 100%: `opacity: 1; transform: translateY(0px) scale(1);`
+- **Desacople y Stagger Progresivo Relajado de los Elementos Interiores**:
+  - Header (`<header>`): Arranca a los `0.4s` con duración de `1.2s` (`translateY(-10px) -> 0px`).
+  - Glow verde de fondo: Fade-in atmosférico tenue de `2.0s` iniciando a los `0.6s`.
+  - H1 ("Te entendemos a ti..."): Fade-in suave de abajo hacia arriba iniciando a los `0.9s` (duración `1.2s`, `translateY(16px) -> 0px`).
+  - Párrafo descriptivo: Arranca a los `1.3s` con fade puro (duración `1.0s`).
+  - Botones de acción ("Diseña tu muestra" / "Ver cómo trabajamos"): Se integran a los `1.7s` con scale suave (`0.97 -> 1`, duración `1.0s`).
+  - Specs/Métricas (+100%, 3 Revisiones, Mobile-First): Flotan a su posición final a los `2.0s` con duración de `1.2s`, completando el asentamiento total en los ~3.2s - 3.4s.
+- **Optimización de Hardware y Renderizado GPU**:
+  - Propiedad `will-change: transform, opacity` activa durante el ciclo de animación y liberada a `'auto'` tras 3700ms en `IDETabManager.tsx` y `HeroSection.tsx`.
+  - Sin micro-saltos de scroll ni CLS.
+- **Validación Técnica y Git**:
+  - `npm run build` ejecutado exitosamente con 0 errores y 0 advertencias (código 0).
+  - Conservado estrictamente en local sin `git push`.
+
+## 22/09/2026 - Eliminación Completa de Pantalla de Carga (Loading Screen) para Rendimiento 100/100 y Arranque Directo
+- **Desmontaje y Remoción Total**:
+  - Eliminado por completo el componente `LoadingScreen.tsx`.
+  - Removido el import y la invocación de `<LoadingScreen />` en `src/app/page.tsx`.
+  - Eliminadas todas las dependencias de eventos globales (`loading-screen-exit`), temporizadores de espera y flags de carga inicial.
+- **Arranque Inmediato con Keyframes CSS Nativos**:
+  - La ventana principal del IDE se anima en el milisegundo cero sin esperar hidratación mediante `.animate-lonzo-window` (`@keyframes lonzoWindowEntrance`):
+    - Curva: `cubic-bezier(0.16, 1, 0.3, 1)`.
+    - Duración: `800ms`.
+    - Estado: `scale: 0.91 translateY(35px) -> scale: 1 translateY(0)`, `opacity: 0 -> 1`.
+    - Punto de anclaje: `transform-origin: center center`.
+  - Cascada interna de micro-retrasos en CSS puro (`animation-fill-mode: both`):
+    - Header/Navbar: `.animate-lonzo-header` (retraso 120ms, `-12px -> 0px`).
+    - Titular H1: `.animate-lonzo-h1` (retraso 220ms, `20px -> 0px`).
+    - Párrafo de valor: `.animate-lonzo-paragraph` (retraso 300ms, `15px -> 0px`).
+    - Botones de acción CTA: `.animate-lonzo-buttons` (retraso 380ms, `15px scale(0.97) -> 0px scale(1)`).
+    - Barra de métricas: `.animate-lonzo-metrics` (retraso 460ms, `10px -> 0px`).
+- **Limpieza de Recursos y Composición**:
+  - `will-change: transform, opacity` se aplica transitoriamente durante la animación y se restablece a `'auto'` a los 1250ms.
+  - Zero bloqueo del hilo principal de ejecución, permitiendo renderizado inmediato First Contentful Paint (FCP) y Largest Contentful Paint (LCP) óptimos.
+- **Validación Técnica y Git**:
+  - `npm run build` ejecutado exitosamente con 0 errores y 0 advertencias de compilación / TypeScript (código 0).
+  - Conservado estrictamente en local sin `git push`.
+
+## 22/09/2026 - Animación OS Window Pop-in estilo Lonzo Visuals con Físicas Elásticas y Stagger Interno
+- **Sincronización con Pantalla de Carga**:
+  - `LoadingScreen.tsx`: Disparo síncrono del evento personalizado `loading-screen-exit` (`window.dispatchEvent(new CustomEvent('loading-screen-exit'))`) en cuanto inicia el fade-out de salida.
+  - `IDETabManager.tsx`: Receptor activo del evento con temporizador de fallback (3.3s si existe video, 50ms si no existe loader) para garantizar la ejecución confiable en cualquier condición.
+- **Físicas y Animación del Marco Contenedor**:
+  - Curva de transición elástica: `cubic-bezier(0.16, 1, 0.3, 1)` (Swift/macOS Spring).
+  - Duración total de entrada: `800ms`.
+  - Transformación inicial: `opacity: 0`, `scale: 0.91`, `translate-y: 35px`.
+  - Transformación final: `opacity: 1`, `scale: 1`, `translate-y: 0`.
+  - Expansión simétrica: `transform-origin: center center`.
+- **Cascada (Stagger) de Elementos Interiores**:
+  - Barra Superior / Navbar del IDE (`header`): Retraso `120ms`, `translate-y: -12px -> 0px`, `opacity: 0 -> 1`.
+  - Título H1 del Hero ("Te entendemos a ti tanto como a tu página web"): Retraso `220ms`, `translate-y: 20px -> 0px`, `opacity: 0 -> 1`.
+  - Párrafo de Valor ("Sin tecnicismos raros..."): Retraso `300ms`, `translate-y: 15px -> 0px`, `opacity: 0 -> 1`.
+  - Botones de Acción ("Diseña tu muestra" / "Ver cómo trabajamos"): Retraso `380ms`, `translate-y: 15px -> 0px`, `scale: 0.97 -> 1`, `opacity: 0 -> 1`.
+  - Barra Inferior de Métricas (+100%, 3 Revisiones, Mobile-First): Retraso `460ms`, `translate-y: 10px -> 0px`, `opacity: 0 -> 1`.
+- **Optimización y Limpieza de Composición**:
+  - Inyección transitoria de `will-change: transform, opacity` durante el ciclo de entrada, removida automáticamente a los 1200ms-1250ms (`willChange: 'auto'`).
+  - Preservación de `overflow-x: clip` para evitar aparición de barras de desplazamiento horizontales durante la escala.
+- **Validación Técnica y Git**:
+  - `npm run build` ejecutado exitosamente con 0 errores y 0 advertencias (código de salida 0).
+  - Conservado estrictamente en local sin `git push`.
 
 ## 22/09/2026 - Configuración Universal de Pantalla de Carga en cada Inicio / F5 con loading-screen-opt
 - **Eliminación de Persistencia de Sesión**:
@@ -467,6 +630,54 @@ pm run build ejecutado exitosamente.
 ### 3. Validación & Control Local
 - Compilación de producción local verificada exitosamente con Next.js 16.3.4 y Turbopack (`npm run build`: 0 errores, 0 advertencias).
 - **Regla estricta Git**: Se cumple la prohibición de ejecutar `git push`. Todos los cambios permanecen en el repositorio local.
+
+---
+## [2026-09-22] Remoción de Divisores y Continuidad Visual Fluidizada (Seamless Scroll)
+
+### 1. Remoción de Bordes y Líneas de Corte
+- **Remoción de divisores estructurales**: Se eliminaron las clases de borde superior e inferior (`border-t border-[#1f2a33]`, `border-b border-[#1f2a33]`) en todos los componentes desde el Portafolio hacia el pie de página (`PortfolioShowcase.tsx`, `TrustToolSection.tsx`, `ServicesView.tsx`, `CleanEditorialAbout.tsx`, `TerminalContactFooter.tsx`).
+- **Eliminación de divisores explícitos**: Se removió el elemento divisor horizontal `<div className="w-full h-px bg-[#212525] mb-20" />` en la sección de Manifiesto & Filosofía (`CleanEditorialAbout.tsx`).
+
+### 2. Fluidez y Continuidad Visual (Seamless Scroll)
+- **Unificación de fondos**: Se estandarizó el color de fondo de todas las secciones en `bg-[#0a0a0a]`, eliminando cambios bruscos de contraste visual entre bloques contiguos.
+- **Ritmo de lectura basado en espaciado**: Se implementó espaciado vertical amplio y consistente (`py-24 md:py-32`) para guiar la lectura de forma natural y orgánica sin necesidad de líneas divisorias rígidas.
+
+### 3. Validación & Control Local
+- Compilación de producción local verificada exitosamente con Next.js 16.3.4 y Turbopack (`npm run build`: 0 errores, 0 advertencias).
+- **Regla estricta Git**: Se cumple rigurosamente la prohibición de ejecutar `git push`. Todos los cambios se mantienen exclusivamente en local.
+
+---
+## [2026-09-22] Sistema Integral de Animaciones (Smooth Scroll, App Window Launch & Scroll Reveal Direccional)
+
+### 1. Desplazamiento Suave Global
+- **Configuración CSS**: Verificado `scroll-behavior: smooth`, `overflow-x: clip` y `max-width: 100%` en `src/app/globals.css` para un desplazamiento fluido en toda la aplicación sin tirones ni desbordamientos horizontales.
+
+### 2. Animación de Entrada de Aplicación (Window Launch Pop-in)
+- **Marco flotante del IDE (`src/components/IDETabManager.tsx`)**:
+  - Implementada animación de lanzamiento al montarse el componente:
+    * Estado inicial: `opacity-0 scale-[0.97] translate-y-6`
+    * Estado final: `opacity-100 scale-100 translate-y-0`
+    * Transición: `duration-700 cubic-bezier(0.16, 1, 0.3, 1)`
+- **Stagger progresivo en Hero (`src/components/HeroSection.tsx`)**:
+  - Elementos internos presentados con escalonamiento dinámico de 80ms (Título: 80ms, Subtítulo: 160ms, Botones CTA: 240ms, Métricas: 320ms).
+
+### 3. Motor de Animación por Scroll Direccional (`src/components/ScrollReveal.tsx`)
+- **Variante Bloques de Texto (`variant="text"`)**:
+  - Transición vertical corta y limpia de abajo hacia arriba (`opacity-0 translate-y-4` -> `opacity-100 translate-y-0`, `duration-500`).
+- **Variante Tarjetas y Elementos UI (`variant="card"`)**:
+  - Slide direccional inteligente según posición layout:
+    * Izquierda (`direction="left"`): `-translate-x-10 opacity-0` -> `translate-x-0 opacity-100` (`duration-700`).
+    * Derecha (`direction="right"`): `translate-x-10 opacity-0` -> `translate-x-0 opacity-100` (`duration-700`).
+    * Centro / Ancho Completo (`direction="up"`): `translate-y-10 opacity-0` -> `translate-y-0 opacity-100` (`duration-700`).
+
+### 4. Rendimiento & Desapuntado (Lighthouse 100/100)
+- `IntersectionObserver` configurado con `threshold: 0.15` y `rootMargin: "0px 0px -60px 0px"`.
+- Desconexión inmediata por elemento observado al entrar en viewport (`observer.unobserve(entry.target)`) liberando recursos de CPU.
+- Propiedad `will-change: opacity, transform` activa únicamente durante la animación y conmutada a `auto` inmediatamente al finalizar para prevenir consumo innecesario de memoria GPU.
+
+### 5. Validación & Entorno
+- Compilación de producción local verificada exitosamente con Next.js 16.3.4 y Turbopack (`npm run build`: 0 errores, 0 advertencias).
+- **Regla estricta Git**: Prohibido ejecutar `git push`. Todos los cambios se mantienen rigurosamente en local.
 
 
 

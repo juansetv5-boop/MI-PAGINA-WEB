@@ -51,7 +51,7 @@ const tabs: TabConfig[] = [
     label: 'services.json',
     badgeColor: '#cbcb41',
     languageMode: 'JSON',
-    description: 'Estructura de Servicios & Tiempos',
+    description: 'Servicios & Soluciones Digitales',
     icon: (
       <span className="text-[#cbcb41] font-bold text-[11px] font-mono">
         &#123;&#125;
@@ -63,6 +63,16 @@ const tabs: TabConfig[] = [
 export default function IDETabManager() {
   const [activeTab, setActiveTab] = useState<TabId>('page.tsx');
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [isWindowAnimating, setIsWindowAnimating] = useState(true);
+
+  useEffect(() => {
+    // Clean up will-change after initial entrance animation completes (3.4s duration + settling)
+    const cleanupTimer = setTimeout(() => {
+      setIsWindowAnimating(false);
+    }, 3700);
+
+    return () => clearTimeout(cleanupTimer);
+  }, []);
 
   // Sync with URL hashes for seamless deep-linking
   useEffect(() => {
@@ -108,9 +118,19 @@ export default function IDETabManager() {
       {/* ── 1. WRAPPER EXTERIOR DEL MARCO FLOTANTE SUPERIOR (CABECERA + HERO) ── */}
       <div className="w-full p-2.5 sm:p-5 md:p-8 pb-0 sm:pb-0 md:pb-0 pt-3 sm:pt-6 md:pt-8 flex flex-col items-center">
         {/* ── CONTENEDOR DE LA VENTANA PRINCIPAL REDONDEADA (LOOK LONZO VISUALS) ── */}
-        <div className="w-full max-w-7xl mx-auto bg-[#1e1e1e] rounded-2xl md:rounded-3xl border border-[#2d2d2d] shadow-2xl overflow-hidden relative flex flex-col">
+        <div
+          className="w-full max-w-7xl mx-auto bg-[#1e1e1e] rounded-2xl md:rounded-3xl border border-[#2d2d2d] shadow-2xl overflow-hidden relative flex flex-col animate-lonzo-window"
+          style={{
+            willChange: isWindowAnimating ? 'transform, opacity' : 'auto',
+          }}
+        >
           {/* Cabecera de Ventana (Titlebar + Tab Strip + Breadcrumbs) */}
-          <header className="sticky top-0 z-40 w-full bg-[#181818] border-b border-[#2a2d2e] select-none">
+          <header
+            className="sticky top-0 z-40 w-full bg-[#181818] border-b border-[#2a2d2e] select-none animate-lonzo-header"
+            style={{
+              willChange: isWindowAnimating ? 'transform, opacity' : 'auto',
+            }}
+          >
             {/* Top Window Titlebar */}
             <div className="w-full px-4 py-2.5 flex items-center justify-between text-xs">
               {/* Left: Window Controls + Logo */}
@@ -164,7 +184,7 @@ export default function IDETabManager() {
             </div>
 
             {/* Tab Strip */}
-            <div className="w-full bg-[#252526] border-t border-b border-[#1f2a33] flex items-center overflow-x-auto no-scrollbar snap-x">
+            <div className="overflow-x-auto no-scrollbar flex items-center w-full px-2 py-1 bg-[#252526] border-t border-b border-[#1f2a33]">
               <div className="flex items-center">
                 {tabs.map((tab) => {
                   const isActive = activeTab === tab.id;
@@ -180,7 +200,7 @@ export default function IDETabManager() {
                         );
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                       }}
-                      className={`group relative flex items-center gap-2.5 px-4 sm:px-5 py-2.5 sm:py-3 text-xs sm:text-sm font-mono whitespace-nowrap snap-center min-h-[44px] transition-all border-r border-[#1f2a33] ${
+                      className={`group relative flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2.5 text-[11px] sm:text-xs md:text-sm font-mono whitespace-nowrap min-h-[38px] sm:min-h-[44px] transition-all border-r border-[#1f2a33] ${
                         isActive
                           ? 'bg-[#1e1e1e] text-[#ffffff] font-medium border-t-2 border-t-[#7fee64] shadow-sm'
                           : 'bg-[#252526] text-[#858585] hover:bg-[#2a2d2e] hover:text-[#cccccc]'
@@ -205,7 +225,7 @@ export default function IDETabManager() {
                             window.scrollTo({ top: 0, behavior: 'smooth' });
                           }
                         }}
-                        className="w-4 h-4 ml-1 rounded-sm flex items-center justify-center text-[#858585] hover:text-[#ffffff] hover:bg-[#333333] transition-colors text-xs font-sans"
+                        className="hidden sm:flex w-4 h-4 ml-1 rounded-sm items-center justify-center text-[#858585] hover:text-[#ffffff] hover:bg-[#333333] transition-colors text-xs font-sans"
                         title="Cerrar archivo"
                       >
                         ×

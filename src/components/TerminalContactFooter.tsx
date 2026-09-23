@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import emailjs from '@emailjs/browser';
 import Link from 'next/link';
 import ScrollReveal from './ScrollReveal';
@@ -17,6 +17,17 @@ export default function TerminalContactFooter() {
   const [step, setStep] = useState<number>(1);
   const [isLoading, setIsLoading] = useState(false);
   const [toast, setToast] = useState<ToastState>('idle');
+
+  useEffect(() => {
+    const handleSelectService = (e: Event) => {
+      const customEvent = e as CustomEvent<{ service?: string }>;
+      if (customEvent.detail?.service) {
+        setFormData((prev) => ({ ...prev, serviceType: customEvent.detail.service! }));
+      }
+    };
+    window.addEventListener('select-service', handleSelectService);
+    return () => window.removeEventListener('select-service', handleSelectService);
+  }, []);
 
   const serviceOptions = [
     { label: 'Landing Page', val: 'Landing Page' },
@@ -96,23 +107,23 @@ export default function TerminalContactFooter() {
   };
 
   return (
-    <footer id="contact" className="w-full max-w-full bg-[#0a0a0a] pt-24 pb-12 px-4 md:px-12 lg:px-24 flex flex-col items-center border-t border-[#1f2a33]">
+    <footer id="contact" className="w-full max-w-full bg-[#0a0a0a] pt-24 md:pt-32 pb-12 px-4 md:px-12 lg:px-24 flex flex-col items-center">
       <div id="start" className="w-full max-w-3xl px-6 md:px-12 mb-16 scroll-mt-24">
 
         {/* Section Title Header */}
-        <ScrollReveal delay={0}>
+        <ScrollReveal variant="text" delay={0}>
           <div className="text-center mb-10">
-            <h2 className="text-[#ddffdc] text-[32px] md:text-[42px] font-medium tracking-[-0.015em]">
-              Consola de contacto <span className="text-[#7fee64]">directo</span>
+            <h2 className="text-[#ddffdc] text-[32px] md:text-[44px] font-medium tracking-[-0.015em]">
+              Cuéntanos qué tienes <span className="text-[#7fee64]">en mente.</span>
             </h2>
-            <p className="text-[#8cab87] text-base mt-2">
-              Ingresa tus datos paso a paso para comunicarte con nuestro equipo.
+            <p className="text-[#8cab87] text-base md:text-lg mt-3 max-w-xl mx-auto leading-relaxed">
+              Sin tecnicismos ni formularios raros. Cuéntanos qué hace tu negocio y te decimos con total sinceridad cómo lo resolveríamos nosotros.
             </p>
           </div>
         </ScrollReveal>
 
         {/* Window Frame: Terminal Style on Desktop, Clean Card on Mobile */}
-        <ScrollReveal delay={150}>
+        <ScrollReveal variant="card" direction="up" delay={120}>
           <div className="bg-[#181818] rounded-2xl md:rounded-lg border border-[#485346] overflow-hidden shadow-2xl">
             {/* Desktop Header Bar (hidden md:flex) */}
             <div className="hidden md:flex items-center justify-between px-4 py-3 border-b border-[#485346] bg-[#181818]">
@@ -213,7 +224,7 @@ export default function TerminalContactFooter() {
                     {step === 1 && (
                       <div className="space-y-2">
                         <label className="block text-[#aed2a4] text-xs md:text-sm font-sans">
-                          system: Por favor ingresa tu nombre completo:
+                          1. Cuéntanos, ¿cómo te llamas?
                         </label>
                         <div className="flex items-center bg-[#212525] border border-[#485346] rounded-lg px-3.5 min-h-[50px] focus-within:border-[#7fee64] transition-colors">
                           <span className="text-[#7fee64] mr-2 font-mono">&gt;</span>
@@ -222,7 +233,7 @@ export default function TerminalContactFooter() {
                             required
                             value={formData.userName}
                             onChange={(e) => setFormData({ ...formData, userName: e.target.value })}
-                            placeholder="Ej: Carlos Mendoza"
+                            placeholder="Tu nombre o el de tu negocio"
                             className="bg-transparent border-none outline-none text-[#7fee64] placeholder-[#677d64] flex-1 text-base font-mono focus:ring-0 w-full"
                           />
                         </div>
@@ -233,7 +244,7 @@ export default function TerminalContactFooter() {
                     {step === 2 && (
                       <div className="space-y-2">
                         <label className="block text-[#aed2a4] text-xs md:text-sm font-sans">
-                          system: Ingresa tu email de contacto:
+                          2. ¿A qué correo te podemos responder?
                         </label>
                         <div className="flex items-center bg-[#212525] border border-[#485346] rounded-lg px-3.5 min-h-[50px] focus-within:border-[#7fee64] transition-colors">
                           <span className="text-[#7fee64] mr-2 font-mono">&gt;</span>
@@ -242,7 +253,7 @@ export default function TerminalContactFooter() {
                             required
                             value={formData.userEmail}
                             onChange={(e) => setFormData({ ...formData, userEmail: e.target.value })}
-                            placeholder="Ej: carlos@miempresa.com"
+                            placeholder="ejemplo@tuempresa.com"
                             className="bg-transparent border-none outline-none text-[#7fee64] placeholder-[#677d64] flex-1 text-base font-mono focus:ring-0 w-full"
                           />
                         </div>
@@ -253,7 +264,7 @@ export default function TerminalContactFooter() {
                     {step === 3 && (
                       <div className="space-y-3">
                         <label className="block text-[#aed2a4] text-xs md:text-sm font-sans">
-                          system: Selecciona el servicio o tipo de proyecto:
+                          3. ¿En qué te gustaría que te ayudemos?
                         </label>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           {serviceOptions.map((opt) => (
@@ -281,7 +292,7 @@ export default function TerminalContactFooter() {
                     {step === 4 && (
                       <div className="space-y-2">
                         <label className="block text-[#aed2a4] text-xs md:text-sm font-sans">
-                          system: ¿A qué se dedica tu negocio o qué necesitas? (Mensaje / Detalle):
+                          4. Cuéntanos qué hace tu negocio o qué idea quieres desarrollar:
                         </label>
                         <div className="flex items-start bg-[#212525] border border-[#485346] rounded-lg px-3.5 py-3 focus-within:border-[#7fee64] transition-colors">
                           <span className="text-[#7fee64] mr-2 mt-0.5 font-mono">&gt;</span>
@@ -290,7 +301,7 @@ export default function TerminalContactFooter() {
                             rows={4}
                             value={formData.message}
                             onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                            placeholder="Ej: Necesitamos una página web para nuestra empresa de consultoría financiera..."
+                            placeholder="Escríbelo con tus propias palabras, sin enredos técnicos..."
                             className="bg-transparent border-none outline-none text-[#7fee64] placeholder-[#677d64] flex-1 text-base font-mono focus:ring-0 resize-none w-full"
                           />
                         </div>
@@ -346,9 +357,9 @@ export default function TerminalContactFooter() {
                             Enviando...
                           </>
                         ) : step < 4 ? (
-                          'Siguiente Paso →'
+                          'Continuar →'
                         ) : (
-                          'Enviar Solicitud →'
+                          'Enviar mensaje →'
                         )}
                       </button>
                     </div>
@@ -379,7 +390,7 @@ export default function TerminalContactFooter() {
       </div>
 
       {/* Footer Navigation Bar */}
-      <div className="w-full border-t border-[#1f2a33] px-6 md:px-12 lg:px-20 py-8">
+      <div className="w-full px-6 md:px-12 lg:px-20 py-12">
         <div className="max-w-[1360px] mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-3">
             <span className="text-[#ddffdc] text-sm font-medium tracking-tight">CLICKSHOP LABS</span>

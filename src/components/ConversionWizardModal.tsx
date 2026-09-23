@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useWizard } from './WizardContext';
+import { buildWhatsAppUrl } from '@/utils/whatsapp';
 
 export default function ConversionWizardModal() {
   const { isWizardOpen, closeWizard } = useWizard();
@@ -10,7 +11,7 @@ export default function ConversionWizardModal() {
   const [formData, setFormData] = useState({
     name: '',
     company: '',
-    siteType: 'Landing Page',
+    siteType: 'landing',
   });
 
   if (!isWizardOpen) return null;
@@ -26,14 +27,11 @@ export default function ConversionWizardModal() {
 
   const handleWhatsAppSubmit = () => {
     const { name, company, siteType } = formData;
-    const clientName = name.trim() || 'Cliente';
-    const companyName = company.trim() || 'Mi Empresa';
-    const selectedType = siteType || 'Asesoría';
-
-    const message = `¡Hola Clickshop! 👋 Mi nombre es ${clientName}, de la empresa ${companyName}. Estoy buscando información sobre: ${selectedType}. Me gustaría cotizar y ver una muestra para mi negocio.`;
-
-    const encodedText = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/573127930898?text=${encodedText}`;
+    const whatsappUrl = buildWhatsAppUrl({
+      name,
+      company,
+      service: siteType,
+    });
 
     window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
     handleClose();
@@ -41,17 +39,17 @@ export default function ConversionWizardModal() {
 
   const handleClose = () => {
     setStep(1);
-    setFormData({ name: '', company: '', siteType: 'Landing Page' });
+    setFormData({ name: '', company: '', siteType: 'landing' });
     closeWizard();
   };
 
   const progressPercent = step === 1 ? 33 : step === 2 ? 66 : 100;
 
   const siteOptions = [
-    'Landing Page',
-    'Página Web Corporativa',
-    'Sistema Web a Medida',
-    'No estoy seguro aún / Necesito asesoría',
+    { label: 'Landing Page', val: 'landing' },
+    { label: 'Página Web Corporativa', val: 'corporativa' },
+    { label: 'Sistema Web a Medida', val: 'sistema' },
+    { label: 'No estoy seguro aún / Necesito asesoría', val: 'asesoria' },
   ];
 
   return (
@@ -111,14 +109,13 @@ export default function ConversionWizardModal() {
             {step === 2 && (
               <div className="space-y-4 animate-fade-in">
                 <label className="block text-[#ddffdc] text-lg font-medium leading-snug">
-                  ¿Cómo se llama tu empresa o proyecto?
+                  ¿Cómo se llama tu empresa o proyecto? <span className="text-xs text-[#8cab87] font-normal">(opcional)</span>
                 </label>
                 <input
                   type="text"
-                  required
                   value={formData.company}
                   onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                  placeholder="Ej: Mendoza Consultores / Clínica Dental"
+                  placeholder="Ej: Mendoza Consultores (opcional)"
                   className="w-full bg-[#212525] border border-[#485346] rounded-lg px-4 py-3 text-[#ddffdc] placeholder-[#677d64] text-base focus:outline-none focus:border-[#7fee64] focus:ring-1 focus:ring-[#7fee64] transition-all"
                 />
               </div>
@@ -133,17 +130,17 @@ export default function ConversionWizardModal() {
                 <div className="space-y-2.5">
                   {siteOptions.map((opt) => (
                     <button
-                      key={opt}
+                      key={opt.val}
                       type="button"
-                      onClick={() => setFormData({ ...formData, siteType: opt })}
+                      onClick={() => setFormData({ ...formData, siteType: opt.val })}
                       className={`w-full text-left px-4 py-3.5 min-h-[48px] rounded-lg text-sm font-medium border transition-all flex items-center justify-between ${
-                        formData.siteType === opt
+                        formData.siteType === opt.val
                           ? 'bg-[#7fee64] text-[#000000] border-[#7fee64] font-semibold shadow-[0_0_15px_rgba(127,238,100,0.25)]'
                           : 'bg-[#212525] text-[#8cab87] border-[#485346] hover:border-[#677d64] hover:text-[#ddffdc] active:bg-[#282c2c]'
                       }`}
                     >
-                      <span>{opt}</span>
-                      {formData.siteType === opt && <span className="font-bold">✓</span>}
+                      <span>{opt.label}</span>
+                      {formData.siteType === opt.val && <span className="font-bold">✓</span>}
                     </button>
                   ))}
                 </div>
