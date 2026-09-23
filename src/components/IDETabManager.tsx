@@ -325,7 +325,7 @@ export default function IDETabManager() {
                   className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-mono text-left text-[#ddffdc] hover:bg-[#252526] transition-colors"
                 >
                   <span className="flex items-center gap-2">
-                    <span className="text-[#7fee64]">⚡</span>
+                    <span className="text-[#7fee64] font-mono text-[11px]">&gt;</span>
                     <span>process (Proceso de Desarrollo)</span>
                   </span>
                   <span className="text-[11px] text-[#677d64]">3 Pasos Estratégicos</span>
@@ -336,7 +336,7 @@ export default function IDETabManager() {
                   className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-mono text-left text-[#ddffdc] hover:bg-[#252526] transition-colors"
                 >
                   <span className="flex items-center gap-2">
-                    <span className="text-[#7fee64]">📖</span>
+                    <span className="text-[#7fee64] font-mono text-[11px]">//</span>
                     <span>about (Sobre Nosotros)</span>
                   </span>
                   <span className="text-[11px] text-[#677d64]">Filosofía & Equipo</span>

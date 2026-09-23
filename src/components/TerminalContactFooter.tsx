@@ -154,7 +154,7 @@ export default function TerminalContactFooter() {
               </div>
               <button
                 onClick={handleReset}
-                className="text-xs font-sans text-[#8cab87] hover:text-[#7fee64] p-1 min-h-[36px] flex items-center"
+                className="text-xs font-sans text-[#8cab87] hover:text-[#7fee64] px-2 min-h-[44px] flex items-center"
               >
                 Reiniciar
               </button>

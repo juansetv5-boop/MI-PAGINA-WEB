@@ -165,7 +165,7 @@ export default function ConversionWizardModal() {
                 type="submit"
                 className="w-full sm:w-auto min-h-[48px] bg-[#7fee64] text-[#000000] px-6 py-3 rounded-full font-sans text-sm font-semibold transition-all hover:opacity-95 hover:shadow-[0_0_20px_rgba(127,238,100,0.3)] active:scale-[0.98] flex items-center justify-center gap-2"
               >
-                <span>{step < 3 ? 'Siguiente Paso →' : 'Completar y enviar por WhatsApp 💬'}</span>
+                <span>{step < 3 ? 'Siguiente Paso →' : 'Completar y enviar por WhatsApp'}</span>
               </button>
             </div>
           </form>
