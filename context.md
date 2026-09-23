@@ -24,6 +24,34 @@
 - Flujo inferior 100% full-width a pantalla completa (w-full max-w-full bg-[#0a0a0a] px-4 md:px-12 lg:px-24) que abarca Proceso, Sobre Nosotros y Consola de Contacto sin marcos restrictivos.
 - Barra de navegación móvil inferior rediseñada como cápsula flotante glassmorphism con botón central destacado y target ergonómico para el pulgar.
 
+## 22/09/2026 - Creación de sitemap.ts y robots.ts para Indexación en Google e IAs
+- **Mapa del Sitio Dinámico (`src/app/sitemap.ts`)**:
+  - Implementado mediante `MetadataRoute.Sitemap` oficial de Next.js App Router.
+  - Incluye la URL principal (`https://clickshop.dev`) con prioridad 1.0 y frecuencia semanal (`weekly`).
+  - Páginas de políticas legales (`/politica-de-privacidad`, `/terminos-y-condiciones`, `/aviso-legal`) con prioridad 0.3 y frecuencia mensual (`monthly`).
+- **Directivas de Rastreadores (`src/app/robots.ts`)**:
+  - Implementado con `MetadataRoute.Robots`.
+  - Reglas permisivas para todos los agentes de búsqueda e IAs (`userAgent: '*'`, `allow: '/'`, `disallow: ['/api/']`).
+  - Vinculación explícita del sitemap (`https://clickshop.dev/sitemap.xml`).
+- **Validación Técnica y Git**:
+  - Generación automática de rutas estáticas `/sitemap.xml` y `/robots.txt` comprobada mediante `npm run build` (código 0).
+  - Conservado estrictamente en local sin `git push`.
+
+## 22/09/2026 - Configuración de SEO Técnico y GEO (Generative Engine Optimization) para Clickshop
+- **Metadata Integral Next.js App Router (`src/app/layout.tsx`)**:
+  - `metadataBase`: Configurado con `https://clickshop.dev`.
+  - `title`: Objeto con `default` y `template: '%s | Clickshop'`.
+  - `description`: Centrada en diseño web, UI/UX y sitios a medida en Pereira, Risaralda, Colombia con enfoque en tranquilidad y conversión.
+  - `keywords`: 13 palabras clave estratégicas de SEO local y especializado (Pereira, Colombia, UI/UX, landing pages, desarrollo frontend).
+  - `openGraph` & `twitter`: OpenGraph completo con tarjeta `summary_large_image`, imagen de preview `/og-image.jpg` (1200x630), localización `es_CO` y canonical URL.
+  - `robots`: Directivas avanzadas para GoogleBot (`max-video-preview`, `max-image-preview: 'large'`, `max-snippet`).
+- **Esquema Estructurado JSON-LD (Schema.org / LocalBusiness / ProfessionalService)**:
+  - Inyectado en `<head>` para motores de búsqueda tradicionales y LLMs / motores generativos (ChatGPT, Perplexity, Google SGE/AI Overview).
+  - Incluye: Geolocalización precisa (Pereira: Lat 4.8133, Long -75.6961), áreas de servicio (`areaServed`: Pereira, Risaralda, Eje Cafetero, Colombia), tópicos de conocimiento (`knowsAbout`), y catálogo de servicios (`hasOfferCatalog`: Landing Page, Página Web Corporativa, Sistema Web a Medida).
+- **Validación Técnica y Git**:
+  - `npm run build` ejecutado exitosamente con 0 errores y 0 advertencias de compilación / TypeScript (código 0).
+  - Conservado estrictamente en local sin `git push`.
+
 ## 22/09/2026 - Compactación y Optimización Responsiva de Pestañas IDE en Móvil
 - **Ajuste de Espaciado y Tipografía Compacta (`src/components/IDETabManager.tsx`)**:
   - Clases aplicadas al contenedor de pestaña (`<button role="tab">`):
