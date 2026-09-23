@@ -20,6 +20,33 @@
 
 ## 2. Architecture Notes
 - Distribución visual fija de 2 columnas (Texto a la izquierda | Canvas a la derecha) para una lectura fluida, natural e ininterrumpida durante el scroll.
+- Entorno IDE modular con pestañas de editor (page.tsx, portfolio.ts, services.json, contact.sh) y modo editorial limpio (about.md).
+
+## 22/09/2026 - Transformación de Identidad Visual a Entorno IDE (VS Code) + Modo Editorial Limpio
+- **Pantalla de Carga Cinemática (`LaptopIntro.tsx`)**:
+  - Implementada animación fija en pantalla completa (`fixed inset-0 z-50 bg-[#080808]`) simulando la apertura de laptop y zoom cinemático hacia la pantalla de analíticas.
+  - Temporizado en 3 segundos con transición suave de desvanecimiento (`opacity-0 scale-105 pointer-events-none transition-all duration-500`).
+  - Persistencia de sesión con `sessionStorage.getItem('clickshop_intro_seen')` para no repetir la intro en recargas de la misma sesión. Incluye soporte para tecla ESC y botón 'Saltar intro'.
+- **Arquitectura de Pestañas IDE (`IDETabManager.tsx`)**:
+  - Reemplazo del encabezado tradicional por una interfaz completa estilo VS Code:
+    - Barra superior con controles tipo Mac, breadcrumbs de ruta (`clickshop > src > app > [tab]`) y atajo de Command Palette (`⌘P`).
+    - Pestañas activas con fondo `#1e1e1e`, acento superior verde neón `#7fee64` de 2px, texto blanco, icono de tecnología y botón de cierre `×`.
+    - Navegación táctil horizontal con inercia nativa (`overflow-x-auto no-scrollbar snap-x`) para pantallas móviles.
+    - Barra inferior de estado (Status Bar) en `#007acc` con rama de git (`main*`), codificación `UTF-8`, lenguaje activo y selector de indentación.
+- **Conmutador de Contenido Modular (Tabs)**:
+  - `page.tsx`: Muestra el ecosistema de inicio (Hero, Scrollytelling, Propuesta de valor, Garantía y herramientas de confianza).
+  - `portfolio.ts`: Despliega directamente el portafolio y casos de estudio reales (`PortfolioShowcase.tsx`).
+  - `services.json`: Creado `ServicesView.tsx` con especificación de servicios, plazos de entrega (5-7 días, 10-14 días), SLA de disponibilidad y selector de vista visual vs. JSON Schema crudo.
+  - `contact.sh`: Carga directamente la consola interactiva Unix en 4 pasos (`TerminalContactFooter.tsx`).
+- **Modo Editorial Limpio para `about.md` (Ruptura de Interfaz)**:
+  - Creado `CleanEditorialAbout.tsx`: transición suave que oculta las barras de cromo del editor (tabs y status bar).
+  - Experiencia editorial minimalista inspirada en Lonzo Visuals con grandes titulares tipográficos, principios no negociables (Ingeniería de Primer Nivel, Sin Plantillas Genéricas, Transparencia Radical) y manifiesto del equipo.
+  - Botón flotante accesible de retorno: `← Volver al Editor` para restaurar la vista IDE instantáneamente.
+- **Sincronización de Anclas y Navegación**:
+  - Sincronización bidireccional entre hashes URL (`#work`, `#services`, `#contact`, `#about`) y el estado de la pestaña activa, manteniendo compatibilidad total con enlaces externos y la barra móvil.
+- **Blindaje Responsivo y Compilación**:
+  - Mantenido `overflow-x: clip` global en contenedores sin romper el sticky pinning del Scrollytelling.
+  - `npm run build` ejecutado exitosamente con 0 errores y 0 advertencias.
 
 ## 18/09/2026 - Refactorización Integral de Arquitectura Dual (Mobile vs Desktop)
 - **Estrategia Dual de Componentes**:
