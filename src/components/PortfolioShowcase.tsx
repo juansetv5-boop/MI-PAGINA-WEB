@@ -176,19 +176,9 @@ export default function PortfolioShowcase() {
                 </div>
               </div>
 
-              {/* Action Button - Minimum 44px height for thumb tap */}
-              <div className="pt-4 border-t border-[#485346]/40">
-                {activeProject.url ? (
-                  <a
-                    href={activeProject.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#7fee64] text-[#000000] px-6 min-h-[48px] py-3 rounded-lg font-sans text-xs md:text-sm font-bold uppercase tracking-wider hover:opacity-95 active:scale-98 transition-all shadow-[0_0_20px_rgba(127,238,100,0.3)]"
-                  >
-                    <span>Visitar {activeProject.domain}</span>
-                    <span>↗</span>
-                  </a>
-                ) : (
+              {/* Action Button - Only rendered for projects without direct live URL */}
+              {!activeProject.url && (
+                <div className="pt-4 border-t border-[#485346]/40">
                   <a
                     href="#start"
                     className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#212525] border border-[#7fee64] text-[#7fee64] px-6 min-h-[48px] py-3 rounded-lg font-sans text-xs md:text-sm font-bold uppercase tracking-wider hover:bg-[#7fee64] hover:text-[#000000] active:scale-98 transition-all"
@@ -196,12 +186,12 @@ export default function PortfolioShowcase() {
                     <span>Solicitar Consulta o Muestra</span>
                     <span>→</span>
                   </a>
-                )}
-              </div>
+                </div>
+              )}
             </div>
 
             {/* RIGHT COLUMN: Dual Presentation (Clean Edge-to-Edge on Mobile, Detailed Browser Mockup on Desktop) */}
-            <div className="lg:col-span-6">
+            <div className="lg:col-span-6 w-full h-full flex flex-col justify-center">
               {/* --- MOBILE VIEW: Clean Touch Card with Edge-to-Edge Preview (block md:hidden) --- */}
               <div className="block md:hidden">
                 {activeProject.mockupType === 'rlp' ? (
@@ -256,13 +246,13 @@ export default function PortfolioShowcase() {
               </div>
 
               {/* --- DESKTOP VIEW: Detailed Browser Mockup with Window Controls & Hover Glow (hidden md:block) --- */}
-              <div className="hidden md:block">
+              <div className="hidden md:block w-full h-full">
                 {activeProject.mockupType === 'rlp' ? (
                   <a
                     href="https://rlpcompliance.com"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group relative w-full aspect-[16/10] rounded-xl overflow-hidden border border-[#485346] bg-[#0e120e] shadow-2xl flex flex-col transition-all duration-300 hover:border-[#7fee64] hover:shadow-[0_0_30px_rgba(127,238,100,0.2)] block"
+                    className="group relative w-full aspect-[16/10] min-h-[380px] lg:min-h-[440px] rounded-xl overflow-hidden border border-[#485346] bg-[#0e120e] shadow-2xl flex flex-col transition-all duration-300 hover:border-[#7fee64] hover:shadow-[0_0_30px_rgba(127,238,100,0.2)] block"
                   >
                     {/* Browser Header Bar */}
                     <div className="flex items-center justify-between px-4 py-2.5 bg-[#181818] border-b border-[#485346] z-10">

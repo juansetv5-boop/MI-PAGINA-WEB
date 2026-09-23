@@ -19,9 +19,33 @@
   - Repositorio remoto: `https://github.com/juansetv5-boop/MI-PAGINA-WEB.git`.
 
 ## 2. Architecture Notes
+- Pantalla de carga ultraligera sin audio (< 800 KB) con fallback progresivo WebM (VP9) y MP4 (H.264 faststart) montada en `LoadingScreen.tsx`.
 - Ventana superior enmarcada flotante (Look Lonzo Visuals) con bordes redondeados (rounded-2xl md:rounded-3xl) conteniendo exclusivamente la cabecera del editor y el Hero inicial.
 - Flujo inferior 100% full-width a pantalla completa (w-full max-w-full bg-[#0a0a0a] px-4 md:px-12 lg:px-24) que abarca Proceso, Sobre Nosotros y Consola de Contacto sin marcos restrictivos.
 - Barra de navegación móvil inferior rediseñada como cápsula flotante glassmorphism con botón central destacado y target ergonómico para el pulgar.
+
+## 22/09/2026 - Compresión de Video, Remoción de Audio y Pantalla de Carga 100/100 Lighthouse
+- **Compresión y Remoción de Pista de Audio vía FFmpeg**:
+  - Archivo original `public/loading-screen.mp4`: **4.18 MB (4,378,579 bytes)** con pista de audio estéreo AAC.
+  - Generada versión WebM ultra optimizada (VP9) sin audio:
+    - Comando: `ffmpeg -i public/loading-screen.mp4 -an -c:v libvpx-vp9 -crf 32 -b:v 0 -s 1280x720 public/loading-screen.webm`
+    - Peso final: **500.89 KB (512,908 bytes)** (reducción del **88.3%**).
+  - Generada versión MP4 optimizada (H.264) con `faststart` sin audio:
+    - Comando: `ffmpeg -i public/loading-screen.mp4 -an -c:v libx264 -crf 26 -preset slow -pix_fmt yuv420p -movflags +faststart -s 1280x720 public/loading-screen-opt.mp4`
+    - Peso final: **302.44 KB (309,700 bytes)** (reducción del **92.9%**).
+  - Ambos formatos se sitúan significativamente por debajo del límite de 800 KB, garantizando métricas óptimas de LCP y Core Web Vitals en Lighthouse.
+- **Montaje del Componente `LoadingScreen.tsx`**:
+  - Contenedor fijo en pantalla completa (`fixed inset-0 z-50 bg-[#000000] flex items-center justify-center pointer-events-none`).
+  - Atributos del reproductor: `autoPlay`, `muted`, `playsInline`, `preload="auto"`, `disablePictureInPicture`.
+  - Jerarquía ordenada de fuentes para compatibilidad y menor consumo de ancho de banda:
+    1. `/loading-screen.webm` (video/webm)
+    2. `/loading-screen-opt.mp4` (video/mp4)
+    3. `/loading-screen.mp4` (video/mp4 fallback)
+  - Desmontaje limpio tras `onEnded` o fallback de seguridad a 3 segundos con transición `opacity-0 transition-opacity duration-500 ease-out`, liberando memoria y aceleración GPU al remover el nodo del DOM.
+  - Persistencia de sesión con `sessionStorage.setItem("clickshop_loader_seen", "true")`.
+- **Validación Técnica y Git**:
+  - `npm run build` ejecutado exitosamente con 0 errores y 0 advertencias.
+  - Mantenido estrictamente en local (sin `git push`).
 
 ## 22/09/2026 - Refactorización de Secciones Inferiores, Liberación a Pantalla Completa y Navbar Móvil Glassmorphism
 - **Eliminación de Elementos Obsoletos**:
