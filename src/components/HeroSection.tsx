@@ -9,7 +9,7 @@ export default function HeroSection() {
   const { openWizard } = useWizard();
 
   return (
-    <section className="relative w-full bg-[#000000] min-h-[92vh] pt-[160px] pb-16 px-6 md:px-12 lg:px-20 flex flex-col items-center justify-center text-center overflow-hidden">
+    <section className="relative w-full bg-[#000000] min-h-[80vh] pt-16 sm:pt-20 md:pt-24 pb-16 px-6 md:px-12 lg:px-20 flex flex-col items-center justify-center text-center overflow-hidden">
       {/* Ambient phosphor glow */}
       <div 
         className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] md:w-[900px] h-[360px] md:h-[500px] pointer-events-none"

@@ -19,8 +19,32 @@
   - Repositorio remoto: `https://github.com/juansetv5-boop/MI-PAGINA-WEB.git`.
 
 ## 2. Architecture Notes
-- Distribución visual fija de 2 columnas (Texto a la izquierda | Canvas a la derecha) para una lectura fluida, natural e ininterrumpida durante el scroll.
-- Entorno IDE modular con pestañas de editor (page.tsx, portfolio.ts, services.json, contact.sh) y modo editorial limpio (about.md).
+- Entorno de ventana enmarcada flotante (Look Lonzo Visuals) con bordes redondeados (rounded-2xl md:rounded-3xl) y marco de editor (#1e1e1e sobre fondo exterior #0a0a0a).
+- Pestañas técnicas superiores (page.tsx, portfolio.ts, services.json) con flujo global común que desemboca en 'Sobre Nosotros' y 'Contacto'.
+- Scrollytelling obsoleto y Status Bar eliminados por completo para una experiencia limpia y enfocada.
+
+## 22/09/2026 - Refactorización de Layout: Remoción de Scrollytelling, Enmarcado Flotante Redondeado y Flujo Global de About & Contact
+- **Eliminación de Componentes Obsoletos y Barras Sobrantes**:
+  - Eliminado por completo el componente `ScrollytellingHero.tsx`, bloques de canvas de fotogramas y scripts de scroll asistido.
+  - Eliminada la badge superior con animación pulsante (`LIVE`).
+  - Eliminada completamente la barra de estado inferior (`<footer>` Status Bar de VS Code), dejando limpia la base de la ventana.
+- **Contenedor Enmarcado Flotante con Bordes Redondeados (Look Lonzo Visuals)**:
+  - Wrapper exterior con fondo `#0a0a0a` y espaciado perimetral responsivo (`p-2.5 sm:p-5 md:p-8 min-h-screen flex flex-col justify-center`).
+  - Contenedor de la Ventana Principal: `w-full max-w-7xl mx-auto bg-[#1e1e1e] rounded-2xl md:rounded-3xl border border-[#2d2d2d] shadow-2xl overflow-hidden relative flex flex-col my-auto`.
+  - Cabecera de ventana preservando controles circulares tipo Mac (rojo, amarillo, verde), logotipo Clickshop, Command Palette (`⌘P`) y selector de pestañas del IDE.
+- **Reestructuración de Pestañas y Flujo Global de Secciones**:
+  - Pestañas del Tab Manager enfocadas en vistas técnicas principales:
+    - `page.tsx`: Hero principal (con padding superior optimizado para el marco), Value Proposition Grid y Trust Tools.
+    - `portfolio.ts`: Casos de estudio y portafolio interactivo (`PortfolioShowcase.tsx`).
+    - `services.json`: Servicios, plazos de entrega, garantías SLA y toggle de JSON Schema (`ServicesView.tsx`).
+  - Flujo vertical global en todas las vistas:
+    - Al desplazarse hacia abajo dentro de cualquiera de las tres vistas, el usuario desemboca fluidamente en:
+      1. **Sección 'Sobre Nosotros'** (`CleanEditorialAbout.tsx`): Diseño editorial limpio integrado orgánicamente con anclas `#about` y `#process`, sin barras flotantes intrusivas y con llamada a la acción hacia la consola.
+      2. **Sección 'Contacto'** (`TerminalContactFooter.tsx`): Consola terminal interactiva de cotización en 4 pasos con integración EmailJS y pie legal.
+- **Validación Técnica y Git**:
+  - Preservado `overflow-x: clip` en html, body y contenedores para blindaje contra overflow lateral.
+  - `npm run build` ejecutado exitosamente con 0 errores y 0 advertencias.
+  - Todo probado y conservado estrictamente en local (sin `git push`).
 
 ## 22/09/2026 - Transformación de Identidad Visual a Entorno IDE (VS Code) + Modo Editorial Limpio
 - **Pantalla de Carga Cinemática (`LaptopIntro.tsx`)**:

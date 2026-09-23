@@ -8,7 +8,7 @@ import { WizardProvider } from "@/components/WizardContext";
 export default function Home() {
   return (
     <WizardProvider>
-      <div className="relative min-h-screen bg-[#000000] text-[#ddffdc] overflow-x-clip max-w-full">
+      <div className="relative min-h-screen bg-[#0a0a0a] text-[#ddffdc] overflow-x-clip max-w-full">
         {/* 1. Cinematic Laptop Loading Intro Sequence */}
         <LaptopIntro />
 

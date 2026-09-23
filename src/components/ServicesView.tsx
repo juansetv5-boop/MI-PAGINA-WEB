@@ -82,7 +82,7 @@ export default function ServicesView() {
   const [viewMode, setViewMode] = useState<'cards' | 'json'>('cards');
 
   return (
-    <section className="w-full bg-[#0a0a0a] min-h-screen py-16 px-6 md:px-12 lg:px-20 text-[#ddffdc]">
+    <section id="services" className="w-full bg-[#000000] py-16 px-6 md:px-12 lg:px-20 text-[#ddffdc] border-t border-[#1f2a33]">
       <div className="max-w-[1360px] mx-auto">
         {/* Header Bar */}
         <ScrollReveal delay={0}>

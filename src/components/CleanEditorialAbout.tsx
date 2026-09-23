@@ -5,24 +5,15 @@ import ScrollReveal from './ScrollReveal';
 import { useWizard } from './WizardContext';
 
 interface CleanEditorialAboutProps {
-  onReturnToEditor: () => void;
+  onReturnToEditor?: () => void;
 }
 
-export default function CleanEditorialAbout({ onReturnToEditor }: CleanEditorialAboutProps) {
+export default function CleanEditorialAbout({ onReturnToEditor }: CleanEditorialAboutProps = {}) {
   const { openWizard } = useWizard();
 
   return (
-    <article className="relative w-full bg-[#000000] text-[#ddffdc] min-h-screen py-24 sm:py-32 px-6 sm:px-12 md:px-20 lg:px-32 selection:bg-[#7fee64]/20 selection:text-[#ddffdc]">
-      {/* Floating Return Button */}
-      <div className="fixed top-6 right-6 md:top-8 md:right-12 z-50">
-        <button
-          onClick={onReturnToEditor}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#181818]/90 hover:bg-[#252526] border border-[#485346] hover:border-[#7fee64] text-xs sm:text-sm font-sans font-medium text-[#ddffdc] backdrop-blur-md shadow-2xl transition-all duration-300 active:scale-95 group"
-        >
-          <span className="text-[#7fee64] transition-transform duration-300 group-hover:-translate-x-1">←</span>
-          <span>Volver al Editor</span>
-        </button>
-      </div>
+    <section id="about" className="relative w-full bg-[#000000] text-[#ddffdc] py-24 sm:py-32 px-6 sm:px-12 md:px-20 lg:px-32 scroll-mt-12 selection:bg-[#7fee64]/20 selection:text-[#ddffdc] border-t border-[#1f2a33]">
+      <div id="process" className="scroll-mt-12" />
 
       <div className="max-w-[1080px] mx-auto">
         {/* Editorial Eyebrow */}
@@ -144,15 +135,15 @@ export default function CleanEditorialAbout({ onReturnToEditor }: CleanEditorial
             >
               Diseña tu muestra interactiva
             </button>
-            <button
-              onClick={onReturnToEditor}
-              className="w-full sm:w-auto px-6 min-h-[48px] py-3.5 rounded-full bg-transparent border border-[#485346] hover:border-[#ddffdc] text-[#ddffdc] font-mono text-xs transition-colors text-center"
+            <a
+              href="#contact"
+              className="w-full sm:w-auto px-6 min-h-[48px] py-3.5 rounded-full bg-transparent border border-[#485346] hover:border-[#ddffdc] text-[#ddffdc] font-mono text-xs transition-colors flex items-center justify-center text-center"
             >
-              Regresar al editor
-            </button>
+              Ir a la consola de contacto ↓
+            </a>
           </div>
         </div>
       </div>
-    </article>
+    </section>
   );
 }
