@@ -3,45 +3,37 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 export default function LoadingScreen() {
-  const [isVisible, setIsVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isFading, setIsFading] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    try {
-      if (sessionStorage.getItem('clickshop_loader_seen') === 'true') {
-        return;
-      }
-    } catch {
-      // In case storage is blocked in private browsing
-    }
-
-    setIsVisible(true);
-
-    // Fallback: Dismiss after 3s max if video ends or stalls
-    timeoutRef.current = setTimeout(() => {
-      triggerFadeOut();
-    }, 3000);
+    // Fallback de seguridad: 3.2 segundos máximo por si el navegador retrasa el evento onEnded
+    timerRef.current = setTimeout(() => {
+      handleExit();
+    }, 3200);
 
     return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      if (timerRef.current) clearTimeout(timerRef.current);
     };
   }, []);
 
-  const triggerFadeOut = () => {
+  const handleExit = () => {
     setIsFading(true);
-    try {
-      sessionStorage.setItem('clickshop_loader_seen', 'true');
-    } catch {}
 
-    // Unmount DOM node after 500ms fade transition to free hardware resources
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+
+    // Desmontar el nodo del DOM tras completar la transición de 500ms
     setTimeout(() => {
-      setIsVisible(false);
+      setIsLoading(false);
     }, 500);
   };
 
-  if (!isVisible) return null;
+  if (!isLoading) return null;
 
   return (
     <div
@@ -56,12 +48,10 @@ export default function LoadingScreen() {
         playsInline
         preload="auto"
         disablePictureInPicture
-        onEnded={triggerFadeOut}
+        onEnded={handleExit}
         className="w-full h-full object-cover max-w-none"
       >
-        <source src="/loading-screen.webm" type="video/webm" />
         <source src="/loading-screen-opt.mp4" type="video/mp4" />
-        <source src="/loading-screen.mp4" type="video/mp4" />
       </video>
     </div>
   );

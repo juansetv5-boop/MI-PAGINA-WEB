@@ -19,10 +19,26 @@
   - Repositorio remoto: `https://github.com/juansetv5-boop/MI-PAGINA-WEB.git`.
 
 ## 2. Architecture Notes
-- Pantalla de carga ultraligera sin audio (< 800 KB) con fallback progresivo WebM (VP9) y MP4 (H.264 faststart) montada en `LoadingScreen.tsx`.
+- Pantalla de carga universal (`LoadingScreen.tsx`) ejecutándose en cada inicio y recarga (F5) con asset exclusivo optimizado `loading-screen-opt.mp4` (302 KB, sin audio).
 - Ventana superior enmarcada flotante (Look Lonzo Visuals) con bordes redondeados (rounded-2xl md:rounded-3xl) conteniendo exclusivamente la cabecera del editor y el Hero inicial.
 - Flujo inferior 100% full-width a pantalla completa (w-full max-w-full bg-[#0a0a0a] px-4 md:px-12 lg:px-24) que abarca Proceso, Sobre Nosotros y Consola de Contacto sin marcos restrictivos.
 - Barra de navegación móvil inferior rediseñada como cápsula flotante glassmorphism con botón central destacado y target ergonómico para el pulgar.
+
+## 22/09/2026 - Configuración Universal de Pantalla de Carga en cada Inicio / F5 con loading-screen-opt
+- **Eliminación de Persistencia de Sesión**:
+  - Removido el almacenamiento y consulta de banderas en `sessionStorage` o `localStorage`.
+  - El estado del loader inicializa siempre activo (`const [isLoading, setIsLoading] = useState(true)`), garantizando una reproducción consistente tanto en la primera visita como en cada recarga de página (F5 / refresh).
+- **Consumo Exclusivo del Asset Optimizado**:
+  - Elemento `<video>` configurado para consumir directamente `/loading-screen-opt.mp4` (H.264 optimizado, 302 KB, sin audio).
+  - Propiedades: `autoPlay`, `muted`, `playsInline`, `preload="auto"`, `disablePictureInPicture`.
+  - Capa envolvente fija: `fixed inset-0 z-50 bg-[#000000] flex items-center justify-center pointer-events-none`.
+- **Ciclo de Vida y Transición Suave**:
+  - Disparado por el evento `onEnded` del video, con fallback de seguridad a 3.2 segundos ante posibles retrasos del navegador.
+  - Transición de desvanecimiento: `opacity-0 transition-opacity duration-500 ease-out`.
+  - Desmontaje total del nodo del DOM al concluir los 500ms para liberar memoria y recursos GPU.
+- **Validación Técnica y Git**:
+  - `npm run build` ejecutado exitosamente con 0 errores y 0 advertencias (código de salida 0).
+  - Todo probado y conservado estrictamente en local (sin `git push`).
 
 ## 22/09/2026 - Compresión de Video, Remoción de Audio y Pantalla de Carga 100/100 Lighthouse
 - **Compresión y Remoción de Pista de Audio vía FFmpeg**:
@@ -434,6 +450,23 @@ pm run build ejecutado exitosamente.
 ### 4. Validación & Entorno
 - Compilación de producción local verificada con Turbopack (`npm run build`: 0 errores, 0 advertencias).
 - Cambios conservados estrictamente en el entorno local (sin `git push`).
+
+---
+## [2026-09-22] Maximización de Mockup & Eliminación de Botón Duplicado en Portafolio
+
+### 1. Eliminación del Botón Verde Redundante (`src/components/PortfolioShowcase.tsx`)
+- **Remoción de elemento duplicado**: Se eliminó el bloque inferior de acción (`<div className="pt-4 border-t border-[#485346]/40">...</div>`) en la columna izquierda para proyectos con URL activa en vivo (`rlpcompliance.com`).
+- **Enfoque en interacción principal**: Se conserva la tarjeta interactiva de la columna derecha (`<a href="https://rlpcompliance.com" target="_blank" ...>`) como el único y principal punto de interacción para abrir el sitio web en una nueva pestaña.
+
+### 2. Escalado y Maximización del Mockup Interactivo
+- **Aprovechamiento de espacio en columna**: El contenedor de la columna derecha aprovecha todo el alto disponible (`w-full h-full flex flex-col justify-center`).
+- **Dimensión y nitidez ampliada en Desktop**:
+  - Ajustada la relación de aspecto y dimensiones del contenedor del mockup a `aspect-[16/10] min-h-[380px] lg:min-h-[440px]`.
+  - La captura de pantalla `rlpcompliance-preview.webp` se despliega con mayor amplitud y definición, permitiendo apreciar los detalles de diseño corporativo y tipografía con total claridad.
+
+### 3. Validación & Control Local
+- Compilación de producción local verificada exitosamente con Next.js 16.3.4 y Turbopack (`npm run build`: 0 errores, 0 advertencias).
+- **Regla estricta Git**: Se cumple la prohibición de ejecutar `git push`. Todos los cambios permanecen en el repositorio local.
 
 
 
