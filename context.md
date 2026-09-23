@@ -19,9 +19,25 @@
   - Repositorio remoto: `https://github.com/juansetv5-boop/MI-PAGINA-WEB.git`.
 
 ## 2. Architecture Notes
-- Ventana superior enmarcada flotante (Look Lonzo Visuals) con bordes redondeados (rounded-2xl md:rounded-3xl) conteniendo exclusivamente la cabecera y el Hero inicial.
-- A partir de la sección `#services`, el layout se expande a pantalla completa (full-width edge-to-edge, w-full max-w-none px-0) con contenedores internos tipográficos max-w-[1360px] mx-auto.
-- Eliminación de badges decorativos de versión y del bloque de cita/banner redundante en Sobre Nosotros.
+- Ventana superior enmarcada flotante (Look Lonzo Visuals) con bordes redondeados (rounded-2xl md:rounded-3xl) conteniendo exclusivamente la cabecera del editor y el Hero inicial.
+- Flujo inferior 100% full-width a pantalla completa (w-full max-w-full bg-[#0a0a0a] px-4 md:px-12 lg:px-24) que abarca Proceso, Sobre Nosotros y Consola de Contacto sin marcos restrictivos.
+- Barra de navegación móvil inferior rediseñada como cápsula flotante glassmorphism con botón central destacado y target ergonómico para el pulgar.
+
+## 22/09/2026 - Refactorización de Secciones Inferiores, Liberación a Pantalla Completa y Navbar Móvil Glassmorphism
+- **Eliminación de Elementos Obsoletos**:
+  - Removido el banner de texto intermedio de cita del equipo y sus botones CTA hijos en `CleanEditorialAbout.tsx`.
+  - Removido el bloque de los tres pilares innegociables (03 / NUESTROS TRES PILARES INNEGOCIABLES: Velocidad Absoluta, Contacto Directo, Propiedad Total) en `CleanEditorialAbout.tsx`.
+  - Removida la sección obsoleta de servicios estáticos (`ValuePropositionGrid.tsx`) del flujo principal; los servicios estructurados residen de forma modular en `services.json` (`ServicesView.tsx`).
+- **Transición a Ancho Completo (Full-Width sin Márgenes)**:
+  - Todo el flujo inferior (Proceso, Sobre Nosotros y Consola de Contacto) se extiende a pantalla completa: `w-full max-w-full bg-[#0a0a0a] px-4 md:px-12 lg:px-24` sin bordes redondeados perimetrales que corten el viewport lateral.
+- **Rediseño Glassmorphism de la Barra Móvil (`MobileBottomNav.tsx`)**:
+  - Convertido en cápsula flotante estilizada: `fixed bottom-3 left-4 right-4 z-50 bg-[#121612]/80 backdrop-blur-xl border border-[#7fee64]/25 rounded-2xl px-3 py-2 shadow-[0_8px_32px_rgba(0,0,0,0.6)]`.
+  - Botón central 'Cotizar' destacado con relieve: `-mt-5 bg-[#7fee64] text-[#000000] w-13 h-13 rounded-full shadow-[0_0_22px_rgba(127,238,100,0.45)] border-2 border-[#121612]`.
+  - Enlaces táctiles de mínimo 44px con feedback visual verde neón `#7fee64`.
+- **Validación Técnica y Git**:
+  - Preservado `overflow-x: clip` en todo el layout para garantizar cero scroll horizontal en móviles.
+  - `npm run build` ejecutado exitosamente con 0 errores y 0 advertencias.
+  - Conservado estrictamente en local (sin `git push`).
 
 ## 22/09/2026 - Eliminación de Banner CTA/Badge y Expansión a Pantalla Completa (Full-Width) desde #services
 - **Eliminación de Elementos Obsoletos**:

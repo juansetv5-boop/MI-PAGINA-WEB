@@ -96,7 +96,7 @@ export default function TerminalContactFooter() {
   };
 
   return (
-    <footer id="contact" className="w-full bg-[#000000] pt-24 pb-12 flex flex-col items-center">
+    <footer id="contact" className="w-full max-w-full bg-[#0a0a0a] pt-24 pb-12 px-4 md:px-12 lg:px-24 flex flex-col items-center border-t border-[#1f2a33]">
       <div id="start" className="w-full max-w-3xl px-6 md:px-12 mb-16 scroll-mt-24">
 
         {/* Section Title Header */}

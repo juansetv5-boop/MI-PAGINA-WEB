@@ -4,9 +4,8 @@ import React from 'react';
 import ScrollReveal from './ScrollReveal';
 
 export default function CleanEditorialAbout() {
-
   return (
-    <section id="about" className="relative w-full bg-[#000000] text-[#ddffdc] py-24 sm:py-32 px-6 sm:px-12 md:px-20 lg:px-32 scroll-mt-12 selection:bg-[#7fee64]/20 selection:text-[#ddffdc] border-t border-[#1f2a33]">
+    <section id="about" className="relative w-full max-w-full bg-[#0a0a0a] text-[#ddffdc] py-24 sm:py-32 px-4 md:px-12 lg:px-24 scroll-mt-12 selection:bg-[#7fee64]/20 selection:text-[#ddffdc] border-t border-[#1f2a33]">
       <div id="process" className="scroll-mt-12" />
 
       <div className="max-w-[1080px] mx-auto">
@@ -58,7 +57,7 @@ export default function CleanEditorialAbout() {
         </div>
 
         {/* Story Section 2: Our Craft */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16 mb-28">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16">
           <div className="md:col-span-4">
             <span className="text-xs font-mono text-[#677d64] uppercase tracking-wider block mb-2">02 / ARTESANÍA</span>
             <h2 className="text-2xl sm:text-3xl font-medium text-[#ddffdc] leading-tight">
@@ -72,42 +71,6 @@ export default function CleanEditorialAbout() {
             <p>
               Creemos que un diseño excepcional no es aquel que añade adornos innecesarios, sino el que elimina toda fricción entre la propuesta de valor de tu negocio y la decisión de compra de tu cliente.
             </p>
-          </div>
-        </div>
-
-        {/* Principles Grid */}
-        <div className="mb-28">
-          <span className="text-xs font-mono text-[#677d64] uppercase tracking-wider block mb-8">03 / NUESTROS TRES PILARES INNEGOCIABLES</span>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="p-8 rounded-2xl bg-[#0e120e] border border-[#212525] flex flex-col justify-between">
-              <div>
-                <span className="text-3xl font-mono font-bold text-[#7fee64] block mb-4">I</span>
-                <h3 className="text-xl font-medium text-[#ddffdc] mb-3">Velocidad Absoluta</h3>
-                <p className="text-sm text-[#8cab87] leading-relaxed">
-                  Si una página tarda más de un segundo en responder, tu visitante ya se fue a la competencia. Garantizamos 100/100 en Core Web Vitals en cada proyecto.
-                </p>
-              </div>
-            </div>
-
-            <div className="p-8 rounded-2xl bg-[#0e120e] border border-[#212525] flex flex-col justify-between">
-              <div>
-                <span className="text-3xl font-mono font-bold text-[#7fee64] block mb-4">II</span>
-                <h3 className="text-xl font-medium text-[#ddffdc] mb-3">Contacto Directo</h3>
-                <p className="text-sm text-[#8cab87] leading-relaxed">
-                  Cero intermediarios ni ejecutivos de cuenta que no entienden de tecnología. Hablas directamente con los ingenieros y diseñadores que escriben el código de tu web.
-                </p>
-              </div>
-            </div>
-
-            <div className="p-8 rounded-2xl bg-[#0e120e] border border-[#212525] flex flex-col justify-between">
-              <div>
-                <span className="text-3xl font-mono font-bold text-[#7fee64] block mb-4">III</span>
-                <h3 className="text-xl font-medium text-[#ddffdc] mb-3">Propiedad Total</h3>
-                <p className="text-sm text-[#8cab87] leading-relaxed">
-                  El código fuente, los dominios y la infraestructura son 100% de tu propiedad desde el día uno. Sin ataduras ni mensualidades obligatorias.
-                </p>
-              </div>
-            </div>
           </div>
         </div>
       </div>

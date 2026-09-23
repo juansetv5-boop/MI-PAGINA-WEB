@@ -26,7 +26,7 @@ export default function TrustToolSection() {
   const { openWizard } = useWizard();
 
   return (
-    <section id="process" className="w-full bg-[#000000] py-24 px-6 md:px-12 lg:px-20 border-t border-[#1f2a33]">
+    <section id="process" className="w-full max-w-full bg-[#0a0a0a] py-24 px-4 md:px-12 lg:px-24 border-t border-[#1f2a33]">
       <div className="max-w-[1360px] mx-auto">
         {/* Header Block */}
         <ScrollReveal delay={0} className="max-w-3xl mb-16">

@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import HeroSection from './HeroSection';
-import ValuePropositionGrid from './ValuePropositionGrid';
 import TrustToolSection from './TrustToolSection';
 import PortfolioShowcase from './PortfolioShowcase';
 import TerminalContactFooter from './TerminalContactFooter';
@@ -73,17 +72,27 @@ export default function IDETabManager() {
         setActiveTab('portfolio.ts');
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else if (hash === '#services') {
-        if (activeTab !== 'page.tsx') {
-          setActiveTab('page.tsx');
-        }
-        // Small delay to allow DOM render before scrolling to #services
-        setTimeout(() => {
-          const el = document.getElementById('services');
-          if (el) el.scrollIntoView({ behavior: 'smooth' });
-        }, 50);
+        setActiveTab('services.json');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       } else if (hash === '#home') {
         setActiveTab('page.tsx');
         window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (hash === '#process') {
+        if (activeTab !== 'page.tsx') setActiveTab('page.tsx');
+        setTimeout(() => {
+          const el = document.getElementById('process');
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }, 60);
+      } else if (hash === '#about') {
+        setTimeout(() => {
+          const el = document.getElementById('about');
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }, 60);
+      } else if (hash === '#contact') {
+        setTimeout(() => {
+          const el = document.getElementById('contact');
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }, 60);
       }
     };
 
@@ -148,9 +157,9 @@ export default function IDETabManager() {
                 </button>
               </div>
 
-              {/* Right: Clean right side (sin badge LIVE ni etiqueta v2.4.0) */}
+              {/* Right: Clean right side */}
               <div className="flex items-center gap-2 text-xs font-mono text-[#677d64]">
-                {/* Empty & Clean */}
+                {/* Clean */}
               </div>
             </div>
 
@@ -288,7 +297,7 @@ export default function IDETabManager() {
 
               <div className="pt-2 border-t border-[#2a2d2e]">
                 <a
-                  href="#services"
+                  href="#process"
                   onClick={() => {
                     setIsCommandPaletteOpen(false);
                     if (activeTab !== 'page.tsx') setActiveTab('page.tsx');
@@ -296,10 +305,10 @@ export default function IDETabManager() {
                   className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-mono text-left text-[#ddffdc] hover:bg-[#252526] transition-colors"
                 >
                   <span className="flex items-center gap-2">
-                    <span className="text-[#cbcb41]">⚡</span>
-                    <span>#services (Servicios de Valor)</span>
+                    <span className="text-[#7fee64]">⚡</span>
+                    <span>process (Proceso de Desarrollo)</span>
                   </span>
-                  <span className="text-[11px] text-[#677d64]">Sección Full-Width</span>
+                  <span className="text-[11px] text-[#677d64]">3 Pasos Estratégicos</span>
                 </a>
                 <a
                   href="#about"
@@ -329,15 +338,10 @@ export default function IDETabManager() {
         </div>
       )}
 
-      {/* ── 2. SECCIONES A PANTALLA COMPLETA (FULL-WIDTH EDGE-TO-EDGE) DESDE #SERVICES ── */}
-      <main className="w-full max-w-none px-0 bg-[#000000] overflow-x-clip mt-6 sm:mt-10 md:mt-12">
-        {/* En la pestaña page.tsx, los servicios y herramientas de confianza se extienden full-width */}
-        {activeTab === 'page.tsx' && (
-          <>
-            <ValuePropositionGrid />
-            <TrustToolSection />
-          </>
-        )}
+      {/* ── 2. SECCIONES A ANCHO COMPLETO (FULL-WIDTH EDGE-TO-EDGE) ── */}
+      <main className="w-full max-w-full bg-[#0a0a0a] overflow-x-clip mt-6 sm:mt-10 md:mt-12">
+        {/* Proceso y Metodología (en vista inicial) */}
+        {activeTab === 'page.tsx' && <TrustToolSection />}
 
         {/* Flujo Global Común a Pantalla Completa: Sobre Nosotros + Contacto */}
         <CleanEditorialAbout />
