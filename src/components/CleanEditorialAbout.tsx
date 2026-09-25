@@ -36,7 +36,7 @@ export default function CleanEditorialAbout() {
               Imagina que tu web es como un libro. Si la portada es hermosa pero abres las páginas y todo está desordenado, confuso o no habla de lo que prometía la carátula, el lector simplemente lo cierra y se va decepcionado.
             </p>
             <p className="text-[#ddffdc]">
-              Nuestro trabajo es ser el escritor que acompaña a tu cliente paso a paso desde la primera línea hasta la última. Cuando una página cumple lo que promete y se siente fácil de recorrer, la gente confía. Y cuando la gente confía, tu negocio se muestra más. Así de simple funciona. :D
+              Nuestro trabajo es ser el escritor que guía a tu cliente paso a paso desde la primera línea hasta la última. Cuando una página cumple lo que promete y se siente fácil de recorrer, la gente confía. Y cuando la gente confía, tu negocio se muestra más. Así de simple funciona.
             </p>
           </div>
         </ScrollReveal>

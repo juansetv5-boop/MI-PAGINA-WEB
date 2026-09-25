@@ -200,7 +200,7 @@ export default function IDETabManager() {
                         );
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                       }}
-                      className={`group relative flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2.5 text-[11px] sm:text-xs md:text-sm font-mono whitespace-nowrap min-h-[38px] sm:min-h-[44px] transition-all border-r border-[#1f2a33] ${
+                      className={`group relative flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 sm:py-2.5 text-[11px] sm:text-xs md:text-sm font-mono whitespace-nowrap min-h-[44px] transition-all border-r border-[#1f2a33] ${
                         isActive
                           ? 'bg-[#1e1e1e] text-[#ffffff] font-medium border-t-2 border-t-[#7fee64] shadow-sm'
                           : 'bg-[#252526] text-[#858585] hover:bg-[#2a2d2e] hover:text-[#cccccc]'
