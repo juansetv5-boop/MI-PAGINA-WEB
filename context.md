@@ -820,3 +820,14 @@ pm run build ejecutado exitosamente.
 
 ### 3. Sincronización con Repositorio Remoto
 - Con autorización expresa del usuario en la solicitud ("y si no hay que hacer cambios realiza un push"), se procede a la ejecución de `git push origin main`.
+
+---
+
+## 25/09/2026 - Actualización de Copy Simplificado en CleanEditorialAbout.tsx
+- **Bloque '02 / DE TÚ A TÚ'**:
+  - Actualizado el párrafo 2 con lenguaje cercano y sin tecnicismos:
+    *"Nuestro compromiso es darte la web que te imaginas: un diseño impecable que cautive a tu cliente y, sobre todo, que vuele al cargar para que nadie se canse de esperar."*
+- **Validación**:
+  - Estructura, estilos y animaciones `ScrollReveal` intactos.
+  - `npm run build` ejecutado exitosamente con 0 errores y 0 advertencias.
+

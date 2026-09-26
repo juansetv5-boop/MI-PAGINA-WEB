@@ -72,7 +72,7 @@ export default function CleanEditorialAbout() {
               No nos interesan los rodeos ni prometer cosas que no necesitas. Trabajamos de tú a tú, escuchando la historia de tu negocio para que tu página web transmita exactamente la misma seguridad y calidez que tú transmites en persona.
             </p>
             <p>
-              Una página bien hecha no presume: acompaña, explica y deja una sensación de tranquilidad en quien la visita.
+              Nuestro compromiso es darte la web que te imaginas: un diseño impecable que cautive a tu cliente y, sobre todo, que vuele al cargar para que nadie se canse de esperar.
             </p>
           </ScrollReveal>
         </div>
