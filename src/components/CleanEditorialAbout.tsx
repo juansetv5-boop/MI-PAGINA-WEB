@@ -62,14 +62,14 @@ export default function CleanEditorialAbout() {
         {/* Story Section 2: Transparency & Human Connection */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16">
           <ScrollReveal direction="left" delay={100} className="md:col-span-4">
-            <span className="text-xs font-mono text-[#677d64] uppercase tracking-wider block mb-2">02 / DE TÚ A TÚ</span>
+            <span className="text-xs font-mono text-[#677d64] uppercase tracking-wider block mb-2">02 / NUESTRO MÉTODO</span>
             <h2 className="text-2xl sm:text-3xl font-medium text-[#ddffdc] leading-tight">
-              Hablar claro genera confianza.
+              Te hacemos parte de cada decisión.
             </h2>
           </ScrollReveal>
           <ScrollReveal direction="right" delay={180} className="md:col-span-8 space-y-6 text-base sm:text-lg text-[#8cab87] leading-relaxed">
             <p>
-              No nos interesan los rodeos ni prometer cosas que no necesitas. Trabajamos de tú a tú, escuchando la historia de tu negocio para que tu página web transmita exactamente la misma seguridad y calidez que tú transmites en persona.
+              Creemos que el mejor resultado nace cuando trabajamos de la mano contigo. Te integramos en el proceso desde el primer día, explicándote cada paso de forma sencilla para que entiendas exactamente cómo y por qué se construye tu página.
             </p>
             <p>
               Nuestro compromiso es darte la web que te imaginas: un diseño impecable que cautive a tu cliente y, sobre todo, que vuele al cargar para que nadie se canse de esperar.

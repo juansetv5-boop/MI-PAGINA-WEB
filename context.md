@@ -824,9 +824,11 @@ pm run build ejecutado exitosamente.
 ---
 
 ## 25/09/2026 - Actualización de Copy Simplificado en CleanEditorialAbout.tsx
-- **Bloque '02 / DE TÚ A TÚ'**:
-  - Actualizado el párrafo 2 con lenguaje cercano y sin tecnicismos:
-    *"Nuestro compromiso es darte la web que te imaginas: un diseño impecable que cautive a tu cliente y, sobre todo, que vuele al cargar para que nadie se canse de esperar."*
+- **Bloque '02 / NUESTRO MÉTODO'**:
+  - Eyebrow actualizado a: `02 / NUESTRO MÉTODO`.
+  - Título actualizado a: *"Te hacemos parte de cada decisión."*
+  - Párrafo 1 actualizado a: *"Creemos que el mejor resultado nace cuando trabajamos de la mano contigo. Te integramos en el proceso desde el primer día, explicándote cada paso de forma sencilla para que entiendas exactamente cómo y por qué se construye tu página."*
+  - Párrafo 2: *"Nuestro compromiso es darte la web que te imaginas: un diseño impecable que cautive a tu cliente y, sobre todo, que vuele al cargar para que nadie se canse de esperar."*
 - **Validación**:
   - Estructura, estilos y animaciones `ScrollReveal` intactos.
   - `npm run build` ejecutado exitosamente con 0 errores y 0 advertencias.
