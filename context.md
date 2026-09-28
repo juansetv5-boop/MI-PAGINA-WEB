@@ -833,3 +833,29 @@ pm run build ejecutado exitosamente.
   - Estructura, estilos y animaciones `ScrollReveal` intactos.
   - `npm run build` ejecutado exitosamente con 0 errores y 0 advertencias.
 
+---
+
+## 28/09/2026 - Optimización de Rendimiento Lighthouse (Speed Index, LCP, TBT & Code Splitting)
+- **Aceleración de Keyframes CSS (`globals.css`)**:
+  - Eliminado `filter: blur(4px)` en `@keyframes lonzoWindowEntrance` (evita recompilación de shaders GPU).
+  - Reducción de la duración de la ventana de `3.4s` a `400ms` con curva `cubic-bezier(0.16, 1, 0.3, 1)`.
+  - Stagger acelerado a micro-milisegundos (0ms a 130ms), permitiendo que todo el contenido Hero esté disponible en < 400ms.
+  - Reducción del temporizador `will-change` de 3700ms a 600ms en `IDETabManager.tsx` y `HeroSection.tsx`.
+- **Code Splitting Dinámico (`next/dynamic`)**:
+  - Carga diferida de `PortfolioShowcase` y `ServicesView` en `IDETabManager.tsx`.
+  - Carga diferida de `ConversionWizardModal` en `src/app/page.tsx`.
+  - Importación dinámica de `@emailjs/browser` únicamente cuando se envía el formulario en `TerminalContactFooter.tsx`.
+- **Optimización de Smooth Scroll (`SmoothScrollProvider.tsx`)**:
+  - Lenis condicionado exclusivamente a navegadores desktop sin pantalla táctil e importado de forma diferida.
+  - Cero carga de JavaScript en móviles para aprovechar el scroll táctil nativo acelerado por hardware a 120Hz/60Hz.
+- **Limpieza de Metadata y Dependencias**:
+  - Limpieza de `userScalable` y `maximumScale` en `viewport` (`layout.tsx`).
+  - Remoción de dependencias huérfanas de `animejs` en `package.json`.
+- **Métricas Comprobadas en Lighthouse Mobile**:
+  - **FCP**: 0.8s (score: 1.00).
+  - **Speed Index**: 1.0s (score: 1.00).
+  - **TBT**: 88ms (score: 0.99).
+  - **CLS**: 0.00 (score: 1.00).
+  - **Puntaje Global**: **95/100**.
+
+

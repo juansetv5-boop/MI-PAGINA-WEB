@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import emailjs from '@emailjs/browser';
 import Link from 'next/link';
 import ScrollReveal from './ScrollReveal';
 
@@ -89,6 +88,7 @@ export default function TerminalContactFooter() {
     };
 
     try {
+      const emailjs = (await import('@emailjs/browser')).default;
       await emailjs.send(serviceId, templateId, templateParams, publicKey);
       setToast('success');
     } catch (error) {

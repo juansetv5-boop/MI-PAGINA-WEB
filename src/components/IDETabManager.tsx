@@ -3,12 +3,27 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import HeroSection from './HeroSection';
 import TrustToolSection from './TrustToolSection';
-import PortfolioShowcase from './PortfolioShowcase';
 import TerminalContactFooter from './TerminalContactFooter';
-import ServicesView from './ServicesView';
 import CleanEditorialAbout from './CleanEditorialAbout';
+
+const PortfolioShowcase = dynamic(() => import('./PortfolioShowcase'), {
+  loading: () => (
+    <div className="w-full min-h-[400px] flex items-center justify-center text-xs font-mono text-[#677d64]">
+      Cargando proyectos...
+    </div>
+  ),
+});
+
+const ServicesView = dynamic(() => import('./ServicesView'), {
+  loading: () => (
+    <div className="w-full min-h-[400px] flex items-center justify-center text-xs font-mono text-[#677d64]">
+      Cargando servicios...
+    </div>
+  ),
+});
 
 export type TabId = 'page.tsx' | 'portfolio.ts' | 'services.json';
 
@@ -69,7 +84,7 @@ export default function IDETabManager() {
     // Clean up will-change after initial entrance animation completes (3.4s duration + settling)
     const cleanupTimer = setTimeout(() => {
       setIsWindowAnimating(false);
-    }, 3700);
+    }, 600);
 
     return () => clearTimeout(cleanupTimer);
   }, []);

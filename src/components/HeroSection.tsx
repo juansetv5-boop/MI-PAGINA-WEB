@@ -11,7 +11,7 @@ export default function HeroSection() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsHeroAnimating(false);
-    }, 3700);
+    }, 600);
     return () => clearTimeout(timer);
   }, []);
 

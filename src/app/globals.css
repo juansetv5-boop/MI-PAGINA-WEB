@@ -150,19 +150,11 @@ body {
   }
 }
 
-/* ── LONZO VISUALS OS WINDOW POP-IN & RELAXED STAGGER KEYFRAMES (CHILL & ULTRA-SMOOTH) ── */
+/* ── LONZO VISUALS OS WINDOW POP-IN & HIGH-PERFORMANCE SNAPPY STAGGER KEYFRAMES ── */
 @keyframes lonzoWindowEntrance {
   0% {
     opacity: 0;
-    transform: translateY(28px) scale(0.95);
-    filter: blur(4px);
-  }
-  40% {
-    opacity: 1;
-    filter: blur(0px);
-  }
-  80% {
-    transform: translateY(2px) scale(0.995);
+    transform: translateY(12px) scale(0.98);
   }
   100% {
     opacity: 1;
@@ -173,7 +165,7 @@ body {
 @keyframes lonzoHeaderEntrance {
   0% {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-8px);
   }
   100% {
     opacity: 1;
@@ -193,7 +185,7 @@ body {
 @keyframes lonzoH1Entrance {
   0% {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(12px);
   }
   100% {
     opacity: 1;
@@ -213,7 +205,7 @@ body {
 @keyframes lonzoButtonsEntrance {
   0% {
     opacity: 0;
-    transform: translateY(8px) scale(0.97);
+    transform: translateY(6px) scale(0.98);
   }
   100% {
     opacity: 1;
@@ -224,7 +216,7 @@ body {
 @keyframes lonzoMetricsEntrance {
   0% {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(8px);
   }
   100% {
     opacity: 1;
@@ -233,32 +225,32 @@ body {
 }
 
 .animate-lonzo-window {
-  animation: lonzoWindowEntrance 3.4s cubic-bezier(0.05, 0.9, 0.1, 1) 0ms both;
+  animation: lonzoWindowEntrance 400ms cubic-bezier(0.16, 1, 0.3, 1) 0ms both;
   transform-origin: center center;
 }
 
 .animate-lonzo-header {
-  animation: lonzoHeaderEntrance 1.2s cubic-bezier(0.05, 0.9, 0.1, 1) 0.4s both;
+  animation: lonzoHeaderEntrance 250ms cubic-bezier(0.16, 1, 0.3, 1) 0ms both;
 }
 
 .animate-lonzo-glow {
-  animation: lonzoGlowEntrance 2.0s cubic-bezier(0.05, 0.9, 0.1, 1) 0.6s both;
+  animation: lonzoGlowEntrance 400ms cubic-bezier(0.16, 1, 0.3, 1) 50ms both;
 }
 
 .animate-lonzo-h1 {
-  animation: lonzoH1Entrance 1.2s cubic-bezier(0.05, 0.9, 0.1, 1) 0.9s both;
+  animation: lonzoH1Entrance 300ms cubic-bezier(0.16, 1, 0.3, 1) 40ms both;
 }
 
 .animate-lonzo-paragraph {
-  animation: lonzoParagraphEntrance 1.0s cubic-bezier(0.05, 0.9, 0.1, 1) 1.3s both;
+  animation: lonzoParagraphEntrance 300ms cubic-bezier(0.16, 1, 0.3, 1) 70ms both;
 }
 
 .animate-lonzo-buttons {
-  animation: lonzoButtonsEntrance 1.0s cubic-bezier(0.05, 0.9, 0.1, 1) 1.7s both;
+  animation: lonzoButtonsEntrance 300ms cubic-bezier(0.16, 1, 0.3, 1) 100ms both;
 }
 
 .animate-lonzo-metrics {
-  animation: lonzoMetricsEntrance 1.2s cubic-bezier(0.05, 0.9, 0.1, 1) 2.0s both;
+  animation: lonzoMetricsEntrance 300ms cubic-bezier(0.16, 1, 0.3, 1) 130ms both;
 }
 
 .animate-led-pulse {

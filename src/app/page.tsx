@@ -1,8 +1,10 @@
+import dynamic from 'next/dynamic';
 import IDETabManager from "@/components/IDETabManager";
-import ConversionWizardModal from "@/components/ConversionWizardModal";
 import FloatingWhatsAppButton from "@/components/FloatingWhatsAppButton";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import { WizardProvider } from "@/components/WizardContext";
+
+const ConversionWizardModal = dynamic(() => import("@/components/ConversionWizardModal"));
 
 export default function Home() {
   return (
